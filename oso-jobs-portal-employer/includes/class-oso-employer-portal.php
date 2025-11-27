@@ -17,8 +17,12 @@ class OSO_Employer_Portal {
         // Load dependencies
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/class-oso-employer-registration.php';
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/helpers/class-oso-employer-utils.php';
+        require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/shortcodes/class-oso-employer-shortcodes.php';
 
         // Initialize employer registration handler
         OSO_Employer_Registration::init();
+        
+        // Initialize shortcodes
+        OSO_Employer_Shortcodes::instance();
     }
 }
