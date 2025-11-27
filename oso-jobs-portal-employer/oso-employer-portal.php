@@ -8,19 +8,27 @@
 
 if ( ! defined('ABSPATH') ) exit;
 
-// Check if master plugin is active by checking its constant
-if ( ! defined('OSO_JOBS_PORTAL_DIR') ) {
-    add_action('admin_notices', function() {
-        echo '<div class="notice notice-error"><p><strong>OSO Jobs Portal - Employer Section:</strong> The OSO Jobs Portal plugin must be installed and active.</p></div>';
-    });
-    return;
-}
-
 // Plugin constants
 define( 'OSO_EMPLOYER_PORTAL_DIR', plugin_dir_path(__FILE__) );
 define( 'OSO_EMPLOYER_PORTAL_URL', plugin_dir_url(__FILE__) );
 
-require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/class-oso-employer-portal.php';
+/**
+ * Initialize employer portal plugin.
+ */
+function oso_employer_portal_init() {
+    // Check if master plugin is active by checking its constant
+    if ( ! defined('OSO_JOBS_PORTAL_DIR') ) {
+        add_action('admin_notices', function() {
+            echo '<div class="notice notice-error"><p><strong>OSO Jobs Portal - Employer Section:</strong> The OSO Jobs Portal plugin must be installed and active.</p></div>';
+        });
+        return;
+    }
 
-// Boot plugin
-add_action( 'plugins_loaded', ['OSO_Employer_Portal', 'instance'] );
+    require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/class-oso-employer-portal.php';
+    
+    // Boot plugin
+    OSO_Employer_Portal::instance();
+}
+
+// Initialize after all plugins are loaded
+add_action( 'plugins_loaded', 'oso_employer_portal_init', 20 );
