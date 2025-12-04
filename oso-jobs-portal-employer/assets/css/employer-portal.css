@@ -824,6 +824,11 @@
     font-size: 1em;
 }
 
+/* Dashboard Actions (Logout Button) */
+.oso-dashboard-actions {
+    margin-top: 40px;
+}
+
 /* ========================================
    Responsive Design
    ======================================== */
