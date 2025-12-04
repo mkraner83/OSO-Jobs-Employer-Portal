@@ -35,6 +35,11 @@ class OSO_Employer_Registration {
             return;
         }
         
+        // Don't block administrators
+        if ( in_array( 'administrator', $user->roles ) ) {
+            return;
+        }
+        
         // Check if user is an employer
         if ( in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, $user->roles ) ) {
             // Find the employer dashboard page
