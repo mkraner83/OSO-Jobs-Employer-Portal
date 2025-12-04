@@ -11,11 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <div class="oso-jobseeker-browser">
-    <div class="oso-browser-header">
-        <h2><?php esc_html_e( 'Browse Jobseekers', 'oso-employer-portal' ); ?></h2>
-        <p class="oso-browser-description"><?php esc_html_e( 'View profiles of qualified candidates looking for positions.', 'oso-employer-portal' ); ?></p>
-    </div>
-
     <!-- Search and Filter Form -->
     <div class="oso-filter-section">
         <form method="get" class="oso-filter-form" id="jobseeker-filter-form">

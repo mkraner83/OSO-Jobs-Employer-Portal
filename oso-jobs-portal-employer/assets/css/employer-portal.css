@@ -227,14 +227,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: rgb(82, 125, 128);
 }
 
 .oso-photo-placeholder .dashicons {
     font-size: 80px;
     width: 80px;
     height: 80px;
-    color: rgba(255, 255, 255, 0.5);
+    color: #fff;
 }
 
 /* Card Content */
@@ -536,12 +536,16 @@
 }
 
 .oso-btn-primary {
-    background: #1976d2;
+    background-color: rgb(82, 125, 128);
     color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    padding: 10px;
 }
 
 .oso-btn-primary:hover {
-    background: #1565c0;
+    background-color: rgb(72, 115, 118);
     color: #fff;
 }
 
