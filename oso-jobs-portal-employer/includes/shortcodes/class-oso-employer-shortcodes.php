@@ -352,18 +352,48 @@ class OSO_Employer_Shortcodes {
 
         // Check if user is logged in
         if ( ! is_user_logged_in() ) {
-            return '<p>' . esc_html__( 'You must be logged in as an employer to view jobseeker profiles.', 'oso-employer-portal' ) . '</p>';
+            return '<p>' . esc_html__( 'You must be logged in to view jobseeker profiles.', 'oso-employer-portal' ) . '</p>';
         }
 
         $user = wp_get_current_user();
         
-        // Check if user has employer role
-        if ( ! in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, (array) $user->roles, true ) ) {
-            return '<p>' . esc_html__( 'You do not have permission to view jobseeker profiles.', 'oso-employer-portal' ) . '</p>';
-        }
-
         // Get jobseeker ID from URL or shortcode attribute
         $jobseeker_id = ! empty( $atts['id'] ) ? (int) $atts['id'] : ( isset( $_GET['jobseeker_id'] ) ? (int) $_GET['jobseeker_id'] : 0 );
+        
+        // If no ID provided and user is a jobseeker, show their own profile
+        if ( ! $jobseeker_id && in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, (array) $user->roles, true ) ) {
+            // Find jobseeker post linked to this user
+            $jobseeker_posts = get_posts([
+                'post_type'      => OSO_Jobs_Portal::POST_TYPE_JOBSEEKER,
+                'posts_per_page' => 1,
+                'meta_query'     => [
+                    [
+                        'key'     => '_oso_jobseeker_email',
+                        'value'   => $user->user_email,
+                        'compare' => '=',
+                    ],
+                ],
+            ]);
+            
+            if ( ! empty( $jobseeker_posts ) ) {
+                $jobseeker_id = $jobseeker_posts[0]->ID;
+            }
+        }
+        
+        // Check permissions: employers can view any profile, jobseekers can only view their own
+        $is_employer = in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, (array) $user->roles, true );
+        $is_jobseeker = in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, (array) $user->roles, true );
+        $is_admin = in_array( 'administrator', (array) $user->roles, true );
+        
+        if ( ! $is_employer && ! $is_admin && $is_jobseeker && $jobseeker_id ) {
+            // Jobseekers can only view their own profile
+            $jobseeker_email = get_post_meta( $jobseeker_id, '_oso_jobseeker_email', true );
+            if ( $jobseeker_email !== $user->user_email ) {
+                return '<p>' . esc_html__( 'You do not have permission to view this profile.', 'oso-employer-portal' ) . '</p>';
+            }
+        } elseif ( ! $is_employer && ! $is_admin && ! $is_jobseeker ) {
+            return '<p>' . esc_html__( 'You do not have permission to view jobseeker profiles.', 'oso-employer-portal' ) . '</p>';
+        }
 
         if ( ! $jobseeker_id ) {
             return '<p>' . esc_html__( 'No jobseeker specified.', 'oso-employer-portal' ) . '</p>';

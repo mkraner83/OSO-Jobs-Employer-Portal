@@ -47,7 +47,7 @@ class OSO_Employer_Registration {
     }
     
     /**
-     * Block employers from accessing wp-admin and redirect to their dashboard
+     * Block employers and jobseekers from accessing wp-admin and redirect to their dashboard/profile
      */
     public static function block_employer_admin_access() {
         // Allow AJAX requests
@@ -86,10 +86,31 @@ class OSO_Employer_Registration {
             wp_redirect( $dashboard_url );
             exit;
         }
+        
+        // Check if user is a jobseeker
+        if ( in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, $user->roles ) ) {
+            // Find the jobseeker profile page
+            $pages = get_posts([
+                'post_type'   => 'page',
+                'post_status' => 'publish',
+                'numberposts' => -1,
+            ]);
+            
+            $profile_url = home_url();
+            foreach ( $pages as $page ) {
+                if ( has_shortcode( $page->post_content, 'oso_jobseeker_profile' ) ) {
+                    $profile_url = get_permalink( $page->ID );
+                    break;
+                }
+            }
+            
+            wp_redirect( $profile_url );
+            exit;
+        }
     }
     
     /**
-     * Redirect employers to their dashboard page instead of wp-admin
+     * Redirect employers and jobseekers to their dashboard/profile page instead of wp-admin
      */
     public static function employer_login_redirect( $redirect_to, $request, $user ) {
         if ( isset( $user->roles ) && is_array( $user->roles ) ) {
@@ -105,6 +126,22 @@ class OSO_Employer_Registration {
                 foreach ( $pages as $page ) {
                     if ( has_shortcode( $page->post_content, 'oso_employer_dashboard' ) || 
                          has_shortcode( $page->post_content, 'oso_employer_profile' ) ) {
+                        return get_permalink( $page->ID );
+                    }
+                }
+            }
+            
+            // Check if user is a jobseeker
+            if ( in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, $user->roles ) ) {
+                // Find the page with the jobseeker profile shortcode
+                $pages = get_posts([
+                    'post_type'   => 'page',
+                    'post_status' => 'publish',
+                    'numberposts' => -1,
+                ]);
+                
+                foreach ( $pages as $page ) {
+                    if ( has_shortcode( $page->post_content, 'oso_jobseeker_profile' ) ) {
                         return get_permalink( $page->ID );
                     }
                 }
