@@ -14,12 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
     <!-- Search and Filter Form -->
     <div class="oso-filter-section">
         <form method="get" class="oso-filter-form" id="jobseeker-filter-form">
-            <div class="oso-filter-row">
-                <div class="oso-filter-field oso-filter-search">
+            <div class="oso-filter-row oso-filter-row-search">
+                <div class="oso-filter-field oso-filter-search-full">
                     <label for="search"><?php esc_html_e( 'Search', 'oso-employer-portal' ); ?></label>
                     <input type="text" id="search" name="search" placeholder="<?php esc_attr_e( 'Name, location, email...', 'oso-employer-portal' ); ?>" value="<?php echo esc_attr( isset( $_GET['search'] ) ? $_GET['search'] : '' ); ?>" />
                 </div>
+            </div>
 
+            <div class="oso-filter-row oso-filter-row-controls">
                 <div class="oso-filter-field">
                     <label for="location"><?php esc_html_e( 'Location', 'oso-employer-portal' ); ?></label>
                     <select id="location" name="location">
@@ -42,6 +44,15 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </div>
 
                 <div class="oso-filter-field">
+                    <label for="over_18"><?php esc_html_e( 'Over 18?', 'oso-employer-portal' ); ?></label>
+                    <select id="over_18" name="over_18">
+                        <option value=""><?php esc_html_e( 'Any', 'oso-employer-portal' ); ?></option>
+                        <option value="yes" <?php selected( isset( $_GET['over_18'] ) ? $_GET['over_18'] : '', 'yes' ); ?>><?php esc_html_e( 'Yes', 'oso-employer-portal' ); ?></option>
+                        <option value="no" <?php selected( isset( $_GET['over_18'] ) ? $_GET['over_18'] : '', 'no' ); ?>><?php esc_html_e( 'No', 'oso-employer-portal' ); ?></option>
+                    </select>
+                </div>
+
+                <div class="oso-filter-field">
                     <label for="sort"><?php esc_html_e( 'Sort By', 'oso-employer-portal' ); ?></label>
                     <select id="sort" name="sort">
                         <option value="date_desc" <?php selected( isset( $_GET['sort'] ) ? $_GET['sort'] : '', 'date_desc' ); ?>><?php esc_html_e( 'Newest First', 'oso-employer-portal' ); ?></option>
@@ -52,8 +63,11 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </div>
 
                 <div class="oso-filter-field oso-filter-actions">
-                    <button type="submit" class="oso-btn oso-btn-primary"><?php esc_html_e( 'Apply Filters', 'oso-employer-portal' ); ?></button>
-                    <a href="<?php echo esc_url( strtok( $_SERVER['REQUEST_URI'], '?' ) ); ?>" class="oso-btn oso-btn-secondary"><?php esc_html_e( 'Clear', 'oso-employer-portal' ); ?></a>
+                    <label>&nbsp;</label>
+                    <div class="oso-action-buttons">
+                        <button type="submit" class="oso-btn oso-btn-primary"><?php esc_html_e( 'Apply Filters', 'oso-employer-portal' ); ?></button>
+                        <a href="<?php echo esc_url( strtok( $_SERVER['REQUEST_URI'], '?' ) ); ?>" class="oso-btn oso-btn-secondary"><?php esc_html_e( 'Clear', 'oso-employer-portal' ); ?></a>
+                    </div>
                 </div>
             </div>
 

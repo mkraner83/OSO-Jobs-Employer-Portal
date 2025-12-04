@@ -242,6 +242,24 @@ class OSO_Employer_Shortcodes {
             );
         }
 
+        // Over 18 filter
+        if ( ! empty( $_GET['over_18'] ) ) {
+            $over_18_value = sanitize_text_field( $_GET['over_18'] );
+            if ( $over_18_value === 'yes' ) {
+                $meta_query[] = array(
+                    'key'     => '_oso_jobseeker_over_18',
+                    'value'   => 'Yes',
+                    'compare' => 'LIKE',
+                );
+            } elseif ( $over_18_value === 'no' ) {
+                $meta_query[] = array(
+                    'key'     => '_oso_jobseeker_over_18',
+                    'value'   => 'No',
+                    'compare' => 'LIKE',
+                );
+            }
+        }
+
         // Checkbox filters (skills, interests, certifications, etc.)
         if ( class_exists( 'OSO_Jobs_Utilities' ) ) {
             $checkbox_groups = OSO_Jobs_Utilities::get_jobseeker_checkbox_groups();

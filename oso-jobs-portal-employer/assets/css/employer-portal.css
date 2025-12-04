@@ -31,14 +31,31 @@
 
 .oso-filter-row {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr auto;
     gap: 15px;
     align-items: end;
+    margin-bottom: 15px;
+}
+
+.oso-filter-row-search {
+    grid-template-columns: 1fr;
+}
+
+.oso-filter-row-controls {
+    grid-template-columns: 1fr 1fr 1fr auto;
 }
 
 .oso-filter-field {
     display: flex;
     flex-direction: column;
+}
+
+.oso-filter-search-full {
+    width: 100%;
+}
+
+.oso-action-buttons {
+    display: flex;
+    gap: 10px;
 }
 
 .oso-filter-field label {
@@ -79,7 +96,7 @@
 .oso-toggle-btn {
     background: none;
     border: none;
-    color: #1976d2;
+    color: #8051B0;
     cursor: pointer;
     font-size: 1em;
     font-weight: 500;
@@ -91,7 +108,7 @@
 }
 
 .oso-toggle-btn:hover {
-    background: rgba(25, 118, 210, 0.1);
+    background: rgba(128, 81, 176, 0.1);
     border-radius: 4px;
 }
 
@@ -303,8 +320,8 @@
 .oso-skill-badge {
     display: inline-block;
     padding: 4px 10px;
-    background: #e3f2fd;
-    color: #1976d2;
+    background: #8051B0;
+    color: #fff;
     border-radius: 12px;
     font-size: 0.85em;
     font-weight: 500;
@@ -503,8 +520,8 @@
 .oso-skill-badge {
     display: inline-block;
     padding: 8px 16px;
-    background: #e3f2fd;
-    color: #1976d2;
+    background: #8051B0;
+    color: #fff;
     border-radius: 16px;
     font-size: 0.95em;
     font-weight: 500;
