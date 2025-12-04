@@ -19,6 +19,31 @@ class OSO_Employer_Registration {
         
         // Block wp-admin access for employers
         add_action( 'admin_init', [__CLASS__, 'block_employer_admin_access'] );
+        
+        // Hide admin bar for employers and jobseekers
+        add_action( 'after_setup_theme', [__CLASS__, 'hide_admin_bar'] );
+    }
+    
+    /**
+     * Hide WordPress admin bar for employers and jobseekers
+     */
+    public static function hide_admin_bar() {
+        if ( ! is_user_logged_in() ) {
+            return;
+        }
+        
+        $user = wp_get_current_user();
+        
+        // Don't hide for administrators
+        if ( in_array( 'administrator', $user->roles ) ) {
+            return;
+        }
+        
+        // Hide for employers and jobseekers
+        if ( in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, $user->roles ) || 
+             in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, $user->roles ) ) {
+            show_admin_bar( false );
+        }
     }
     
     /**
