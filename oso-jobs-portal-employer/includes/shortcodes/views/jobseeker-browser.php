@@ -127,7 +127,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                 $availability_end = ! empty( $meta['_oso_jobseeker_availability_end'] ) ? $meta['_oso_jobseeker_availability_end'] : '';
                 
                 // Get "Why interested" text from post_content
-                $why_text = ! empty( $jobseeker->post_content ) ? $jobseeker->post_content : '';
+                $why_text = get_the_content();
+                $why_text = wp_strip_all_tags( $why_text );
                 if ( strlen( $why_text ) > 200 ) {
                     $why_text = substr( $why_text, 0, 200 ) . '...';
                 }
