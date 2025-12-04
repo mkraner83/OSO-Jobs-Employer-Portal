@@ -37,7 +37,15 @@ class OSO_Employer_Portal {
             'oso-employer-portal',
             OSO_EMPLOYER_PORTAL_URL . 'assets/css/employer-portal.css',
             array(),
-            '1.0.0'
+            '1.0.1'
+        );
+        
+        wp_enqueue_script(
+            'oso-employer-portal',
+            OSO_EMPLOYER_PORTAL_URL . 'assets/js/employer-portal.js',
+            array( 'jquery' ),
+            '1.0.1',
+            true
         );
     }
 }

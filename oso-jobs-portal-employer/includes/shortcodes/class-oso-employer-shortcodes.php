@@ -189,17 +189,83 @@ class OSO_Employer_Shortcodes {
         // Get pagination
         $paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
 
-        // Query jobseekers
+        // Build query args
         $args = array(
             'post_type'      => OSO_Jobs_Portal::POST_TYPE_JOBSEEKER,
             'posts_per_page' => (int) $atts['per_page'],
             'paged'          => $paged,
             'post_status'    => 'publish',
-            'orderby'        => 'date',
-            'order'          => 'DESC',
         );
 
+        // Handle sorting
+        $sort = isset( $_GET['sort'] ) ? sanitize_text_field( $_GET['sort'] ) : 'date_desc';
+        switch ( $sort ) {
+            case 'date_asc':
+                $args['orderby'] = 'date';
+                $args['order']   = 'ASC';
+                break;
+            case 'name_asc':
+                $args['orderby']  = 'meta_value';
+                $args['meta_key'] = '_oso_jobseeker_full_name';
+                $args['order']    = 'ASC';
+                break;
+            case 'name_desc':
+                $args['orderby']  = 'meta_value';
+                $args['meta_key'] = '_oso_jobseeker_full_name';
+                $args['order']    = 'DESC';
+                break;
+            default: // date_desc
+                $args['orderby'] = 'date';
+                $args['order']   = 'DESC';
+                break;
+        }
+
+        // Handle search
+        if ( ! empty( $_GET['search'] ) ) {
+            $search = sanitize_text_field( $_GET['search'] );
+            $args['s'] = $search;
+            
+            // Also search in meta fields
+            add_filter( 'posts_search', array( $this, 'extend_jobseeker_search' ), 10, 2 );
+        }
+
+        // Build meta query for filters
+        $meta_query = array( 'relation' => 'AND' );
+
+        // Location filter
+        if ( ! empty( $_GET['location'] ) ) {
+            $meta_query[] = array(
+                'key'     => '_oso_jobseeker_location',
+                'value'   => sanitize_text_field( $_GET['location'] ),
+                'compare' => '=',
+            );
+        }
+
+        // Checkbox filters (skills, interests, certifications, etc.)
+        if ( class_exists( 'OSO_Jobs_Utilities' ) ) {
+            $checkbox_groups = OSO_Jobs_Utilities::get_jobseeker_checkbox_groups();
+            
+            foreach ( $checkbox_groups as $key => $config ) {
+                if ( ! empty( $_GET[ $key ] ) && is_array( $_GET[ $key ] ) ) {
+                    $selected = array_map( 'sanitize_text_field', $_GET[ $key ] );
+                    
+                    $meta_query[] = array(
+                        'key'     => $config['meta'],
+                        'value'   => $selected,
+                        'compare' => 'REGEXP',
+                    );
+                }
+            }
+        }
+
+        if ( count( $meta_query ) > 1 ) {
+            $args['meta_query'] = $meta_query;
+        }
+
         $jobseekers = new WP_Query( $args );
+
+        // Remove search filter
+        remove_filter( 'posts_search', array( $this, 'extend_jobseeker_search' ), 10 );
 
         return $this->load_template(
             'jobseeker-browser.php',
@@ -208,6 +274,49 @@ class OSO_Employer_Shortcodes {
                 'paged'      => $paged,
             )
         );
+    }
+
+    /**
+     * Extend search to include meta fields.
+     *
+     * @param string   $search Search SQL.
+     * @param WP_Query $query  Query object.
+     * @return string
+     */
+    public function extend_jobseeker_search( $search, $query ) {
+        global $wpdb;
+
+        if ( empty( $search ) || ! $query->is_main_query() ) {
+            return $search;
+        }
+
+        $search_term = $query->get( 's' );
+        if ( empty( $search_term ) ) {
+            return $search;
+        }
+
+        // Add meta fields to search
+        $meta_keys = array(
+            '_oso_jobseeker_full_name',
+            '_oso_jobseeker_email',
+            '_oso_jobseeker_location',
+        );
+
+        $meta_search = '';
+        foreach ( $meta_keys as $meta_key ) {
+            $meta_search .= " OR (meta.meta_key = '" . esc_sql( $meta_key ) . "' AND meta.meta_value LIKE '%" . esc_sql( $wpdb->esc_like( $search_term ) ) . "%')";
+        }
+
+        if ( ! empty( $meta_search ) ) {
+            $search = preg_replace(
+                '/\(\(\(/',
+                "((({$wpdb->posts}.ID IN (SELECT DISTINCT post_id FROM {$wpdb->postmeta} meta WHERE 1=1 {$meta_search})) OR (",
+                $search
+            );
+            $search .= ')';
+        }
+
+        return $search;
     }
 
     /**

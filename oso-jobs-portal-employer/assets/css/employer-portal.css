@@ -13,6 +13,154 @@
     padding: 20px;
 }
 
+/* ========================================
+   Search & Filter Section
+   ======================================== */
+
+.oso-filter-section {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.oso-filter-form {
+    width: 100%;
+}
+
+.oso-filter-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 15px;
+    align-items: end;
+}
+
+.oso-filter-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.oso-filter-field label {
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+    font-size: 0.95em;
+}
+
+.oso-filter-field input[type="text"],
+.oso-filter-field select {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+    background: #fff;
+}
+
+.oso-filter-field input[type="text"]:focus,
+.oso-filter-field select:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.oso-filter-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+/* Advanced Filters Toggle */
+.oso-advanced-toggle {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.oso-toggle-btn {
+    background: none;
+    border: none;
+    color: #1976d2;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    padding: 10px 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.oso-toggle-btn:hover {
+    background: rgba(25, 118, 210, 0.1);
+    border-radius: 4px;
+}
+
+.oso-toggle-btn .dashicons {
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    transition: transform 0.3s;
+}
+
+.oso-toggle-btn.active .dashicons {
+    transform: rotate(180deg);
+}
+
+/* Advanced Filters Panel */
+.oso-advanced-filters {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.oso-filter-group {
+    margin-bottom: 25px;
+}
+
+.oso-filter-group h4 {
+    margin: 0 0 12px 0;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.oso-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.oso-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.oso-checkbox-label:hover {
+    background: #f5f5f5;
+    border-color: #1976d2;
+}
+
+.oso-checkbox-label input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+.oso-checkbox-label span {
+    font-size: 0.95em;
+    color: #555;
+}
+
+.oso-checkbox-label input[type="checkbox"]:checked + span {
+    color: #1976d2;
+    font-weight: 500;
+}
+
 .oso-browser-header {
     margin-bottom: 30px;
     text-align: center;
@@ -466,6 +614,24 @@
 }
 
 @media (max-width: 768px) {
+    .oso-filter-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .oso-filter-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .oso-filter-actions .oso-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .oso-checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+    
     .oso-jobseeker-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 20px;
