@@ -46,6 +46,12 @@
         // Simple Lightbox for Profile Photos
         $('.oso-photo-lightbox').on('click', function(e) {
             e.preventDefault();
+            e.stopPropagation();
+            
+            // Prevent duplicate lightbox if one already exists
+            if ($('.oso-lightbox-overlay').length > 0) {
+                return false;
+            }
             
             var $img = $(this).find('img');
             var imgSrc = $(this).attr('href');

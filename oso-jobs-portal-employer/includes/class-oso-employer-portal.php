@@ -33,18 +33,25 @@ class OSO_Employer_Portal {
      * Enqueue frontend assets.
      */
     public function enqueue_frontend_assets() {
+        // Enqueue Dashicons for button icons
+        wp_enqueue_style( 'dashicons' );
+        
         wp_enqueue_style(
             'oso-employer-portal',
             OSO_EMPLOYER_PORTAL_URL . 'assets/css/employer-portal.css',
-            array(),
-            '1.0.2'
+            array( 'dashicons' ),
+            '1.0.3'
         );
+        
+        // Deregister conflicting lightbox scripts that might cause duplicates
+        wp_deregister_script( 'lightbox' );
+        wp_deregister_script( 'simple-lightbox' );
         
         wp_enqueue_script(
             'oso-employer-portal',
             OSO_EMPLOYER_PORTAL_URL . 'assets/js/employer-portal.js',
             array( 'jquery' ),
-            '1.0.2',
+            '1.0.3',
             true
         );
         
