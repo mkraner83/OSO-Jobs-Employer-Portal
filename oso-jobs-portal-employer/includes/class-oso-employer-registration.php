@@ -90,36 +90,42 @@ class OSO_Employer_Registration {
         // Check if user is a jobseeker
         if ( in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, $user->roles ) ) {
             // Redirect to the jobseeker profile page
-            return home_url( '/job-portal/jobseeker-profile/' );
-        }   'post_status' => 'publish',
-                    'numberposts' => -1,
-                ]);
-                
-                foreach ( $pages as $page ) {
-                    if ( has_shortcode( $page->post_content, 'oso_employer_dashboard' ) || 
-                         has_shortcode( $page->post_content, 'oso_employer_profile' ) ) {
-                        return get_permalink( $page->ID );
-                    }
-                }
-            }
-            
-            // Check if user is a jobseeker
-            if ( in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, $user->roles ) ) {
-                // Find the page with the jobseeker profile shortcode
-                $pages = get_posts([
-                    'post_type'   => 'page',
-                    'post_status' => 'publish',
-                    'numberposts' => -1,
-                ]);
-                
-                foreach ( $pages as $page ) {
-                    if ( has_shortcode( $page->post_content, 'oso_jobseeker_profile' ) ) {
-                        return get_permalink( $page->ID );
-                    }
+            wp_redirect( home_url( '/job-portal/jobseeker-profile/' ) );
+            exit;
+        }
+    }
+
+    /**
+     * Redirect employers and jobseekers after login
+     */
+    public static function employer_login_redirect( $redirect_to, $request, $user ) {
+        if ( ! isset( $user->roles ) || ! is_array( $user->roles ) ) {
+            return $redirect_to;
+        }
+
+        // Check if user is an employer
+        if ( in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, $user->roles ) ) {
+            // Find the employer dashboard page
+            $pages = get_posts([
+                'post_type'   => 'page',
+                'post_status' => 'publish',
+                'numberposts' => -1,
+            ]);
+
+            foreach ( $pages as $page ) {
+                if ( has_shortcode( $page->post_content, 'oso_employer_dashboard' ) || 
+                     has_shortcode( $page->post_content, 'oso_employer_profile' ) ) {
+                    return get_permalink( $page->ID );
                 }
             }
         }
         
+        // Check if user is a jobseeker
+        if ( in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, $user->roles ) ) {
+            // Redirect to the jobseeker profile page
+            return home_url( '/job-portal/jobseeker-profile/' );
+        }
+
         return $redirect_to;
     }
 
