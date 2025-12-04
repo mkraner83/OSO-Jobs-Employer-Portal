@@ -30,7 +30,9 @@ $resume = ! empty( $meta['_oso_jobseeker_resume'] ) ? $meta['_oso_jobseeker_resu
         <div class="oso-profile-sidebar">
             <?php if ( $photo ) : ?>
                 <div class="oso-profile-photo">
-                    <img src="<?php echo esc_url( $photo ); ?>" alt="<?php echo esc_attr( $name ); ?>" />
+                    <a href="<?php echo esc_url( $photo ); ?>" class="oso-photo-lightbox" data-lightbox="jobseeker-photo">
+                        <img src="<?php echo esc_url( $photo ); ?>" alt="<?php echo esc_attr( $name ); ?>" />
+                    </a>
                 </div>
             <?php else : ?>
                 <div class="oso-profile-photo-placeholder">

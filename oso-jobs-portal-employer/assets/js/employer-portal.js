@@ -42,6 +42,57 @@
             $('#advanced-filters').show();
             $('#toggle-advanced').addClass('active').find('.toggle-text').text('Hide Advanced Filters');
         }
+        
+        // Simple Lightbox for Profile Photos
+        $('.oso-photo-lightbox').on('click', function(e) {
+            e.preventDefault();
+            
+            var $img = $(this).find('img');
+            var imgSrc = $(this).attr('href');
+            var imgAlt = $img.attr('alt');
+            
+            // Create lightbox HTML
+            var lightboxHtml = '<div class="oso-lightbox-overlay">' +
+                '<div class="oso-lightbox-content">' +
+                '<span class="oso-lightbox-close">&times;</span>' +
+                '<img src="' + imgSrc + '" alt="' + imgAlt + '">' +
+                '</div>' +
+                '</div>';
+            
+            // Append to body
+            $('body').append(lightboxHtml);
+            
+            // Add CSS if not already present
+            if ($('#oso-lightbox-styles').length === 0) {
+                var styles = '<style id="oso-lightbox-styles">' +
+                    '.oso-lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; align-items: center; justify-content: center; }' +
+                    '.oso-lightbox-content { position: relative; max-width: 90%; max-height: 90%; }' +
+                    '.oso-lightbox-content img { max-width: 100%; max-height: 90vh; display: block; }' +
+                    '.oso-lightbox-close { position: absolute; top: -40px; right: 0; color: white; font-size: 40px; cursor: pointer; font-weight: bold; }' +
+                    '.oso-lightbox-close:hover { color: #ccc; }' +
+                    '</style>';
+                $('head').append(styles);
+            }
+            
+            // Close on click
+            $('.oso-lightbox-overlay').on('click', function(e) {
+                if (e.target === this || $(e.target).hasClass('oso-lightbox-close')) {
+                    $(this).fadeOut(200, function() {
+                        $(this).remove();
+                    });
+                }
+            });
+            
+            // Close on ESC key
+            $(document).on('keyup.lightbox', function(e) {
+                if (e.key === 'Escape') {
+                    $('.oso-lightbox-overlay').fadeOut(200, function() {
+                        $(this).remove();
+                    });
+                    $(document).off('keyup.lightbox');
+                }
+            });
+        });
     });
 
 })(jQuery);

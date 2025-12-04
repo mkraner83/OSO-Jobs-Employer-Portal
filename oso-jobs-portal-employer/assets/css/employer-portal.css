@@ -395,7 +395,7 @@
 .oso-back-link {
     display: inline-block;
     margin-bottom: 15px;
-    color: #1976d2;
+    color: #8051B0;
     text-decoration: none;
     font-weight: 500;
 }
@@ -434,6 +434,27 @@
     object-fit: cover;
 }
 
+.oso-photo-lightbox {
+    display: block;
+    cursor: zoom-in;
+    position: relative;
+}
+
+.oso-photo-lightbox:hover::after {
+    content: '🔍';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.oso-photo-lightbox:hover img {
+    opacity: 0.9;
+}
+
 .oso-profile-photo-placeholder {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
@@ -464,7 +485,7 @@
 }
 
 .oso-profile-email a {
-    color: #1976d2;
+    color: #8051B0;
     text-decoration: none;
 }
 
