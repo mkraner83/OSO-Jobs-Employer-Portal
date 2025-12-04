@@ -37,6 +37,8 @@ class OSO_Employer_Shortcodes {
      */
     protected function __construct() {
         add_shortcode( 'oso_employer_dashboard', array( $this, 'shortcode_employer_dashboard' ) );
+        add_shortcode( 'oso_jobseeker_browser', array( $this, 'shortcode_jobseeker_browser' ) );
+        add_shortcode( 'oso_jobseeker_profile', array( $this, 'shortcode_jobseeker_profile' ) );
     }
 
     /**
@@ -158,6 +160,108 @@ class OSO_Employer_Shortcodes {
         }
 
         return $meta;
+    }
+
+    /**
+     * Render jobseeker browser shortcode.
+     */
+    public function shortcode_jobseeker_browser( $atts ) {
+        $atts = shortcode_atts(
+            array(
+                'per_page' => 12,
+            ),
+            $atts,
+            'oso_jobseeker_browser'
+        );
+
+        // Check if user is logged in
+        if ( ! is_user_logged_in() ) {
+            return '<p>' . esc_html__( 'You must be logged in as an employer to browse jobseekers.', 'oso-employer-portal' ) . '</p>';
+        }
+
+        $user    = wp_get_current_user();
+        
+        // Check if user has employer role
+        if ( ! in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, (array) $user->roles, true ) ) {
+            return '<p>' . esc_html__( 'You do not have permission to browse jobseekers.', 'oso-employer-portal' ) . '</p>';
+        }
+
+        // Get pagination
+        $paged = get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1;
+
+        // Query jobseekers
+        $args = array(
+            'post_type'      => OSO_Jobs_Portal::POST_TYPE_JOBSEEKER,
+            'posts_per_page' => (int) $atts['per_page'],
+            'paged'          => $paged,
+            'post_status'    => 'publish',
+            'orderby'        => 'date',
+            'order'          => 'DESC',
+        );
+
+        $jobseekers = new WP_Query( $args );
+
+        return $this->load_template(
+            'jobseeker-browser.php',
+            array(
+                'jobseekers' => $jobseekers,
+                'paged'      => $paged,
+            )
+        );
+    }
+
+    /**
+     * Render single jobseeker profile shortcode.
+     */
+    public function shortcode_jobseeker_profile( $atts ) {
+        $atts = shortcode_atts(
+            array(
+                'id' => 0,
+            ),
+            $atts,
+            'oso_jobseeker_profile'
+        );
+
+        // Check if user is logged in
+        if ( ! is_user_logged_in() ) {
+            return '<p>' . esc_html__( 'You must be logged in as an employer to view jobseeker profiles.', 'oso-employer-portal' ) . '</p>';
+        }
+
+        $user = wp_get_current_user();
+        
+        // Check if user has employer role
+        if ( ! in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, (array) $user->roles, true ) ) {
+            return '<p>' . esc_html__( 'You do not have permission to view jobseeker profiles.', 'oso-employer-portal' ) . '</p>';
+        }
+
+        // Get jobseeker ID from URL or shortcode attribute
+        $jobseeker_id = ! empty( $atts['id'] ) ? (int) $atts['id'] : ( isset( $_GET['jobseeker_id'] ) ? (int) $_GET['jobseeker_id'] : 0 );
+
+        if ( ! $jobseeker_id ) {
+            return '<p>' . esc_html__( 'No jobseeker specified.', 'oso-employer-portal' ) . '</p>';
+        }
+
+        // Get jobseeker post
+        $jobseeker = get_post( $jobseeker_id );
+
+        if ( ! $jobseeker || OSO_Jobs_Portal::POST_TYPE_JOBSEEKER !== $jobseeker->post_type ) {
+            return '<p>' . esc_html__( 'Jobseeker not found.', 'oso-employer-portal' ) . '</p>';
+        }
+
+        // Get jobseeker metadata
+        if ( class_exists( 'OSO_Jobs_Utilities' ) ) {
+            $meta = OSO_Jobs_Utilities::get_jobseeker_meta( $jobseeker_id );
+        } else {
+            $meta = array();
+        }
+
+        return $this->load_template(
+            'jobseeker-profile-view.php',
+            array(
+                'jobseeker' => $jobseeker,
+                'meta'      => $meta,
+            )
+        );
     }
 
     /**

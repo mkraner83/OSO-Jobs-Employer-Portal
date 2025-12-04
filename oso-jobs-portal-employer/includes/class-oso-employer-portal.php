@@ -24,5 +24,20 @@ class OSO_Employer_Portal {
         
         // Initialize shortcodes
         OSO_Employer_Shortcodes::instance();
+        
+        // Enqueue frontend styles
+        add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_assets' ] );
+    }
+    
+    /**
+     * Enqueue frontend assets.
+     */
+    public function enqueue_frontend_assets() {
+        wp_enqueue_style(
+            'oso-employer-portal',
+            OSO_EMPLOYER_PORTAL_URL . 'assets/css/employer-portal.css',
+            array(),
+            '1.0.0'
+        );
     }
 }

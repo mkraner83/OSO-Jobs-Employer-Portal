@@ -97,6 +97,17 @@ endif;
         <?php endif; ?>
     </div>
 
+    <div class="oso-dashboard-quick-links">
+        <h3><?php esc_html_e( 'Quick Links', 'oso-employer-portal' ); ?></h3>
+        <div class="oso-quick-links-grid">
+            <a href="<?php echo esc_url( home_url( '/browse-jobseekers/' ) ); ?>" class="oso-quick-link">
+                <span class="dashicons dashicons-groups"></span>
+                <span><?php esc_html_e( 'Browse Jobseekers', 'oso-employer-portal' ); ?></span>
+            </a>
+            <!-- Add more quick links as needed -->
+        </div>
+    </div>
+
     <div class="oso-dashboard-actions">
         <p>
             <a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>" class="button"><?php esc_html_e( 'Logout', 'oso-employer-portal' ); ?></a>
