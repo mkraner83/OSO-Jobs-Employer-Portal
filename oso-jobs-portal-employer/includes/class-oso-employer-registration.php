@@ -46,7 +46,8 @@ class OSO_Employer_Registration {
             
             $dashboard_url = home_url();
             foreach ( $pages as $page ) {
-                if ( has_shortcode( $page->post_content, 'oso_employer_dashboard' ) ) {
+                if ( has_shortcode( $page->post_content, 'oso_employer_dashboard' ) || 
+                     has_shortcode( $page->post_content, 'oso_employer_profile' ) ) {
                     $dashboard_url = get_permalink( $page->ID );
                     break;
                 }
@@ -72,7 +73,8 @@ class OSO_Employer_Registration {
                 ]);
                 
                 foreach ( $pages as $page ) {
-                    if ( has_shortcode( $page->post_content, 'oso_employer_dashboard' ) ) {
+                    if ( has_shortcode( $page->post_content, 'oso_employer_dashboard' ) || 
+                         has_shortcode( $page->post_content, 'oso_employer_profile' ) ) {
                         return get_permalink( $page->ID );
                     }
                 }

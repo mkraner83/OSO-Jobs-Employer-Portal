@@ -37,6 +37,7 @@ class OSO_Employer_Shortcodes {
      */
     protected function __construct() {
         add_shortcode( 'oso_employer_dashboard', array( $this, 'shortcode_employer_dashboard' ) );
+        add_shortcode( 'oso_employer_profile', array( $this, 'shortcode_employer_dashboard' ) ); // Alias
         add_shortcode( 'oso_jobseeker_browser', array( $this, 'shortcode_jobseeker_browser' ) );
         add_shortcode( 'oso_jobseeker_profile', array( $this, 'shortcode_jobseeker_profile' ) );
     }
