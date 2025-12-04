@@ -131,21 +131,22 @@ class OSO_Employer_Registration {
 
     public static function handle_employer_submission( $fields, $entry, $form_data, $entry_id ) {
 
-        $full_name = self::get_field_value( $fields, 'Full Name' );
-        $email     = self::get_field_value( $fields, 'Email' );
-        $phone     = self::get_field_value( $fields, 'Phone' );
-        $company   = self::get_field_value( $fields, 'Company' );
-
+        // Get email from Contact Email field
+        $email = self::get_field_value( $fields, 'Contact Email' );
         if ( ! $email ) return;
 
+        // Get camp name as the display name
+        $camp_name = self::get_field_value( $fields, 'Camp Name' );
+        if ( ! $camp_name ) return;
+
         // Generate unique username
-        $username = OSO_Employer_Utils::generate_username( $full_name, $email );
+        $username = OSO_Employer_Utils::generate_username( $camp_name, $email );
 
         // Create WordPress user (no password)
         $user_id = wp_insert_user([
             'user_login'   => $username,
             'user_email'   => $email,
-            'display_name' => $full_name,
+            'display_name' => $camp_name,
             'role'         => OSO_Jobs_Portal::ROLE_EMPLOYER,
         ]);
 
@@ -158,40 +159,31 @@ class OSO_Employer_Registration {
         $post_id = wp_insert_post([
             'post_author' => $user_id,
             'post_type'   => OSO_Jobs_Portal::POST_TYPE_EMPLOYER,
-            'post_title'  => $full_name,
+            'post_title'  => $camp_name,
             'post_status' => 'publish',
         ]);
 
-        // Link CPT to user ID
+        // Link CPT to user ID and WPForms entry
         update_post_meta( $post_id, '_oso_employer_user_id', $user_id );
+        update_post_meta( $post_id, '_oso_employer_wpforms_entry', $entry_id );
 
-        // Save all form fields dynamically
-        // Map common field names to meta keys
+        // Map WPForms field names to meta keys
         $field_mapping = array(
-            'Full Name' => '_oso_employer_full_name',
-            'Email' => '_oso_employer_email',
-            'Phone' => '_oso_employer_phone',
-            'Company' => '_oso_employer_company',
-            'Company Name' => '_oso_employer_company',
-            'Address' => '_oso_employer_address',
-            'Street Address' => '_oso_employer_address',
-            'City' => '_oso_employer_city',
+            'Camp Name' => '_oso_employer_company',
+            'Brief Description' => '_oso_employer_description',
+            'Type of Camp' => '_oso_employer_camp_types',
             'State' => '_oso_employer_state',
-            'Zip' => '_oso_employer_zip',
-            'Zip Code' => '_oso_employer_zip',
-            'Postal Code' => '_oso_employer_zip',
-            'Website' => '_oso_employer_website',
-            'Company Website' => '_oso_employer_website',
-            'Description' => '_oso_employer_description',
-            'Company Description' => '_oso_employer_description',
-            'About' => '_oso_employer_description',
-            'Contact Person' => '_oso_employer_contact_person',
-            'Contact Name' => '_oso_employer_contact_person',
-            'Job Title' => '_oso_employer_job_title',
-            'Position' => '_oso_employer_job_title',
+            'Address' => '_oso_employer_address',
+            'Closest Major City (optional)' => '_oso_employer_major_city',
+            'Start of Staff Training Date' => '_oso_employer_training_start',
+            'Housing Provided' => '_oso_employer_housing',
+            'Contact Email' => '_oso_employer_email',
+            'Website / URL' => '_oso_employer_website',
+            'Social Media Links (optional)' => '_oso_employer_social_links',
+            'Subscription Type' => '_oso_employer_subscription_type',
         );
 
-        // Save all fields from the form
+        // Save all form fields
         foreach ( $fields as $field ) {
             if ( ! isset( $field['name'] ) || empty( $field['name'] ) ) {
                 continue;
@@ -200,22 +192,32 @@ class OSO_Employer_Registration {
             $field_name = trim( $field['name'] );
             $field_value = isset( $field['value'] ) ? $field['value'] : '';
 
-            // Check if we have a mapping for this field
-            $meta_key = null;
-            foreach ( $field_mapping as $form_label => $meta ) {
-                if ( strcasecmp( $field_name, $form_label ) === 0 ) {
-                    $meta_key = $meta;
-                    break;
+            // Skip file uploads (logo handled separately)
+            if ( isset( $field['type'] ) && $field['type'] === 'file-upload' ) {
+                // Handle logo upload
+                if ( stripos( $field_name, 'logo' ) !== false && ! empty( $field_value ) ) {
+                    // If multiple files, take first one as logo
+                    $files = is_array( $field_value ) ? $field_value : array( $field_value );
+                    if ( ! empty( $files[0] ) ) {
+                        update_post_meta( $post_id, '_oso_employer_logo', esc_url_raw( $files[0] ) );
+                    }
                 }
+                continue;
             }
 
-            // If no mapping found, create a generic meta key
-            if ( ! $meta_key ) {
-                $meta_key = '_oso_employer_' . sanitize_key( strtolower( str_replace( ' ', '_', $field_name ) ) );
-            }
+            // Get meta key from mapping or create generic one
+            $meta_key = isset( $field_mapping[ $field_name ] ) ? $field_mapping[ $field_name ] : '_oso_employer_' . sanitize_key( strtolower( str_replace( ' ', '_', $field_name ) ) );
 
-            // Save the field
-            update_post_meta( $post_id, $meta_key, sanitize_text_field( $field_value ) );
+            // Save the field with appropriate sanitization
+            if ( is_array( $field_value ) ) {
+                update_post_meta( $post_id, $meta_key, implode( "\n", array_map( 'sanitize_text_field', $field_value ) ) );
+            } elseif ( stripos( $field_name, 'description' ) !== false || stripos( $field_name, 'social' ) !== false ) {
+                update_post_meta( $post_id, $meta_key, sanitize_textarea_field( $field_value ) );
+            } elseif ( stripos( $field_name, 'website' ) !== false || stripos( $field_name, 'url' ) !== false ) {
+                update_post_meta( $post_id, $meta_key, esc_url_raw( $field_value ) );
+            } else {
+                update_post_meta( $post_id, $meta_key, sanitize_text_field( $field_value ) );
+            }
         }
     }
 

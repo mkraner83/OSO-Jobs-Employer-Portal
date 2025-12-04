@@ -227,10 +227,24 @@
             $message.removeClass('success error').addClass('loading')
                 .text('Saving changes...').fadeIn();
             
+            // Auto-add https:// to website if needed
+            var websiteInput = $('#website');
+            if (websiteInput.length && websiteInput.val().trim() !== '') {
+                var websiteValue = websiteInput.val().trim();
+                if (!websiteValue.match(/^https?:\/\//i)) {
+                    websiteInput.val('https://' + websiteValue);
+                }
+            }
+            
             var formData = new FormData($form[0]);
             formData.append('action', 'oso_update_employer_profile');
             formData.append('nonce', $('#oso_employer_profile_nonce').val());
             formData.append('employer_id', $form.data('employer-id'));
+            
+            // Debug: log what we're sending
+            console.log('Submitting employer profile update...');
+            console.log('Employer ID:', $form.data('employer-id'));
+            console.log('Nonce:', $('#oso_employer_profile_nonce').val());
             
             $.ajax({
                 url: osoEmployerPortal.ajaxUrl,
@@ -239,6 +253,7 @@
                 processData: false,
                 contentType: false,
                 success: function(response) {
+                    console.log('AJAX Response:', response);
                     if (response.success) {
                         $message.removeClass('loading error').addClass('success')
                             .text(response.data.message);
@@ -250,12 +265,15 @@
                             }
                         }, 1000);
                     } else {
+                        console.error('Error:', response.data);
                         $message.removeClass('loading success').addClass('error')
                             .text(response.data.message || 'An error occurred.');
                         $submitBtn.prop('disabled', false);
                     }
                 },
-                error: function() {
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                    console.error('Response:', xhr.responseText);
                     $message.removeClass('loading success').addClass('error')
                         .text('An error occurred. Please try again.');
                     $submitBtn.prop('disabled', false);

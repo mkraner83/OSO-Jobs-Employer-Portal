@@ -59,20 +59,20 @@ endif;
         
         <div class="oso-profile-info-grid">
             <?php
-            // Define all employer fields to display
+            // Define all employer fields to display (matching WPForms)
             $employer_fields = array(
-                '_oso_employer_full_name' => array( 'label' => 'Full Name', 'required' => true ),
-                '_oso_employer_email' => array( 'label' => 'Email', 'required' => true ),
-                '_oso_employer_phone' => array( 'label' => 'Phone', 'required' => false ),
-                '_oso_employer_company' => array( 'label' => 'Company Name', 'required' => false ),
-                '_oso_employer_contact_person' => array( 'label' => 'Contact Person', 'required' => false ),
-                '_oso_employer_job_title' => array( 'label' => 'Job Title/Position', 'required' => false ),
-                '_oso_employer_address' => array( 'label' => 'Address', 'required' => false ),
-                '_oso_employer_city' => array( 'label' => 'City', 'required' => false ),
+                '_oso_employer_company' => array( 'label' => 'Camp Name', 'required' => true ),
+                '_oso_employer_email' => array( 'label' => 'Contact Email', 'required' => true ),
+                '_oso_employer_website' => array( 'label' => 'Website', 'required' => false, 'type' => 'url' ),
                 '_oso_employer_state' => array( 'label' => 'State', 'required' => false ),
-                '_oso_employer_zip' => array( 'label' => 'Zip Code', 'required' => false ),
-                '_oso_employer_website' => array( 'label' => 'Website', 'required' => false ),
-                '_oso_employer_description' => array( 'label' => 'Company Description', 'required' => false, 'full_width' => true ),
+                '_oso_employer_address' => array( 'label' => 'Address', 'required' => false ),
+                '_oso_employer_major_city' => array( 'label' => 'Closest Major City', 'required' => false ),
+                '_oso_employer_training_start' => array( 'label' => 'Start of Staff Training', 'required' => false, 'type' => 'date' ),
+                '_oso_employer_housing' => array( 'label' => 'Housing Provided', 'required' => false ),
+                '_oso_employer_subscription_type' => array( 'label' => 'Subscription Type', 'required' => false ),
+                '_oso_employer_camp_types' => array( 'label' => 'Type of Camp', 'required' => false, 'type' => 'list' ),
+                '_oso_employer_description' => array( 'label' => 'Brief Description', 'required' => false, 'full_width' => true, 'type' => 'textarea' ),
+                '_oso_employer_social_links' => array( 'label' => 'Social Media Links', 'required' => false, 'full_width' => true, 'type' => 'textarea' ),
             );
 
             foreach ( $employer_fields as $meta_key => $field_config ) :
@@ -85,13 +85,18 @@ endif;
                 
                 $display_value = ! empty( $value ) ? $value : 'Not provided';
                 $field_class = ! empty( $field_config['full_width'] ) ? 'oso-profile-field-full' : 'oso-profile-field';
+                $field_type = isset( $field_config['type'] ) ? $field_config['type'] : 'text';
                 ?>
                 <div class="<?php echo esc_attr( $field_class ); ?>">
                     <strong><?php echo esc_html( $field_config['label'] ); ?>:</strong>
-                    <?php if ( $meta_key === '_oso_employer_website' && ! empty( $value ) ) : ?>
+                    <?php if ( $field_type === 'url' && ! empty( $value ) ) : ?>
                         <a href="<?php echo esc_url( $value ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $value ); ?></a>
-                    <?php elseif ( $meta_key === '_oso_employer_description' ) : ?>
+                    <?php elseif ( $field_type === 'textarea' ) : ?>
                         <p><?php echo wp_kses_post( nl2br( $value ) ); ?></p>
+                    <?php elseif ( $field_type === 'list' ) : ?>
+                        <span><?php echo esc_html( str_replace( "\n", ', ', $value ) ); ?></span>
+                    <?php elseif ( $field_type === 'date' && ! empty( $value ) ) : ?>
+                        <span><?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $value ) ) ); ?></span>
                     <?php else : ?>
                         <span><?php echo esc_html( $display_value ); ?></span>
                     <?php endif; ?>

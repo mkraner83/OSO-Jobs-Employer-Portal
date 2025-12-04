@@ -655,9 +655,13 @@ class OSO_Employer_Shortcodes {
      * AJAX handler to update employer profile.
      */
     public function ajax_update_employer_profile() {
+        error_log( 'OSO Employer Profile Update: Starting...' );
+        error_log( 'POST data: ' . print_r( $_POST, true ) );
+        
         check_ajax_referer( 'oso_update_employer_profile', 'nonce' );
         
         if ( ! is_user_logged_in() ) {
+            error_log( 'OSO Employer Profile Update: User not logged in' );
             wp_send_json_error( array( 'message' => __( 'You must be logged in.', 'oso-employer-portal' ) ) );
         }
         
@@ -680,46 +684,68 @@ class OSO_Employer_Shortcodes {
             wp_send_json_error( array( 'message' => __( 'You do not have permission to edit this profile.', 'oso-employer-portal' ) ) );
         }
         
-        // Update post title (full name)
-        if ( isset( $_POST['full_name'] ) ) {
+        // Update post title (camp name)
+        if ( isset( $_POST['camp_name'] ) ) {
             wp_update_post( array(
                 'ID'         => $employer_id,
-                'post_title' => sanitize_text_field( $_POST['full_name'] ),
+                'post_title' => sanitize_text_field( $_POST['camp_name'] ),
             ) );
-            update_post_meta( $employer_id, '_oso_employer_full_name', sanitize_text_field( $_POST['full_name'] ) );
+            update_post_meta( $employer_id, '_oso_employer_company', sanitize_text_field( $_POST['camp_name'] ) );
         }
         
-        // Update all employer fields
+        // Update all employer fields (matching WPForms structure)
         $fields_to_update = array(
-            'email'           => '_oso_employer_email',
-            'phone'           => '_oso_employer_phone',
-            'company'         => '_oso_employer_company',
-            'contact_person'  => '_oso_employer_contact_person',
-            'job_title'       => '_oso_employer_job_title',
-            'address'         => '_oso_employer_address',
-            'city'            => '_oso_employer_city',
-            'state'           => '_oso_employer_state',
-            'zip'             => '_oso_employer_zip',
-            'website'         => '_oso_employer_website',
-            'description'     => '_oso_employer_description',
+            'email'            => '_oso_employer_email',
+            'website'          => '_oso_employer_website',
+            'description'      => '_oso_employer_description',
+            'camp_types'       => '_oso_employer_camp_types',
+            'state'            => '_oso_employer_state',
+            'address'          => '_oso_employer_address',
+            'major_city'       => '_oso_employer_major_city',
+            'training_start'   => '_oso_employer_training_start',
+            'housing'          => '_oso_employer_housing',
+            'social_links'     => '_oso_employer_social_links',
+            'subscription_type'=> '_oso_employer_subscription_type',
         );
         
+        $updated_fields = array();
         foreach ( $fields_to_update as $field => $meta_key ) {
             if ( isset( $_POST[ $field ] ) ) {
-                if ( $field === 'description' ) {
-                    $value = sanitize_textarea_field( $_POST[ $field ] );
+                $value = $_POST[ $field ];
+                
+                // Sanitize based on field type
+                if ( in_array( $field, array( 'description', 'camp_types', 'social_links' ) ) ) {
+                    $value = sanitize_textarea_field( $value );
                 } elseif ( $field === 'website' ) {
-                    $value = esc_url_raw( $_POST[ $field ] );
+                    // Auto-add https:// if not present
+                    $value = trim( $value );
+                    if ( ! empty( $value ) && ! preg_match( '~^https?://~i', $value ) ) {
+                        $value = 'https://' . $value;
+                    }
+                    $value = esc_url_raw( $value );
+                } elseif ( $field === 'email' ) {
+                    $value = sanitize_email( $value );
+                } elseif ( $field === 'training_start' ) {
+                    $value = sanitize_text_field( $value ); // Date format YYYY-MM-DD
                 } else {
-                    $value = sanitize_text_field( $_POST[ $field ] );
+                    $value = sanitize_text_field( $value );
                 }
-                update_post_meta( $employer_id, $meta_key, $value );
+                
+                $result = update_post_meta( $employer_id, $meta_key, $value );
+                $updated_fields[ $field ] = array(
+                    'meta_key' => $meta_key,
+                    'value' => $value,
+                    'result' => $result
+                );
             }
         }
+        
+        error_log( 'OSO Employer Profile Update: Updated fields - ' . print_r( $updated_fields, true ) );
         
         wp_send_json_success( array( 
             'message'     => __( 'Profile updated successfully!', 'oso-employer-portal' ),
             'redirect_url'=> home_url( '/job-portal/employer-profile/' ),
+            'debug' => $updated_fields
         ) );
     }
 
