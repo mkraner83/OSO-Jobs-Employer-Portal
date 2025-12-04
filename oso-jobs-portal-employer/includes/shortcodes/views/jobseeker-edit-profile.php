@@ -14,6 +14,9 @@ $text_fields = class_exists( 'OSO_Jobs_Utilities' ) ? OSO_Jobs_Utilities::get_jo
 $checkbox_groups = class_exists( 'OSO_Jobs_Utilities' ) ? OSO_Jobs_Utilities::get_jobseeker_checkbox_groups() : array();
 
 $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_full_name'] : $jobseeker->post_title;
+
+// Debug: Uncomment to see what's in meta
+// echo '<pre>'; print_r($meta); echo '</pre>';
 ?>
 
 <div class="oso-jobseeker-edit-profile">
@@ -108,13 +111,37 @@ $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_ful
             <!-- Earliest Start -->
             <div class="oso-form-group">
                 <label for="availability_start"><?php echo esc_html( $text_fields['availability_start']['label'] ); ?></label>
-                <input type="date" id="availability_start" name="availability_start" value="<?php echo esc_attr( ! empty( $meta['_oso_jobseeker_availability_start'] ) ? $meta['_oso_jobseeker_availability_start'] : '' ); ?>" />
+                <?php
+                $start_date = ! empty( $meta['_oso_jobseeker_availability_start'] ) ? $meta['_oso_jobseeker_availability_start'] : '';
+                // Debug: Show raw value
+                // echo '<!-- Raw start date: ' . esc_html( $start_date ) . ' -->';
+                // Convert to Y-m-d format if needed
+                if ( $start_date && ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $start_date) ) {
+                    $timestamp = strtotime( $start_date );
+                    if ( $timestamp ) {
+                        $start_date = date( 'Y-m-d', $timestamp );
+                    }
+                }
+                ?>
+                <input type="date" id="availability_start" name="availability_start" value="<?php echo esc_attr( $start_date ); ?>" />
+                <p class="oso-field-description"><?php esc_html_e( 'Current value:', 'oso-employer-portal' ); ?> <?php echo esc_html( ! empty( $meta['_oso_jobseeker_availability_start'] ) ? $meta['_oso_jobseeker_availability_start'] : 'Not set' ); ?></p>
             </div>
 
             <!-- Latest End -->
             <div class="oso-form-group">
                 <label for="availability_end"><?php echo esc_html( $text_fields['availability_end']['label'] ); ?></label>
-                <input type="date" id="availability_end" name="availability_end" value="<?php echo esc_attr( ! empty( $meta['_oso_jobseeker_availability_end'] ) ? $meta['_oso_jobseeker_availability_end'] : '' ); ?>" />
+                <?php
+                $end_date = ! empty( $meta['_oso_jobseeker_availability_end'] ) ? $meta['_oso_jobseeker_availability_end'] : '';
+                // Convert to Y-m-d format if needed
+                if ( $end_date && ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $end_date) ) {
+                    $timestamp = strtotime( $end_date );
+                    if ( $timestamp ) {
+                        $end_date = date( 'Y-m-d', $timestamp );
+                    }
+                }
+                ?>
+                <input type="date" id="availability_end" name="availability_end" value="<?php echo esc_attr( $end_date ); ?>" />
+                <p class="oso-field-description"><?php esc_html_e( 'Current value:', 'oso-employer-portal' ); ?> <?php echo esc_html( ! empty( $meta['_oso_jobseeker_availability_end'] ) ? $meta['_oso_jobseeker_availability_end'] : 'Not set' ); ?></p>
             </div>
         </div>
 
@@ -140,6 +167,7 @@ $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_ful
             ?>
             <div class="oso-form-section">
                 <h3><?php echo esc_html( $config['label'] ); ?></h3>
+                <p class="oso-field-description"><?php esc_html_e( 'Current values:', 'oso-employer-portal' ); ?> <?php echo esc_html( ! empty( $current_values ) ? implode( ', ', $current_values ) : 'None selected' ); ?></p>
                 <div class="oso-checkbox-group">
                     <?php foreach ( $config['options'] as $option ) : ?>
                         <label class="oso-checkbox-label">
