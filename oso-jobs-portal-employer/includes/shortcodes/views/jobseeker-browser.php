@@ -126,12 +126,30 @@ if ( ! defined( 'ABSPATH' ) ) {
                 $availability_start = ! empty( $meta['_oso_jobseeker_availability_start'] ) ? $meta['_oso_jobseeker_availability_start'] : '';
                 $availability_end = ! empty( $meta['_oso_jobseeker_availability_end'] ) ? $meta['_oso_jobseeker_availability_end'] : '';
                 
-                // Get job interests
-                $job_interests_raw = ! empty( $meta['_oso_jobseeker_job_interests'] ) ? $meta['_oso_jobseeker_job_interests'] : '';
+                // Get "Why interested" text from post_content
+                $why_text = ! empty( $jobseeker->post_content ) ? $jobseeker->post_content : '';
+                if ( strlen( $why_text ) > 200 ) {
+                    $why_text = substr( $why_text, 0, 200 ) . '...';
+                }
+                
+                // Get all skills as badges (excluding "Are You Over 18?")
+                $all_skills = array();
                 if ( class_exists( 'OSO_Jobs_Utilities' ) ) {
-                    $job_interests = OSO_Jobs_Utilities::meta_string_to_array( $job_interests_raw );
-                } else {
-                    $job_interests = array();
+                    $checkbox_groups = OSO_Jobs_Utilities::get_jobseeker_checkbox_groups();
+                    
+                    foreach ( $checkbox_groups as $key => $config ) {
+                        // Skip "Are You Over 18?"
+                        if ( $key === 'over_18' ) {
+                            continue;
+                        }
+                        
+                        $value_raw = ! empty( $meta[ $config['meta'] ] ) ? $meta[ $config['meta'] ] : '';
+                        $values = OSO_Jobs_Utilities::meta_string_to_array( $value_raw );
+                        
+                        if ( ! empty( $values ) ) {
+                            $all_skills = array_merge( $all_skills, $values );
+                        }
+                    }
                 }
                 
                 // Build profile URL - use dedicated profile page
@@ -174,18 +192,21 @@ if ( ! defined( 'ABSPATH' ) ) {
                             </p>
                         <?php endif; ?>
                         
-                        <?php if ( ! empty( $job_interests ) ) : ?>
-                            <div class="oso-card-interests">
-                                <strong><?php esc_html_e( 'Interests:', 'oso-employer-portal' ); ?></strong>
-                                <span class="oso-interests-text">
-                                    <?php 
-                                    $display_interests = array_slice( $job_interests, 0, 3 );
-                                    echo esc_html( implode( ', ', $display_interests ) );
-                                    if ( count( $job_interests ) > 3 ) {
-                                        echo esc_html( ' +' . ( count( $job_interests ) - 3 ) . ' more' );
-                                    }
-                                    ?>
-                                </span>
+                        <?php if ( ! empty( $why_text ) ) : ?>
+                            <div class="oso-card-why">
+                                <strong><?php esc_html_e( 'Why Summer Camp:', 'oso-employer-portal' ); ?></strong>
+                                <p><?php echo esc_html( $why_text ); ?></p>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <?php if ( ! empty( $all_skills ) ) : ?>
+                            <div class="oso-card-skills">
+                                <?php foreach ( array_slice( $all_skills, 0, 5 ) as $skill ) : ?>
+                                    <span class="oso-skill-badge"><?php echo esc_html( $skill ); ?></span>
+                                <?php endforeach; ?>
+                                <?php if ( count( $all_skills ) > 5 ) : ?>
+                                    <span class="oso-skill-more">+<?php echo esc_html( count( $all_skills ) - 5 ); ?> more</span>
+                                <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     </div>
