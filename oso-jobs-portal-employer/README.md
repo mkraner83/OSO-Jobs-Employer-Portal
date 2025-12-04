@@ -128,24 +128,95 @@ or
 [oso_jobseeker_profile]
 ```
 
-## WPForms Setup
+## Database Structure & WPForms Integration
 
-The employer registration form (ID: 1917) should include these fields:
-- **Camp Name** (text)
-- **Upload Logo** (file upload)
-- **Brief Description** (textarea)
-- **Type of Camp** (checkboxes: Day Camp, Overnight Camp, Sport Camp, Arts Camp, etc.)
-- **State** (dropdown)
-- **Address** (text)
-- **Closest Major City** (text)
-- **Start of Staff Training Date** (date)
-- **Housing Provided** (dropdown: Yes/No)
-- **Contact Email** (email)
-- **Website/URL** (text)
-- **Social Media Links** (textarea)
-- **Subscription Type** (dropdown/radio)
+### Employer Data Flow (WPForms ID: 1917 → Database)
 
-**Important:** The registration handler runs at priority 5 to prevent conflicts with the core plugin's generic handler (priority 10).
+**WPForms Field Label** → **Database Meta Key** → **Field Type**
+
+| WPForms Field | Database Meta Key | Type | Notes |
+|--------------|-------------------|------|-------|
+| Camp Name | `_oso_employer_company` | text | Also stored as post_title |
+| Upload Logo | `_oso_employer_logo` | file URL | Uploaded to WordPress media library |
+| Brief Description | `_oso_employer_description` | textarea | Camp overview |
+| Type of Camp | `_oso_employer_camp_types` | checkbox array | Day Camp, Overnight, Sport, Arts, etc. Stored as newline-separated |
+| State | `_oso_employer_state` | dropdown | US state |
+| Address | `_oso_employer_address` | text | Street address |
+| Closest Major City | `_oso_employer_major_city` | text | Reference city |
+| Start of Staff Training Date | `_oso_employer_training_start` | date | Format: MM/DD/YYYY |
+| Housing Provided | `_oso_employer_housing` | dropdown | Yes/No |
+| Contact Email | `_oso_employer_email` | email | Primary contact |
+| Website/URL | `_oso_employer_website` | URL | Auto-adds https:// if missing |
+| Social Media Links | `_oso_employer_social_links` | textarea | Multiple links, newline-separated |
+| Subscription Type | `_oso_employer_subscription_type` | dropdown | Billing tier (read-only in profile) |
+
+**Additional Meta Fields (System Generated):**
+- `_oso_employer_user_id` - Linked WordPress user ID
+- `_oso_employer_photos` - Photo URLs (newline-separated, up to 6)
+- `_oso_employer_wpforms_entry` - WPForms entry ID for reference
+
+**Post Type:** `oso_employer` (stored in wp_posts table)
+**Meta Storage:** wp_postmeta table
+
+**Registration Hook:** `wpforms_process_complete_1917` (priority 5)
+
+---
+
+### Jobseeker Data Flow (WPForms → Database)
+
+**Note:** Jobseeker registration is handled by the core OSO Jobs Portal plugin.
+
+**WPForms Field Label** → **Database Meta Key** → **Field Type**
+
+| WPForms Field | Database Meta Key | Type | Notes |
+|--------------|-------------------|------|-------|
+| Full Name | `_oso_jobseeker_full_name` | text | Also stored as post_title |
+| Email | `_oso_jobseeker_email` | email | Primary contact |
+| Phone | `_oso_jobseeker_phone` | text | Contact number |
+| Location | `_oso_jobseeker_location` | text | City, State |
+| Are You Over 18? | `_oso_jobseeker_over_18` | radio | Yes/No |
+| Upload Photo | `_oso_jobseeker_photo` | file URL | Profile photo |
+| Upload Resume | `_oso_jobseeker_resume` | file URL | PDF/DOC resume |
+| Availability Start | `_oso_jobseeker_availability_start` | date | Season start date |
+| Availability End | `_oso_jobseeker_availability_end` | date | Season end date |
+| Why Interested in Summer Camp | `_oso_jobseeker_why_interested` | textarea | Personal statement |
+| Job Interests | `_oso_jobseeker_job_interests` | checkbox array | Counselor, Lifeguard, etc. |
+| Sports Skills | `_oso_jobseeker_sports_skills` | checkbox array | Soccer, Basketball, etc. |
+| Arts Skills | `_oso_jobseeker_arts_skills` | checkbox array | Music, Drama, etc. |
+| Adventure Skills | `_oso_jobseeker_adventure_skills` | checkbox array | Hiking, Climbing, etc. |
+| Waterfront Skills | `_oso_jobseeker_waterfront_skills` | checkbox array | Swimming, Sailing, etc. |
+| Support Services Skills | `_oso_jobseeker_support_skills` | checkbox array | Kitchen, Maintenance, etc. |
+| Certifications | `_oso_jobseeker_certifications` | checkbox array | CPR, First Aid, etc. |
+
+**Additional Meta Fields (System Generated):**
+- `_oso_jobseeker_user_id` - Linked WordPress user ID
+- `_oso_jobseeker_wpforms_entry` - WPForms entry ID for reference
+
+**Post Type:** `oso_jobseeker` (stored in wp_posts table)
+**Meta Storage:** wp_postmeta table
+
+---
+
+## WPForms Setup Requirements
+
+### Employer Registration Form (ID: 1917)
+**Required Fields:**
+- Camp Name (text) - **REQUIRED**
+- Contact Email (email) - **REQUIRED**
+- Subscription Type (dropdown) - **REQUIRED**
+
+**Optional Fields:**
+- Upload Logo, Brief Description, Type of Camp, State, Address, Closest Major City, Start of Staff Training Date, Housing Provided, Website/URL, Social Media Links
+
+**Important Notes:**
+- Registration handler runs at **priority 5** to prevent conflicts with core plugin (priority 10)
+- Logo files uploaded to WordPress media library automatically
+- URLs auto-formatted with https:// if protocol missing
+- Date format converted between MM/DD/YYYY (storage) and YYYY-MM-DD (HTML input)
+- Checkbox arrays stored as newline-separated strings
+
+### Jobseeker Registration Form
+Handled by core OSO Jobs Portal plugin. Refer to core plugin documentation.
 
 ## Changelog
 
