@@ -178,8 +178,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                         <?php endif; ?>
                         
                         <?php if ( $why_interested ) : ?>
-                            <p class="oso-card-why">
-                                <em><?php echo esc_html( $why_interested ); ?></em>
+                            <p class="oso-card-text">
+                                <?php echo esc_html( $why_interested ); ?>
                             </p>
                         <?php endif; ?>
                         
