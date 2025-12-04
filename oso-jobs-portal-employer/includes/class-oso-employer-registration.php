@@ -22,6 +22,12 @@ class OSO_Employer_Registration {
         
         // Hide admin bar for employers and jobseekers
         add_action( 'after_setup_theme', [__CLASS__, 'hide_admin_bar'] );
+        
+        // Register password reset shortcode
+        add_shortcode( 'oso_employer_password_link', [__CLASS__, 'password_reset_shortcode'] );
+        
+        // Enable shortcodes in WPForms confirmation messages
+        add_filter( 'wpforms_frontend_confirmation_message', [__CLASS__, 'process_confirmation_shortcodes'], 10, 4 );
     }
     
     /**
@@ -228,5 +234,48 @@ class OSO_Employer_Registration {
             }
         }
         return '';
+    }
+    
+    /**
+     * Shortcode to generate password reset link
+     * Usage: [oso_employer_password_link email="user@example.com"]
+     */
+    public static function password_reset_shortcode( $atts ) {
+        $atts = shortcode_atts( array(
+            'email' => '',
+        ), $atts );
+        
+        $email = sanitize_email( $atts['email'] );
+        if ( empty( $email ) ) {
+            return '';
+        }
+        
+        // Check if user exists
+        $user = get_user_by( 'email', $email );
+        if ( ! $user ) {
+            return '';
+        }
+        
+        // Generate password reset key
+        $reset_key = get_password_reset_key( $user );
+        if ( is_wp_error( $reset_key ) ) {
+            return '<span style="color: red;">Error generating reset link.</span>';
+        }
+        
+        // Build reset URL
+        $reset_url = network_site_url( "wp-login.php?action=rp&key=$reset_key&login=" . rawurlencode( $user->user_login ), 'login' );
+        
+        return '<a href="' . esc_url( $reset_url ) . '" style="display: inline-block; padding: 12px 30px; background: #548A8F; color: #fff; text-decoration: none; border-radius: 5px; font-weight: 600; margin: 10px 0;">Set Your Password</a>';
+    }
+    
+    /**
+     * Process shortcodes in WPForms confirmation messages
+     */
+    public static function process_confirmation_shortcodes( $message, $form_data, $fields, $entry_id ) {
+        // Only process for employer registration form
+        if ( isset( $form_data['id'] ) && (int) $form_data['id'] === self::FORM_ID ) {
+            return do_shortcode( $message );
+        }
+        return $message;
     }
 }
