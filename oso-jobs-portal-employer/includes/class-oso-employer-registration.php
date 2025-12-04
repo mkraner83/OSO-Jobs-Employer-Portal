@@ -238,6 +238,9 @@ class OSO_Employer_Registration {
         );
 
         // Save all form fields
+        error_log( 'OSO Employer Registration: Processing ' . count( $fields ) . ' fields from form' );
+        
+        $saved_fields = array();
         foreach ( $fields as $field ) {
             if ( ! isset( $field['name'] ) || empty( $field['name'] ) ) {
                 continue;
@@ -245,6 +248,8 @@ class OSO_Employer_Registration {
 
             $field_name = trim( $field['name'] );
             $field_value = isset( $field['value'] ) ? $field['value'] : '';
+            
+            error_log( 'OSO Employer Registration: Field - Name: "' . $field_name . '", Value: "' . ( is_array( $field_value ) ? implode( ', ', $field_value ) : substr( $field_value, 0, 100 ) ) . '"' );
 
             // Skip file uploads (logo handled separately)
             if ( isset( $field['type'] ) && $field['type'] === 'file-upload' ) {
@@ -254,6 +259,7 @@ class OSO_Employer_Registration {
                     $files = is_array( $field_value ) ? $field_value : array( $field_value );
                     if ( ! empty( $files[0] ) ) {
                         update_post_meta( $post_id, '_oso_employer_logo', esc_url_raw( $files[0] ) );
+                        error_log( 'OSO Employer Registration: Saved logo - ' . $files[0] );
                     }
                 }
                 continue;
@@ -264,15 +270,28 @@ class OSO_Employer_Registration {
 
             // Save the field with appropriate sanitization
             if ( is_array( $field_value ) ) {
-                update_post_meta( $post_id, $meta_key, implode( "\n", array_map( 'sanitize_text_field', $field_value ) ) );
+                $saved_value = implode( "\n", array_map( 'sanitize_text_field', $field_value ) );
+                update_post_meta( $post_id, $meta_key, $saved_value );
             } elseif ( stripos( $field_name, 'description' ) !== false || stripos( $field_name, 'social' ) !== false ) {
-                update_post_meta( $post_id, $meta_key, sanitize_textarea_field( $field_value ) );
+                $saved_value = sanitize_textarea_field( $field_value );
+                update_post_meta( $post_id, $meta_key, $saved_value );
             } elseif ( stripos( $field_name, 'website' ) !== false || stripos( $field_name, 'url' ) !== false ) {
-                update_post_meta( $post_id, $meta_key, esc_url_raw( $field_value ) );
+                $saved_value = esc_url_raw( $field_value );
+                update_post_meta( $post_id, $meta_key, $saved_value );
             } else {
-                update_post_meta( $post_id, $meta_key, sanitize_text_field( $field_value ) );
+                $saved_value = sanitize_text_field( $field_value );
+                update_post_meta( $post_id, $meta_key, $saved_value );
             }
+            
+            $saved_fields[] = array(
+                'field_name' => $field_name,
+                'meta_key' => $meta_key,
+                'value' => is_array( $field_value ) ? 'array[' . count( $field_value ) . ']' : substr( $field_value, 0, 50 )
+            );
         }
+        
+        error_log( 'OSO Employer Registration: Saved ' . count( $saved_fields ) . ' fields to post ID ' . $post_id );
+        error_log( 'OSO Employer Registration: Field summary - ' . print_r( $saved_fields, true ) );
     }
 
     private static function get_field_value( $fields, $label ) {
