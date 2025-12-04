@@ -841,10 +841,54 @@
 }
 
 /* ========================================
+   Employer Profile View
+   ======================================== */
+
+.oso-profile-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.oso-profile-header-row h3 {
+    margin: 0;
+}
+
+.oso-profile-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    background: #f9f9f9;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.oso-profile-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.oso-profile-field strong {
+    color: #548A8F;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.oso-profile-field span {
+    color: #333;
+    font-size: 1.05em;
+}
+
+/* ========================================
    Edit Profile Form
    ======================================== */
 
-.oso-jobseeker-edit-profile {
+.oso-jobseeker-edit-profile,
+.oso-employer-edit-profile {
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;

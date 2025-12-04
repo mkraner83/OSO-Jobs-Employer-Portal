@@ -34,23 +34,49 @@ endif;
 // User is logged in
 ?>
 <div class="oso-employer-dashboard">
-    <h2><?php esc_html_e( 'Employer Dashboard', 'oso-employer-portal' ); ?></h2>
+    <h2><?php esc_html_e( 'Employer Profile', 'oso-employer-portal' ); ?></h2>
     
-    <div class="oso-dashboard-welcome">
-        <p><?php printf( esc_html__( 'Welcome, %s!', 'oso-employer-portal' ), esc_html( $user->display_name ) ); ?></p>
+    <!-- Quick Links at Top -->
+    <div class="oso-dashboard-quick-links">
+        <h3><?php esc_html_e( 'Quick Links', 'oso-employer-portal' ); ?></h3>
+        <div class="oso-quick-links-grid">
+            <a href="<?php echo esc_url( home_url( '/job-portal/browse-jobseekers/' ) ); ?>" class="oso-quick-link">
+                <span class="dashicons dashicons-groups"></span>
+                <span><?php esc_html_e( 'Browse Jobseekers', 'oso-employer-portal' ); ?></span>
+            </a>
+        </div>
     </div>
 
+    <!-- Employer Profile Information -->
     <div class="oso-employer-profile">
-        <h3><?php esc_html_e( 'Your Profile', 'oso-employer-portal' ); ?></h3>
-        <div class="oso-profile-info">
-            <p><strong><?php esc_html_e( 'Full Name:', 'oso-employer-portal' ); ?></strong> <?php echo esc_html( $meta['_oso_employer_full_name'] ); ?></p>
-            <p><strong><?php esc_html_e( 'Email:', 'oso-employer-portal' ); ?></strong> <?php echo esc_html( $meta['_oso_employer_email'] ); ?></p>
-            <?php if ( ! empty( $meta['_oso_employer_phone'] ) ) : ?>
-                <p><strong><?php esc_html_e( 'Phone:', 'oso-employer-portal' ); ?></strong> <?php echo esc_html( $meta['_oso_employer_phone'] ); ?></p>
-            <?php endif; ?>
-            <?php if ( ! empty( $meta['_oso_employer_company'] ) ) : ?>
-                <p><strong><?php esc_html_e( 'Company:', 'oso-employer-portal' ); ?></strong> <?php echo esc_html( $meta['_oso_employer_company'] ); ?></p>
-            <?php endif; ?>
+        <div class="oso-profile-header-row">
+            <h3><?php esc_html_e( 'Your Profile', 'oso-employer-portal' ); ?></h3>
+            <a href="<?php echo esc_url( home_url( '/job-portal/edit-employer-profile/' ) ); ?>" class="oso-btn oso-btn-primary">
+                <span class="dashicons dashicons-edit"></span>
+                <?php esc_html_e( 'Edit Profile', 'oso-employer-portal' ); ?>
+            </a>
+        </div>
+        
+        <div class="oso-profile-info-grid">
+            <div class="oso-profile-field">
+                <strong><?php esc_html_e( 'Full Name:', 'oso-employer-portal' ); ?></strong>
+                <span><?php echo esc_html( $meta['_oso_employer_full_name'] ); ?></span>
+            </div>
+            
+            <div class="oso-profile-field">
+                <strong><?php esc_html_e( 'Email:', 'oso-employer-portal' ); ?></strong>
+                <span><?php echo esc_html( $meta['_oso_employer_email'] ); ?></span>
+            </div>
+            
+            <div class="oso-profile-field">
+                <strong><?php esc_html_e( 'Phone:', 'oso-employer-portal' ); ?></strong>
+                <span><?php echo esc_html( ! empty( $meta['_oso_employer_phone'] ) ? $meta['_oso_employer_phone'] : 'Not provided' ); ?></span>
+            </div>
+            
+            <div class="oso-profile-field">
+                <strong><?php esc_html_e( 'Company:', 'oso-employer-portal' ); ?></strong>
+                <span><?php echo esc_html( ! empty( $meta['_oso_employer_company'] ) ? $meta['_oso_employer_company'] : 'Not provided' ); ?></span>
+            </div>
         </div>
     </div>
 
@@ -101,20 +127,10 @@ endif;
         <?php endif; ?>
     </div>
 
-    <div class="oso-dashboard-quick-links">
-        <h3><?php esc_html_e( 'Quick Links', 'oso-employer-portal' ); ?></h3>
-        <div class="oso-quick-links-grid">
-            <a href="<?php echo esc_url( home_url( '/browse-jobseekers/' ) ); ?>" class="oso-quick-link">
-                <span class="dashicons dashicons-groups"></span>
-                <span><?php esc_html_e( 'Browse Jobseekers', 'oso-employer-portal' ); ?></span>
-            </a>
-            <!-- Add more quick links as needed -->
-        </div>
-    </div>
-
     <div class="oso-dashboard-actions">
-        <p>
-            <a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>" class="button"><?php esc_html_e( 'Logout', 'oso-employer-portal' ); ?></a>
-        </p>
+        <a href="<?php echo esc_url( wp_logout_url( home_url() ) ); ?>" class="oso-btn oso-btn-secondary">
+            <span class="dashicons dashicons-exit"></span>
+            <?php esc_html_e( 'Logout', 'oso-employer-portal' ); ?>
+        </a>
     </div>
 </div>

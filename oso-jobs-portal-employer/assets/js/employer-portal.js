@@ -99,7 +99,7 @@
                 }
             });
         });
-        // Edit Profile Form Handling
+        // Jobseeker Edit Profile Form Handling
         $('#oso-edit-profile-form').on('submit', function(e) {
             e.preventDefault();
             
@@ -211,6 +211,57 @@
                 });
             });
         }
+        
+        // Employer Edit Profile Form Handling
+        $('#oso-edit-employer-profile-form').on('submit', function(e) {
+            e.preventDefault();
+            
+            var $form = $(this);
+            var $message = $('#oso-employer-form-message');
+            var $submitBtn = $form.find('button[type="submit"]');
+            
+            // Disable submit button
+            $submitBtn.prop('disabled', true);
+            
+            // Show loading message
+            $message.removeClass('success error').addClass('loading')
+                .text('Saving changes...').fadeIn();
+            
+            var formData = new FormData($form[0]);
+            formData.append('action', 'oso_update_employer_profile');
+            formData.append('nonce', $('#oso_employer_profile_nonce').val());
+            formData.append('employer_id', $form.data('employer-id'));
+            
+            $.ajax({
+                url: osoEmployerPortal.ajaxUrl,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        $message.removeClass('loading error').addClass('success')
+                            .text(response.data.message);
+                        
+                        // Redirect after 1 second
+                        setTimeout(function() {
+                            if (response.data.redirect_url) {
+                                window.location.href = response.data.redirect_url;
+                            }
+                        }, 1000);
+                    } else {
+                        $message.removeClass('loading success').addClass('error')
+                            .text(response.data.message || 'An error occurred.');
+                        $submitBtn.prop('disabled', false);
+                    }
+                },
+                error: function() {
+                    $message.removeClass('loading success').addClass('error')
+                        .text('An error occurred. Please try again.');
+                    $submitBtn.prop('disabled', false);
+                }
+            });
+        });
 
     });
 

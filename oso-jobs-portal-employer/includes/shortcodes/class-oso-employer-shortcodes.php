@@ -38,12 +38,14 @@ class OSO_Employer_Shortcodes {
     protected function __construct() {
         add_shortcode( 'oso_employer_dashboard', array( $this, 'shortcode_employer_dashboard' ) );
         add_shortcode( 'oso_employer_profile', array( $this, 'shortcode_employer_dashboard' ) ); // Alias
+        add_shortcode( 'oso_employer_edit_profile', array( $this, 'shortcode_employer_edit_profile' ) );
         add_shortcode( 'oso_jobseeker_browser', array( $this, 'shortcode_jobseeker_browser' ) );
         add_shortcode( 'oso_jobseeker_profile', array( $this, 'shortcode_jobseeker_profile' ) );
         add_shortcode( 'oso_jobseeker_edit_profile', array( $this, 'shortcode_jobseeker_edit_profile' ) );
         
         // AJAX handlers
         add_action( 'wp_ajax_oso_update_jobseeker_profile', array( $this, 'ajax_update_jobseeker_profile' ) );
+        add_action( 'wp_ajax_oso_update_employer_profile', array( $this, 'ajax_update_employer_profile' ) );
         add_action( 'wp_ajax_oso_upload_profile_file', array( $this, 'ajax_upload_profile_file' ) );
     }
 
@@ -611,6 +613,99 @@ class OSO_Employer_Shortcodes {
         wp_send_json_success( array( 
             'url'     => $file['url'],
             'message' => __( 'File uploaded successfully!', 'oso-employer-portal' ),
+        ) );
+    }
+
+    /**
+     * Render employer edit profile shortcode.
+     */
+    public function shortcode_employer_edit_profile( $atts ) {
+        // Check if user is logged in
+        if ( ! is_user_logged_in() ) {
+            return '<p>' . esc_html__( 'You must be logged in to edit your profile.', 'oso-employer-portal' ) . '</p>';
+        }
+
+        $user = wp_get_current_user();
+        
+        // Only employers can edit their profile
+        if ( ! in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, (array) $user->roles, true ) ) {
+            return '<p>' . esc_html__( 'Only employers can edit their profile.', 'oso-employer-portal' ) . '</p>';
+        }
+        
+        // Get employer post linked to this user
+        $employer = $this->get_employer_by_user( $user->ID );
+        
+        if ( ! $employer ) {
+            return '<p>' . esc_html__( 'No employer profile found for your account.', 'oso-employer-portal' ) . '</p>';
+        }
+        
+        // Get employer metadata
+        $meta = $this->get_employer_meta( $employer->ID );
+
+        return $this->load_template(
+            'employer-edit-profile.php',
+            array(
+                'employer' => $employer,
+                'meta'     => $meta,
+            )
+        );
+    }
+
+    /**
+     * AJAX handler to update employer profile.
+     */
+    public function ajax_update_employer_profile() {
+        check_ajax_referer( 'oso_update_employer_profile', 'nonce' );
+        
+        if ( ! is_user_logged_in() ) {
+            wp_send_json_error( array( 'message' => __( 'You must be logged in.', 'oso-employer-portal' ) ) );
+        }
+        
+        $user = wp_get_current_user();
+        
+        // Only employers can edit their profile
+        if ( ! in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, (array) $user->roles, true ) ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to edit this profile.', 'oso-employer-portal' ) ) );
+        }
+        
+        $employer_id = isset( $_POST['employer_id'] ) ? (int) $_POST['employer_id'] : 0;
+        
+        if ( ! $employer_id ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid employer ID.', 'oso-employer-portal' ) ) );
+        }
+        
+        // Verify this employer belongs to the current user
+        $employer_user_id = get_post_meta( $employer_id, '_oso_employer_user_id', true );
+        if ( (int) $employer_user_id !== $user->ID ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to edit this profile.', 'oso-employer-portal' ) ) );
+        }
+        
+        // Update post title (full name)
+        if ( isset( $_POST['full_name'] ) ) {
+            wp_update_post( array(
+                'ID'         => $employer_id,
+                'post_title' => sanitize_text_field( $_POST['full_name'] ),
+            ) );
+            update_post_meta( $employer_id, '_oso_employer_full_name', sanitize_text_field( $_POST['full_name'] ) );
+        }
+        
+        // Update text fields
+        $text_fields = array(
+            'email'   => '_oso_employer_email',
+            'phone'   => '_oso_employer_phone',
+            'company' => '_oso_employer_company',
+        );
+        
+        foreach ( $text_fields as $field => $meta_key ) {
+            if ( isset( $_POST[ $field ] ) ) {
+                $value = sanitize_text_field( $_POST[ $field ] );
+                update_post_meta( $employer_id, $meta_key, $value );
+            }
+        }
+        
+        wp_send_json_success( array( 
+            'message'     => __( 'Profile updated successfully!', 'oso-employer-portal' ),
+            'redirect_url'=> home_url( '/job-portal/employer-profile/' ),
         ) );
     }
 
