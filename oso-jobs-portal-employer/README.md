@@ -19,11 +19,28 @@ The Employer Extension adds a complete employer portal to the OSO Jobs Portal sy
 
 ### Employer Dashboard
 - Accessible via shortcode: `[oso_employer_dashboard]` or `[oso_employer_profile]`
-- Displays employer profile information
-- Lists employer's posted jobs
-- Quick link to browse jobseekers
+- Full-width purple banner with "Browse Jobseekers" link
+- "Your Job Postings" section (shows placeholder if no jobs)
+- Complete profile information display with all employer fields
+- Edit profile button with icon
 - Login form for non-authenticated users
 - Role-based access control
+- Logout button with proper spacing
+
+### Employer Profile Editing
+- Accessible via shortcode: `[oso_employer_edit_profile]`
+- Edit all employer information:
+  - **Camp Information**: Camp Name, Contact Email, Website, Brief Description, Type of Camp (checkboxes)
+  - **Location**: State, Address, Closest Major City
+  - **Images**: Logo upload with preview, Photo uploads (up to 6 photos with grid display and remove buttons)
+  - **Additional Details**: Start of Staff Training (date picker), Housing Provided (dropdown), Social Media Links (textarea)
+  - **Subscription Type**: View-only field (disabled)
+- AJAX form submission with loading states
+- Auto-formatting for URLs (adds https:// if missing)
+- Date format conversion (HTML date input ↔ display format)
+- File validation (16MB max per file)
+- Success message and auto-redirect to profile
+- Password reset link shortcode: `[oso_employer_password_link]`
 
 ### Jobseeker Browser
 - Accessible via shortcode: `[oso_jobseeker_browser]`
@@ -113,13 +130,47 @@ or
 
 ## WPForms Setup
 
-The employer registration form (ID: 1917) should include:
-- Full Name
-- Email
-- Phone
-- Company
+The employer registration form (ID: 1917) should include these fields:
+- **Camp Name** (text)
+- **Upload Logo** (file upload)
+- **Brief Description** (textarea)
+- **Type of Camp** (checkboxes: Day Camp, Overnight Camp, Sport Camp, Arts Camp, etc.)
+- **State** (dropdown)
+- **Address** (text)
+- **Closest Major City** (text)
+- **Start of Staff Training Date** (date)
+- **Housing Provided** (dropdown: Yes/No)
+- **Contact Email** (email)
+- **Website/URL** (text)
+- **Social Media Links** (textarea)
+- **Subscription Type** (dropdown/radio)
+
+**Important:** The registration handler runs at priority 5 to prevent conflicts with the core plugin's generic handler (priority 10).
 
 ## Changelog
+
+### Version 1.0.8 (December 4, 2025) - RESTORE POINT
+**Employer Profile Editing & Dashboard Redesign**
+- Added employer profile editing functionality with all WPForms fields
+- Edit form includes: Camp Name, Email, Website, Description, Camp Types, State, Address, Major City, Training Start Date, Housing, Social Links
+- Fixed WPForms registration hook conflict (priority 5 vs 10)
+- All 12+ employer fields now save correctly to database
+- Profile view displays all saved employer data dynamically
+- Added logo upload with preview (max 16MB)
+- Added photo uploads (up to 6 photos, max 16MB each)
+- Photo grid display with remove buttons
+- Fixed training date format conversion (MM/DD/YYYY ↔ YYYY-MM-DD)
+- Made Subscription Type field disabled/read-only
+- AJAX save handler with auto https:// URL formatting
+- File upload handler supports both employers and jobseekers
+- Redesigned employer dashboard layout:
+  - Removed "Employer Profile" h2 title
+  - Full-width purple banner (#8051B0) for "Browse Jobseekers" link
+  - Added "Your Job Postings" section below banner
+  - New order: Quick Link Banner → Job Postings → Your Profile
+  - Added 8px border radius to Browse Jobseekers banner
+  - Added 40px spacing before logout button
+- Password reset shortcode [oso_employer_password_link] for WPForms confirmation
 
 ### Version 1.1.0 (December 4, 2025)
 - Added full-width search field in jobseeker browser
@@ -162,10 +213,21 @@ The employer registration form (ID: 1917) should include:
 
 ### Meta Fields (Employer)
 - `_oso_employer_user_id` - Linked WordPress user ID
-- `_oso_employer_full_name` - Employer full name
-- `_oso_employer_email` - Email address
-- `_oso_employer_phone` - Phone number
-- `_oso_employer_company` - Company name
+- `_oso_employer_company` - Camp Name
+- `_oso_employer_email` - Contact Email
+- `_oso_employer_website` - Website URL
+- `_oso_employer_description` - Brief Description
+- `_oso_employer_camp_types` - Type of Camp (multi-select)
+- `_oso_employer_state` - State
+- `_oso_employer_address` - Address
+- `_oso_employer_major_city` - Closest Major City
+- `_oso_employer_training_start` - Start of Staff Training Date
+- `_oso_employer_housing` - Housing Provided
+- `_oso_employer_social_links` - Social Media Links
+- `_oso_employer_subscription_type` - Subscription Type (read-only)
+- `_oso_employer_logo` - Logo image URL
+- `_oso_employer_photos` - Photo URLs (newline-separated)
+- `_oso_employer_wpforms_entry` - WPForms entry ID
 
 ### Meta Fields (Jobseeker - from core plugin)
 - `_oso_jobseeker_full_name`
