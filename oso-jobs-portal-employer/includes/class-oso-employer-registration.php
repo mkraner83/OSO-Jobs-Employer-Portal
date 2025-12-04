@@ -136,6 +136,9 @@ class OSO_Employer_Registration {
     }
 
     public static function handle_employer_submission( $fields, $entry, $form_data, $entry_id ) {
+        
+        error_log( 'OSO Employer Registration: Hook triggered! Entry ID: ' . $entry_id );
+        error_log( 'OSO Employer Registration: Fields received - ' . print_r( array_keys( $fields ), true ) );
 
         // Get email from Contact Email field
         $email = self::get_field_value( $fields, 'Contact Email' );
@@ -220,6 +223,8 @@ class OSO_Employer_Registration {
         // Link CPT to user ID and WPForms entry
         update_post_meta( $post_id, '_oso_employer_user_id', $user_id );
         update_post_meta( $post_id, '_oso_employer_wpforms_entry', $entry_id );
+        
+        error_log( 'OSO Employer Registration: About to process fields. Fields array type: ' . gettype( $fields ) . ', Count: ' . ( is_array( $fields ) ? count( $fields ) : 'N/A' ) );
 
         // Map WPForms field names to meta keys
         $field_mapping = array(
