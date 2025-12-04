@@ -58,25 +58,45 @@ endif;
         </div>
         
         <div class="oso-profile-info-grid">
-            <div class="oso-profile-field">
-                <strong><?php esc_html_e( 'Full Name:', 'oso-employer-portal' ); ?></strong>
-                <span><?php echo esc_html( $meta['_oso_employer_full_name'] ); ?></span>
-            </div>
-            
-            <div class="oso-profile-field">
-                <strong><?php esc_html_e( 'Email:', 'oso-employer-portal' ); ?></strong>
-                <span><?php echo esc_html( $meta['_oso_employer_email'] ); ?></span>
-            </div>
-            
-            <div class="oso-profile-field">
-                <strong><?php esc_html_e( 'Phone:', 'oso-employer-portal' ); ?></strong>
-                <span><?php echo esc_html( ! empty( $meta['_oso_employer_phone'] ) ? $meta['_oso_employer_phone'] : 'Not provided' ); ?></span>
-            </div>
-            
-            <div class="oso-profile-field">
-                <strong><?php esc_html_e( 'Company:', 'oso-employer-portal' ); ?></strong>
-                <span><?php echo esc_html( ! empty( $meta['_oso_employer_company'] ) ? $meta['_oso_employer_company'] : 'Not provided' ); ?></span>
-            </div>
+            <?php
+            // Define all employer fields to display
+            $employer_fields = array(
+                '_oso_employer_full_name' => array( 'label' => 'Full Name', 'required' => true ),
+                '_oso_employer_email' => array( 'label' => 'Email', 'required' => true ),
+                '_oso_employer_phone' => array( 'label' => 'Phone', 'required' => false ),
+                '_oso_employer_company' => array( 'label' => 'Company Name', 'required' => false ),
+                '_oso_employer_contact_person' => array( 'label' => 'Contact Person', 'required' => false ),
+                '_oso_employer_job_title' => array( 'label' => 'Job Title/Position', 'required' => false ),
+                '_oso_employer_address' => array( 'label' => 'Address', 'required' => false ),
+                '_oso_employer_city' => array( 'label' => 'City', 'required' => false ),
+                '_oso_employer_state' => array( 'label' => 'State', 'required' => false ),
+                '_oso_employer_zip' => array( 'label' => 'Zip Code', 'required' => false ),
+                '_oso_employer_website' => array( 'label' => 'Website', 'required' => false ),
+                '_oso_employer_description' => array( 'label' => 'Company Description', 'required' => false, 'full_width' => true ),
+            );
+
+            foreach ( $employer_fields as $meta_key => $field_config ) :
+                $value = ! empty( $meta[ $meta_key ] ) ? $meta[ $meta_key ] : '';
+                
+                // Skip empty optional fields
+                if ( empty( $value ) && ! $field_config['required'] ) {
+                    continue;
+                }
+                
+                $display_value = ! empty( $value ) ? $value : 'Not provided';
+                $field_class = ! empty( $field_config['full_width'] ) ? 'oso-profile-field-full' : 'oso-profile-field';
+                ?>
+                <div class="<?php echo esc_attr( $field_class ); ?>">
+                    <strong><?php echo esc_html( $field_config['label'] ); ?>:</strong>
+                    <?php if ( $meta_key === '_oso_employer_website' && ! empty( $value ) ) : ?>
+                        <a href="<?php echo esc_url( $value ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $value ); ?></a>
+                    <?php elseif ( $meta_key === '_oso_employer_description' ) : ?>
+                        <p><?php echo wp_kses_post( nl2br( $value ) ); ?></p>
+                    <?php else : ?>
+                        <span><?php echo esc_html( $display_value ); ?></span>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
         </div>
     </div>
 

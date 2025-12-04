@@ -165,11 +165,58 @@ class OSO_Employer_Registration {
         // Link CPT to user ID
         update_post_meta( $post_id, '_oso_employer_user_id', $user_id );
 
-        // Save employer profile data
-        update_post_meta( $post_id, '_oso_employer_full_name', $full_name );
-        update_post_meta( $post_id, '_oso_employer_email', $email );
-        update_post_meta( $post_id, '_oso_employer_phone', $phone );
-        update_post_meta( $post_id, '_oso_employer_company', $company );
+        // Save all form fields dynamically
+        // Map common field names to meta keys
+        $field_mapping = array(
+            'Full Name' => '_oso_employer_full_name',
+            'Email' => '_oso_employer_email',
+            'Phone' => '_oso_employer_phone',
+            'Company' => '_oso_employer_company',
+            'Company Name' => '_oso_employer_company',
+            'Address' => '_oso_employer_address',
+            'Street Address' => '_oso_employer_address',
+            'City' => '_oso_employer_city',
+            'State' => '_oso_employer_state',
+            'Zip' => '_oso_employer_zip',
+            'Zip Code' => '_oso_employer_zip',
+            'Postal Code' => '_oso_employer_zip',
+            'Website' => '_oso_employer_website',
+            'Company Website' => '_oso_employer_website',
+            'Description' => '_oso_employer_description',
+            'Company Description' => '_oso_employer_description',
+            'About' => '_oso_employer_description',
+            'Contact Person' => '_oso_employer_contact_person',
+            'Contact Name' => '_oso_employer_contact_person',
+            'Job Title' => '_oso_employer_job_title',
+            'Position' => '_oso_employer_job_title',
+        );
+
+        // Save all fields from the form
+        foreach ( $fields as $field ) {
+            if ( ! isset( $field['name'] ) || empty( $field['name'] ) ) {
+                continue;
+            }
+
+            $field_name = trim( $field['name'] );
+            $field_value = isset( $field['value'] ) ? $field['value'] : '';
+
+            // Check if we have a mapping for this field
+            $meta_key = null;
+            foreach ( $field_mapping as $form_label => $meta ) {
+                if ( strcasecmp( $field_name, $form_label ) === 0 ) {
+                    $meta_key = $meta;
+                    break;
+                }
+            }
+
+            // If no mapping found, create a generic meta key
+            if ( ! $meta_key ) {
+                $meta_key = '_oso_employer_' . sanitize_key( strtolower( str_replace( ' ', '_', $field_name ) ) );
+            }
+
+            // Save the field
+            update_post_meta( $post_id, $meta_key, sanitize_text_field( $field_value ) );
+        }
     }
 
     private static function get_field_value( $fields, $label ) {

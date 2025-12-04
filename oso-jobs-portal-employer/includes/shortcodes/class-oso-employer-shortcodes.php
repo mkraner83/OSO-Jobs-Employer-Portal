@@ -689,16 +689,30 @@ class OSO_Employer_Shortcodes {
             update_post_meta( $employer_id, '_oso_employer_full_name', sanitize_text_field( $_POST['full_name'] ) );
         }
         
-        // Update text fields
-        $text_fields = array(
-            'email'   => '_oso_employer_email',
-            'phone'   => '_oso_employer_phone',
-            'company' => '_oso_employer_company',
+        // Update all employer fields
+        $fields_to_update = array(
+            'email'           => '_oso_employer_email',
+            'phone'           => '_oso_employer_phone',
+            'company'         => '_oso_employer_company',
+            'contact_person'  => '_oso_employer_contact_person',
+            'job_title'       => '_oso_employer_job_title',
+            'address'         => '_oso_employer_address',
+            'city'            => '_oso_employer_city',
+            'state'           => '_oso_employer_state',
+            'zip'             => '_oso_employer_zip',
+            'website'         => '_oso_employer_website',
+            'description'     => '_oso_employer_description',
         );
         
-        foreach ( $text_fields as $field => $meta_key ) {
+        foreach ( $fields_to_update as $field => $meta_key ) {
             if ( isset( $_POST[ $field ] ) ) {
-                $value = sanitize_text_field( $_POST[ $field ] );
+                if ( $field === 'description' ) {
+                    $value = sanitize_textarea_field( $_POST[ $field ] );
+                } elseif ( $field === 'website' ) {
+                    $value = esc_url_raw( $_POST[ $field ] );
+                } else {
+                    $value = sanitize_text_field( $_POST[ $field ] );
+                }
                 update_post_meta( $employer_id, $meta_key, $value );
             }
         }

@@ -883,6 +883,27 @@
     font-size: 1.05em;
 }
 
+.oso-profile-field-full {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.oso-profile-field-full strong {
+    color: #548A8F;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.oso-profile-field-full p {
+    color: #333;
+    font-size: 1.05em;
+    line-height: 1.6;
+    margin: 0;
+}
+
 /* ========================================
    Edit Profile Form
    ======================================== */
