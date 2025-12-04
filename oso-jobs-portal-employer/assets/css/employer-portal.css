@@ -542,17 +542,21 @@
 .oso-profile-photo,
 .oso-profile-photo-placeholder {
     width: 100%;
-    aspect-ratio: 1;
     border-radius: 8px;
     overflow: hidden;
     margin-bottom: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+.oso-profile-photo {
+    display: inline-block;
+    line-height: 0;
+}
+
 .oso-profile-photo img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    display: block;
 }
 
 .oso-photo-lightbox {
@@ -561,22 +565,13 @@
     position: relative;
 }
 
-.oso-photo-lightbox:hover::after {
-    content: '🔍';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 48px;
-    opacity: 0.8;
-    pointer-events: none;
-}
-
 .oso-photo-lightbox:hover img {
     opacity: 0.9;
+    transition: opacity 0.3s ease;
 }
 
 .oso-profile-photo-placeholder {
+    aspect-ratio: 1;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
     align-items: center;
