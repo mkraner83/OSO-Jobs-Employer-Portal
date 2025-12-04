@@ -155,11 +155,23 @@ class OSO_Employer_Shortcodes {
      * @return array
      */
     protected function get_employer_meta( $post_id ) {
+        // Get ALL meta fields for this employer
         $fields = array(
-            '_oso_employer_full_name',
-            '_oso_employer_email',
-            '_oso_employer_phone',
             '_oso_employer_company',
+            '_oso_employer_email',
+            '_oso_employer_website',
+            '_oso_employer_description',
+            '_oso_employer_camp_types',
+            '_oso_employer_state',
+            '_oso_employer_address',
+            '_oso_employer_major_city',
+            '_oso_employer_training_start',
+            '_oso_employer_housing',
+            '_oso_employer_social_links',
+            '_oso_employer_subscription_type',
+            '_oso_employer_logo',
+            '_oso_employer_user_id',
+            '_oso_employer_wpforms_entry',
         );
 
         $meta = array();
