@@ -89,37 +89,9 @@ class OSO_Employer_Registration {
         
         // Check if user is a jobseeker
         if ( in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, $user->roles ) ) {
-            // Find the jobseeker profile page
-            $pages = get_posts([
-                'post_type'   => 'page',
-                'post_status' => 'publish',
-                'numberposts' => -1,
-            ]);
-            
-            $profile_url = home_url();
-            foreach ( $pages as $page ) {
-                if ( has_shortcode( $page->post_content, 'oso_jobseeker_profile' ) ) {
-                    $profile_url = get_permalink( $page->ID );
-                    break;
-                }
-            }
-            
-            wp_redirect( $profile_url );
-            exit;
-        }
-    }
-    
-    /**
-     * Redirect employers and jobseekers to their dashboard/profile page instead of wp-admin
-     */
-    public static function employer_login_redirect( $redirect_to, $request, $user ) {
-        if ( isset( $user->roles ) && is_array( $user->roles ) ) {
-            // Check if user is an employer
-            if ( in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, $user->roles ) ) {
-                // Find the page with the employer dashboard shortcode
-                $pages = get_posts([
-                    'post_type'   => 'page',
-                    'post_status' => 'publish',
+            // Redirect to the jobseeker profile page
+            return home_url( '/job-portal/jobseeker-profile/' );
+        }   'post_status' => 'publish',
                     'numberposts' => -1,
                 ]);
                 

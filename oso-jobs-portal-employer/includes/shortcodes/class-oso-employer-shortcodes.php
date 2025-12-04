@@ -362,7 +362,7 @@ class OSO_Employer_Shortcodes {
 
         $user = wp_get_current_user();
         
-        // Get jobseeker ID from URL or shortcode attribute
+        // Get jobseeker ID from shortcode attribute or URL parameter (for employers viewing)
         $jobseeker_id = ! empty( $atts['id'] ) ? (int) $atts['id'] : ( isset( $_GET['jobseeker_id'] ) ? (int) $_GET['jobseeker_id'] : 0 );
         
         // If no ID provided and user is a jobseeker, show their own profile
@@ -552,7 +552,7 @@ class OSO_Employer_Shortcodes {
         
         wp_send_json_success( array( 
             'message'     => __( 'Profile updated successfully!', 'oso-employer-portal' ),
-            'redirect_url'=> get_permalink( $jobseeker_id ),
+            'redirect_url'=> home_url( '/job-portal/jobseeker-profile/' ),
         ) );
     }
 

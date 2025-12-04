@@ -22,19 +22,8 @@ $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_ful
 <div class="oso-jobseeker-edit-profile">
     <div class="oso-profile-header">
         <?php
-        // Find profile page
-        $profile_url = '#';
-        $pages = get_posts([
-            'post_type'   => 'page',
-            'post_status' => 'publish',
-            'numberposts' => -1,
-        ]);
-        foreach ( $pages as $page ) {
-            if ( has_shortcode( $page->post_content, 'oso_jobseeker_profile' ) ) {
-                $profile_url = get_permalink( $page->ID );
-                break;
-            }
-        }
+        // Use direct URL for profile page
+        $profile_url = home_url( '/job-portal/jobseeker-profile/' );
         ?>
         <a href="<?php echo esc_url( $profile_url ); ?>" class="oso-back-link">
             &laquo; <?php esc_html_e( 'Back to Profile', 'oso-employer-portal' ); ?>
@@ -164,6 +153,9 @@ $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_ful
             } else {
                 $current_values = array();
             }
+            
+            // Trim all values for accurate comparison
+            $current_values = array_map( 'trim', $current_values );
             ?>
             <div class="oso-form-section">
                 <h3><?php echo esc_html( $config['label'] ); ?></h3>
@@ -184,7 +176,7 @@ $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_ful
                 <span class="dashicons dashicons-saved"></span>
                 <?php esc_html_e( 'Save Changes', 'oso-employer-portal' ); ?>
             </button>
-            <a href="<?php echo esc_url( $profile_url ); ?>" class="oso-btn oso-btn-secondary">
+            <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-profile/' ) ); ?>" class="oso-btn oso-btn-secondary">
                 <?php esc_html_e( 'Cancel', 'oso-employer-portal' ); ?>
             </a>
         </div>

@@ -142,19 +142,8 @@ $resume = ! empty( $meta['_oso_jobseeker_resume'] ) ? $meta['_oso_jobseeker_resu
                 }
                 
                 if ( $is_own_profile ) :
-                    // Find edit profile page
-                    $edit_url = '#';
-                    $pages = get_posts([
-                        'post_type'   => 'page',
-                        'post_status' => 'publish',
-                        'numberposts' => -1,
-                    ]);
-                    foreach ( $pages as $page ) {
-                        if ( has_shortcode( $page->post_content, 'oso_jobseeker_edit_profile' ) ) {
-                            $edit_url = get_permalink( $page->ID );
-                            break;
-                        }
-                    }
+                    // Use direct URL for edit profile page
+                    $edit_url = home_url( '/job-portal/edit-jobseeker-profile/' );
                     ?>
                     <a href="<?php echo esc_url( $edit_url ); ?>" class="oso-btn oso-btn-primary">
                         <span class="dashicons dashicons-edit"></span>
