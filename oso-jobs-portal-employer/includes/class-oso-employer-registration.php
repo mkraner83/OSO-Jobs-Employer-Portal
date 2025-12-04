@@ -16,6 +16,45 @@ class OSO_Employer_Registration {
         
         // Redirect employers to their dashboard after login
         add_filter( 'login_redirect', [__CLASS__, 'employer_login_redirect'], 10, 3 );
+        
+        // Block wp-admin access for employers
+        add_action( 'admin_init', [__CLASS__, 'block_employer_admin_access'] );
+    }
+    
+    /**
+     * Block employers from accessing wp-admin and redirect to their dashboard
+     */
+    public static function block_employer_admin_access() {
+        // Allow AJAX requests
+        if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+            return;
+        }
+        
+        $user = wp_get_current_user();
+        if ( ! $user || ! $user->exists() ) {
+            return;
+        }
+        
+        // Check if user is an employer
+        if ( in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, $user->roles ) ) {
+            // Find the employer dashboard page
+            $pages = get_posts([
+                'post_type'   => 'page',
+                'post_status' => 'publish',
+                'numberposts' => -1,
+            ]);
+            
+            $dashboard_url = home_url();
+            foreach ( $pages as $page ) {
+                if ( has_shortcode( $page->post_content, 'oso_employer_dashboard' ) ) {
+                    $dashboard_url = get_permalink( $page->ID );
+                    break;
+                }
+            }
+            
+            wp_redirect( $dashboard_url );
+            exit;
+        }
     }
     
     /**
