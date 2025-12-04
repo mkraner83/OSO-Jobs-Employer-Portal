@@ -12,16 +12,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! $is_logged_in ) :
     ?>
     <div class="oso-employer-dashboard oso-login-required">
-        <h2><?php esc_html_e( 'Employer Dashboard', 'oso-employer-portal' ); ?></h2>
-        <p><?php esc_html_e( 'Please log in to access your employer dashboard.', 'oso-employer-portal' ); ?></p>
-        
-        <div class="oso-login-form">
-            <?php echo $login_form; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+        <div class="oso-login-box">
+            <div class="oso-login-header">
+                <h3><?php esc_html_e( 'Employer Login', 'oso-employer-portal' ); ?></h3>
+                <p><?php esc_html_e( 'Please log in to access your dashboard', 'oso-employer-portal' ); ?></p>
+            </div>
+            
+            <div class="oso-login-form">
+                <?php echo $login_form; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+            </div>
+            
+            <p class="oso-lost-password">
+                <a href="<?php echo esc_url( $lost_url ); ?>"><?php esc_html_e( 'Lost your password?', 'oso-employer-portal' ); ?></a>
+            </p>
         </div>
-        
-        <p class="oso-lost-password">
-            <a href="<?php echo esc_url( $lost_url ); ?>"><?php esc_html_e( 'Lost your password?', 'oso-employer-portal' ); ?></a>
-        </p>
     </div>
     <?php
     return;
