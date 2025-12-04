@@ -139,24 +139,60 @@ class OSO_Employer_Registration {
 
         // Get email from Contact Email field
         $email = self::get_field_value( $fields, 'Contact Email' );
-        if ( ! $email ) return;
+        if ( ! $email ) {
+            error_log( 'OSO Employer Registration: No email found in form submission' );
+            return;
+        }
 
         // Get camp name as the display name
         $camp_name = self::get_field_value( $fields, 'Camp Name' );
-        if ( ! $camp_name ) return;
+        if ( ! $camp_name ) {
+            error_log( 'OSO Employer Registration: No camp name found in form submission' );
+            return;
+        }
 
-        // Generate unique username
-        $username = OSO_Employer_Utils::generate_username( $camp_name, $email );
+        error_log( 'OSO Employer Registration: Processing submission - Camp: ' . $camp_name . ', Email: ' . $email );
 
-        // Create WordPress user (no password)
-        $user_id = wp_insert_user([
-            'user_login'   => $username,
-            'user_email'   => $email,
-            'display_name' => $camp_name,
-            'role'         => OSO_Jobs_Portal::ROLE_EMPLOYER,
-        ]);
+        // Check if user already exists
+        $existing_user = get_user_by( 'email', $email );
+        if ( $existing_user ) {
+            error_log( 'OSO Employer Registration: User already exists with this email - User ID: ' . $existing_user->ID );
+            
+            // Check if employer post exists for this user
+            $existing_employer = get_posts([
+                'post_type' => OSO_Jobs_Portal::POST_TYPE_EMPLOYER,
+                'meta_key' => '_oso_employer_user_id',
+                'meta_value' => $existing_user->ID,
+                'post_status' => 'any',
+                'posts_per_page' => 1,
+            ]);
+            
+            if ( empty( $existing_employer ) ) {
+                error_log( 'OSO Employer Registration: User exists but no employer post found. Creating employer post for existing user.' );
+                $user_id = $existing_user->ID;
+            } else {
+                error_log( 'OSO Employer Registration: User and employer post already exist. Exiting.' );
+                return;
+            }
+        } else {
+            // Generate unique username
+            $username = OSO_Employer_Utils::generate_username( $camp_name, $email );
 
-        if ( is_wp_error( $user_id ) ) return;
+            // Create WordPress user (no password)
+            $user_id = wp_insert_user([
+                'user_login'   => $username,
+                'user_email'   => $email,
+                'display_name' => $camp_name,
+                'role'         => OSO_Jobs_Portal::ROLE_EMPLOYER,
+            ]);
+        }
+
+        if ( is_wp_error( $user_id ) ) {
+            error_log( 'OSO Employer Registration: User creation failed - ' . $user_id->get_error_message() );
+            return;
+        }
+
+        error_log( 'OSO Employer Registration: User created successfully - ID: ' . $user_id . ', Email: ' . $email );
 
         // Send password setup email
         wp_new_user_notification( $user_id, null, 'user' );
@@ -168,6 +204,18 @@ class OSO_Employer_Registration {
             'post_title'  => $camp_name,
             'post_status' => 'publish',
         ]);
+
+        if ( is_wp_error( $post_id ) ) {
+            error_log( 'OSO Employer Registration: Post creation failed - ' . $post_id->get_error_message() );
+            return;
+        }
+
+        if ( ! $post_id ) {
+            error_log( 'OSO Employer Registration: Post creation returned 0/false' );
+            return;
+        }
+
+        error_log( 'OSO Employer Registration: Employer post created successfully - Post ID: ' . $post_id );
 
         // Link CPT to user ID and WPForms entry
         update_post_meta( $post_id, '_oso_employer_user_id', $user_id );
