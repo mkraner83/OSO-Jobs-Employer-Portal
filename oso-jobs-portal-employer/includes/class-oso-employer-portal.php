@@ -17,35 +17,8 @@ class OSO_Employer_Portal {
         // Load dependencies
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/class-oso-employer-registration.php';
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/helpers/class-oso-employer-utils.php';
-        require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/shortcodes/class-oso-employer-shortcodes.php';
 
         // Initialize employer registration handler
         OSO_Employer_Registration::init();
-        
-        // Initialize shortcodes
-        OSO_Employer_Shortcodes::instance();
-        
-        // Enqueue frontend styles
-        add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_assets' ] );
-    }
-    
-    /**
-     * Enqueue frontend assets.
-     */
-    public function enqueue_frontend_assets() {
-        wp_enqueue_style(
-            'oso-employer-portal',
-            OSO_EMPLOYER_PORTAL_URL . 'assets/css/employer-portal.css',
-            array(),
-            '1.0.1'
-        );
-        
-        wp_enqueue_script(
-            'oso-employer-portal',
-            OSO_EMPLOYER_PORTAL_URL . 'assets/js/employer-portal.js',
-            array( 'jquery' ),
-            '1.0.1',
-            true
-        );
     }
 }

@@ -1,131 +1,215 @@
 <?php
 /**
- * Single Jobseeker Profile View Template
- *
- * @package OSO_Employer_Portal\Shortcodes\Views
+ * Jobseeker Profile View for Employers
+ * 
+ * Template for displaying individual jobseeker profile details.
+ * 
+ * @package OSO_Employer_Portal
  */
 
+// Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// Get field configurations
-$text_fields = class_exists( 'OSO_Jobs_Utilities' ) ? OSO_Jobs_Utilities::get_jobseeker_text_fields() : array();
-$checkbox_groups = class_exists( 'OSO_Jobs_Utilities' ) ? OSO_Jobs_Utilities::get_jobseeker_checkbox_groups() : array();
+// Get jobseeker ID from URL parameter
+$jobseeker_id = isset( $_GET['jobseeker_id'] ) ? intval( $_GET['jobseeker_id'] ) : 0;
 
-$name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_full_name'] : $jobseeker->post_title;
-$photo = ! empty( $meta['_oso_jobseeker_photo'] ) ? $meta['_oso_jobseeker_photo'] : '';
-$resume = ! empty( $meta['_oso_jobseeker_resume'] ) ? $meta['_oso_jobseeker_resume'] : '';
+if ( ! $jobseeker_id ) {
+    echo '<p class="oso-error">Invalid jobseeker ID.</p>';
+    return;
+}
+
+// Get the jobseeker post
+$jobseeker = get_post( $jobseeker_id );
+
+if ( ! $jobseeker || $jobseeker->post_type !== 'oso_jobseeker' ) {
+    echo '<p class="oso-error">Jobseeker not found.</p>';
+    return;
+}
+
+// Get all meta data
+$meta = OSO_Jobs_Utilities::get_jobseeker_meta( $jobseeker_id );
+
+// Extract specific fields
+$name = $jobseeker->post_title;
+$email = isset( $meta['_oso_jobseeker_email'] ) ? $meta['_oso_jobseeker_email'] : '';
+$phone = isset( $meta['_oso_jobseeker_phone'] ) ? $meta['_oso_jobseeker_phone'] : '';
+$location = isset( $meta['_oso_jobseeker_location'] ) ? $meta['_oso_jobseeker_location'] : '';
+$age_group = isset( $meta['_oso_jobseeker_age_group'] ) ? $meta['_oso_jobseeker_age_group'] : '';
+$gender = isset( $meta['_oso_jobseeker_gender'] ) ? $meta['_oso_jobseeker_gender'] : '';
+$visa_status = isset( $meta['_oso_jobseeker_visa_status'] ) ? $meta['_oso_jobseeker_visa_status'] : '';
+$camp_role = isset( $meta['_oso_jobseeker_camp_role'] ) ? $meta['_oso_jobseeker_camp_role'] : '';
+$availability_start = isset( $meta['_oso_jobseeker_availability_start'] ) ? $meta['_oso_jobseeker_availability_start'] : '';
+$availability_end = isset( $meta['_oso_jobseeker_availability_end'] ) ? $meta['_oso_jobseeker_availability_end'] : '';
+$experience_years = isset( $meta['_oso_jobseeker_experience_years'] ) ? $meta['_oso_jobseeker_experience_years'] : '';
+$education_level = isset( $meta['_oso_jobseeker_education_level'] ) ? $meta['_oso_jobseeker_education_level'] : '';
+
+// Get "Why Are You Interested" from post_content (plain text)
+$why_interested = $jobseeker->post_content;
+
+// Get job interests from meta field (should be badges)
+$job_interests = isset( $meta['_oso_jobseeker_job_interests'] ) ? $meta['_oso_jobseeker_job_interests'] : array();
+if ( ! is_array( $job_interests ) ) {
+    $job_interests = array_filter( array_map( 'trim', explode( ',', $job_interests ) ) );
+}
+
+// Get skills (checkboxes from form)
+$skills = isset( $meta['_oso_jobseeker_skills'] ) ? $meta['_oso_jobseeker_skills'] : array();
+if ( ! is_array( $skills ) ) {
+    $skills = array_filter( array_map( 'trim', explode( ',', $skills ) ) );
+}
+
+// Get certifications
+$certifications = isset( $meta['_oso_jobseeker_certifications'] ) ? $meta['_oso_jobseeker_certifications'] : array();
+if ( ! is_array( $certifications ) ) {
+    $certifications = array_filter( array_map( 'trim', explode( ',', $certifications ) ) );
+}
+
+// Get languages
+$languages = isset( $meta['_oso_jobseeker_languages'] ) ? $meta['_oso_jobseeker_languages'] : array();
+if ( ! is_array( $languages ) ) {
+    $languages = array_filter( array_map( 'trim', explode( ',', $languages ) ) );
+}
+
 ?>
 
-<div class="oso-jobseeker-profile-view">
-    <div class="oso-profile-header">
-        <a href="javascript:history.back()" class="oso-back-link">
-            &laquo; <?php esc_html_e( 'Back to Search', 'oso-employer-portal' ); ?>
-        </a>
-        <h2><?php esc_html_e( 'Jobseeker Profile', 'oso-employer-portal' ); ?></h2>
+<div class="oso-jobseeker-profile">
+    
+    <!-- Back Button -->
+    <div class="oso-profile-back">
+        <a href="javascript:history.back()" class="oso-btn oso-btn-secondary">← Back to Results</a>
     </div>
-
-    <div class="oso-profile-main">
-        <div class="oso-profile-sidebar">
-            <?php if ( $photo ) : ?>
-                <div class="oso-profile-photo">
-                    <img src="<?php echo esc_url( $photo ); ?>" alt="<?php echo esc_attr( $name ); ?>" />
-                </div>
-            <?php else : ?>
-                <div class="oso-profile-photo-placeholder">
-                    <span class="dashicons dashicons-admin-users"></span>
-                </div>
-            <?php endif; ?>
+    
+    <!-- Profile Header -->
+    <div class="oso-profile-header">
+        <h1 class="oso-profile-name"><?php echo esc_html( $name ); ?></h1>
+        <?php if ( $location ) : ?>
+            <p class="oso-profile-location"><?php echo esc_html( $location ); ?></p>
+        <?php endif; ?>
+    </div>
+    
+    <!-- Two Column Layout -->
+    <div class="oso-profile-layout">
+        
+        <!-- Main Content Column -->
+        <div class="oso-profile-main">
             
-            <h3 class="oso-profile-name"><?php echo esc_html( $name ); ?></h3>
-            
-            <?php if ( ! empty( $meta['_oso_jobseeker_location'] ) ) : ?>
-                <p class="oso-profile-location">
-                    <span class="dashicons dashicons-location"></span>
-                    <?php echo esc_html( $meta['_oso_jobseeker_location'] ); ?>
-                </p>
-            <?php endif; ?>
-            
-            <?php if ( ! empty( $meta['_oso_jobseeker_email'] ) ) : ?>
-                <p class="oso-profile-email">
-                    <span class="dashicons dashicons-email"></span>
-                    <a href="mailto:<?php echo esc_attr( $meta['_oso_jobseeker_email'] ); ?>">
-                        <?php echo esc_html( $meta['_oso_jobseeker_email'] ); ?>
-                    </a>
-                </p>
-            <?php endif; ?>
-            
-            <?php if ( $resume ) : ?>
-                <div class="oso-profile-resume">
-                    <a href="<?php echo esc_url( $resume ); ?>" class="oso-btn oso-btn-secondary" target="_blank" rel="noopener noreferrer">
-                        <span class="dashicons dashicons-media-document"></span>
-                        <?php esc_html_e( 'Download Resume', 'oso-employer-portal' ); ?>
-                    </a>
-                </div>
-            <?php endif; ?>
-        </div>
-
-        <div class="oso-profile-content">
-            <div class="oso-profile-section">
-                <h4><?php esc_html_e( 'Availability', 'oso-employer-portal' ); ?></h4>
-                <div class="oso-profile-availability">
-                    <?php if ( ! empty( $meta['_oso_jobseeker_availability_start'] ) ) : ?>
-                        <p><strong><?php esc_html_e( 'Earliest Start:', 'oso-employer-portal' ); ?></strong> <?php echo esc_html( $meta['_oso_jobseeker_availability_start'] ); ?></p>
-                    <?php endif; ?>
-                    <?php if ( ! empty( $meta['_oso_jobseeker_availability_end'] ) ) : ?>
-                        <p><strong><?php esc_html_e( 'Latest End:', 'oso-employer-portal' ); ?></strong> <?php echo esc_html( $meta['_oso_jobseeker_availability_end'] ); ?></p>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <?php if ( ! empty( $jobseeker->post_content ) ) : ?>
+            <!-- Why Interested Section (Plain Text from post_content) -->
+            <?php if ( ! empty( $why_interested ) ) : ?>
                 <div class="oso-profile-section">
-                    <h4><?php esc_html_e( 'Why Interested in Summer Camp?', 'oso-employer-portal' ); ?></h4>
+                    <h2>Why Are You Interested in Summer Camp?</h2>
                     <div class="oso-profile-why">
-                        <?php echo wp_kses_post( wpautop( $jobseeker->post_content ) ); ?>
+                        <?php echo wpautop( wp_kses_post( $why_interested ) ); ?>
                     </div>
                 </div>
             <?php endif; ?>
-
-            <?php
-            // Display checkbox groups (badges for skills, text for over_18)
-            foreach ( $checkbox_groups as $key => $config ) :
-                $value_raw = ! empty( $meta[ $config['meta'] ] ) ? $meta[ $config['meta'] ] : '';
-                if ( class_exists( 'OSO_Jobs_Utilities' ) ) {
-                    $values = OSO_Jobs_Utilities::meta_string_to_array( $value_raw );
-                } else {
-                    $values = array();
-                }
-                
-                if ( empty( $values ) ) {
-                    continue;
-                }
-                
-                // Display "over 18" as simple text in availability section, not as badges
-                if ( $key === 'over_18' ) {
-                    continue; // Skip - already shown in sidebar or can be omitted
-                }
-                ?>
+            
+            <!-- Job Interests Section (Badges from meta field) -->
+            <?php if ( ! empty( $job_interests ) ) : ?>
                 <div class="oso-profile-section">
-                    <h4><?php echo esc_html( $config['label'] ); ?></h4>
-                    <div class="oso-profile-skills">
-                        <?php foreach ( $values as $value ) : ?>
-                            <span class="oso-skill-badge"><?php echo esc_html( $value ); ?></span>
+                    <h2>Job Interests</h2>
+                    <div class="oso-profile-interests">
+                        <?php foreach ( $job_interests as $interest ) : ?>
+                            <span class="oso-interest-badge"><?php echo esc_html( $interest ); ?></span>
                         <?php endforeach; ?>
                     </div>
                 </div>
-            <?php endforeach; ?>
-
-            <div class="oso-profile-actions">
-                <a href="mailto:<?php echo esc_attr( ! empty( $meta['_oso_jobseeker_email'] ) ? $meta['_oso_jobseeker_email'] : '' ); ?>" class="oso-btn oso-btn-primary">
-                    <span class="dashicons dashicons-email"></span>
-                    <?php esc_html_e( 'Contact Candidate', 'oso-employer-portal' ); ?>
-                </a>
-                <a href="javascript:history.back()" class="oso-btn oso-btn-secondary">
-                    <?php esc_html_e( 'Back to Search', 'oso-employer-portal' ); ?>
-                </a>
-            </div>
+            <?php endif; ?>
+            
+            <!-- Skills Section -->
+            <?php if ( ! empty( $skills ) ) : ?>
+                <div class="oso-profile-section">
+                    <h2>Skills</h2>
+                    <div class="oso-profile-skills">
+                        <?php foreach ( $skills as $skill ) : ?>
+                            <span class="oso-skill-badge"><?php echo esc_html( $skill ); ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+            
+            <!-- Certifications Section -->
+            <?php if ( ! empty( $certifications ) ) : ?>
+                <div class="oso-profile-section">
+                    <h2>Certifications</h2>
+                    <div class="oso-profile-certifications">
+                        <?php foreach ( $certifications as $cert ) : ?>
+                            <span class="oso-cert-badge"><?php echo esc_html( $cert ); ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+            
+            <!-- Languages Section -->
+            <?php if ( ! empty( $languages ) ) : ?>
+                <div class="oso-profile-section">
+                    <h2>Languages</h2>
+                    <div class="oso-profile-languages">
+                        <?php foreach ( $languages as $language ) : ?>
+                            <span class="oso-language-badge"><?php echo esc_html( $language ); ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+            
         </div>
+        
+        <!-- Sidebar Column -->
+        <div class="oso-profile-sidebar">
+            
+            <!-- Contact Information -->
+            <div class="oso-profile-box">
+                <h3>Contact Information</h3>
+                <?php if ( $email ) : ?>
+                    <p><strong>Email:</strong><br><?php echo esc_html( $email ); ?></p>
+                <?php endif; ?>
+                <?php if ( $phone ) : ?>
+                    <p><strong>Phone:</strong><br><?php echo esc_html( $phone ); ?></p>
+                <?php endif; ?>
+            </div>
+            
+            <!-- Basic Details -->
+            <div class="oso-profile-box">
+                <h3>Basic Details</h3>
+                <?php if ( $age_group ) : ?>
+                    <p><strong>Age Group:</strong><br><?php echo esc_html( $age_group ); ?></p>
+                <?php endif; ?>
+                <?php if ( $gender ) : ?>
+                    <p><strong>Gender:</strong><br><?php echo esc_html( $gender ); ?></p>
+                <?php endif; ?>
+                <?php if ( $visa_status ) : ?>
+                    <p><strong>Visa Status:</strong><br><?php echo esc_html( ucwords( str_replace( '_', ' ', $visa_status ) ) ); ?></p>
+                <?php endif; ?>
+            </div>
+            
+            <!-- Camp Information -->
+            <div class="oso-profile-box">
+                <h3>Camp Information</h3>
+                <?php if ( $camp_role ) : ?>
+                    <p><strong>Desired Role:</strong><br><?php echo esc_html( $camp_role ); ?></p>
+                <?php endif; ?>
+                <?php if ( $availability_start ) : ?>
+                    <p><strong>Available From:</strong><br><?php echo esc_html( date( 'M d, Y', strtotime( $availability_start ) ) ); ?></p>
+                <?php endif; ?>
+                <?php if ( $availability_end ) : ?>
+                    <p><strong>Available Until:</strong><br><?php echo esc_html( date( 'M d, Y', strtotime( $availability_end ) ) ); ?></p>
+                <?php endif; ?>
+                <?php if ( $experience_years ) : ?>
+                    <p><strong>Experience:</strong><br><?php echo esc_html( $experience_years ); ?> years</p>
+                <?php endif; ?>
+            </div>
+            
+            <!-- Education -->
+            <?php if ( $education_level ) : ?>
+                <div class="oso-profile-box">
+                    <h3>Education</h3>
+                    <p><?php echo esc_html( $education_level ); ?></p>
+                </div>
+            <?php endif; ?>
+            
+        </div>
+        
     </div>
+    
 </div>

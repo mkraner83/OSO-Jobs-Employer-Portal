@@ -13,10 +13,6 @@ class OSO_Employer_Registration {
             10,
             4
         );
-        
-        // Add custom smart tag for password setup link
-        add_filter( 'wpforms_smart_tags', [__CLASS__, 'register_smart_tag'] );
-        add_filter( 'wpforms_process_smart_tags', [__CLASS__, 'process_smart_tag'], 10, 4 );
     }
 
     public static function handle_employer_submission( $fields, $entry, $form_data, $entry_id ) {
@@ -41,7 +37,7 @@ class OSO_Employer_Registration {
 
         if ( is_wp_error( $user_id ) ) return;
 
-        // Send password setup email (Option 1)
+        // Send password setup email
         wp_new_user_notification( $user_id, null, 'user' );
 
         // Create Employer CPT entry
@@ -60,11 +56,6 @@ class OSO_Employer_Registration {
         update_post_meta( $post_id, '_oso_employer_email', $email );
         update_post_meta( $post_id, '_oso_employer_phone', $phone );
         update_post_meta( $post_id, '_oso_employer_company', $company );
-        
-        // Store user ID for smart tag (Option 2)
-        wpforms()->process->fields = $fields;
-        wpforms()->process->entry_id = $entry_id;
-        set_transient( 'oso_employer_registration_' . $entry_id, $user_id, HOUR_IN_SECONDS );
     }
 
     private static function get_field_value( $fields, $label ) {
@@ -74,58 +65,5 @@ class OSO_Employer_Registration {
             }
         }
         return '';
-    }
-    
-    /**
-     * Register custom smart tag for password setup link.
-     */
-    public static function register_smart_tag( $tags ) {
-        $tags['employer_password_link'] = __( 'Employer Password Setup Link', 'oso-employer-portal' );
-        return $tags;
-    }
-    
-    /**
-     * Process the password setup link smart tag.
-     */
-    public static function process_smart_tag( $content, $tag, $form_data, $fields ) {
-        // Only process our custom tag
-        if ( 'employer_password_link' !== $tag ) {
-            return $content;
-        }
-        
-        // Only for our specific form
-        if ( empty( $form_data['id'] ) || (int) $form_data['id'] !== self::FORM_ID ) {
-            return $content;
-        }
-        
-        // Get the user ID from transient
-        $entry_id = wpforms()->process->entry_id ?? 0;
-        $user_id = get_transient( 'oso_employer_registration_' . $entry_id );
-        
-        if ( ! $user_id ) {
-            return __( 'Please check your email for password setup instructions.', 'oso-employer-portal' );
-        }
-        
-        $user = get_user_by( 'id', $user_id );
-        if ( ! $user ) {
-            return __( 'Please check your email for password setup instructions.', 'oso-employer-portal' );
-        }
-        
-        // Generate password reset key
-        $key = get_password_reset_key( $user );
-        if ( is_wp_error( $key ) ) {
-            return __( 'Please check your email for password setup instructions.', 'oso-employer-portal' );
-        }
-        
-        // Build the password setup URL
-        $url = network_site_url(
-            'wp-login.php?action=rp&key=' . rawurlencode( $key ) . '&login=' . rawurlencode( $user->user_login ),
-            'login'
-        );
-        
-        // Return the clickable link
-        return '<a href="' . esc_url( $url ) . '" class="oso-password-setup-link" target="_blank">' . 
-               __( 'Click here to set up your password', 'oso-employer-portal' ) . 
-               '</a>';
     }
 }
