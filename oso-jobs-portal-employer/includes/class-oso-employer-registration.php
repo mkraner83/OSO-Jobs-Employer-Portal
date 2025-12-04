@@ -7,10 +7,11 @@ class OSO_Employer_Registration {
     const FORM_ID = 1917;
 
     public static function init() {
+        // Use priority 5 to run BEFORE the generic wpforms_process_complete hook (priority 10)
         add_action(
             'wpforms_process_complete_' . self::FORM_ID,
             [__CLASS__, 'handle_employer_submission'],
-            10,
+            5,
             4
         );
         
