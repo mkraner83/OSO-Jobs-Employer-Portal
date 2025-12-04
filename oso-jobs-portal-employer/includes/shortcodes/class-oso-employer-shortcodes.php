@@ -40,6 +40,11 @@ class OSO_Employer_Shortcodes {
         add_shortcode( 'oso_employer_profile', array( $this, 'shortcode_employer_dashboard' ) ); // Alias
         add_shortcode( 'oso_jobseeker_browser', array( $this, 'shortcode_jobseeker_browser' ) );
         add_shortcode( 'oso_jobseeker_profile', array( $this, 'shortcode_jobseeker_profile' ) );
+        add_shortcode( 'oso_jobseeker_edit_profile', array( $this, 'shortcode_jobseeker_edit_profile' ) );
+        
+        // AJAX handlers
+        add_action( 'wp_ajax_oso_update_jobseeker_profile', array( $this, 'ajax_update_jobseeker_profile' ) );
+        add_action( 'wp_ajax_oso_upload_profile_file', array( $this, 'ajax_upload_profile_file' ) );
     }
 
     /**
@@ -420,6 +425,193 @@ class OSO_Employer_Shortcodes {
                 'meta'      => $meta,
             )
         );
+    }
+
+    /**
+     * Render jobseeker edit profile shortcode.
+     */
+    public function shortcode_jobseeker_edit_profile( $atts ) {
+        // Check if user is logged in
+        if ( ! is_user_logged_in() ) {
+            return '<p>' . esc_html__( 'You must be logged in to edit your profile.', 'oso-employer-portal' ) . '</p>';
+        }
+
+        $user = wp_get_current_user();
+        
+        // Only jobseekers can edit their profile
+        if ( ! in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, (array) $user->roles, true ) ) {
+            return '<p>' . esc_html__( 'Only jobseekers can edit their profile.', 'oso-employer-portal' ) . '</p>';
+        }
+        
+        // Find jobseeker post linked to this user
+        $jobseeker_posts = get_posts([
+            'post_type'      => OSO_Jobs_Portal::POST_TYPE_JOBSEEKER,
+            'posts_per_page' => 1,
+            'meta_query'     => [
+                [
+                    'key'     => '_oso_jobseeker_email',
+                    'value'   => $user->user_email,
+                    'compare' => '=',
+                ],
+            ],
+        ]);
+        
+        if ( empty( $jobseeker_posts ) ) {
+            return '<p>' . esc_html__( 'No jobseeker profile found for your account.', 'oso-employer-portal' ) . '</p>';
+        }
+        
+        $jobseeker = $jobseeker_posts[0];
+        
+        // Get jobseeker metadata
+        if ( class_exists( 'OSO_Jobs_Utilities' ) ) {
+            $meta = OSO_Jobs_Utilities::get_jobseeker_meta( $jobseeker->ID );
+        } else {
+            $meta = array();
+        }
+
+        return $this->load_template(
+            'jobseeker-edit-profile.php',
+            array(
+                'jobseeker' => $jobseeker,
+                'meta'      => $meta,
+            )
+        );
+    }
+
+    /**
+     * AJAX handler to update jobseeker profile.
+     */
+    public function ajax_update_jobseeker_profile() {
+        check_ajax_referer( 'oso_update_jobseeker_profile', 'nonce' );
+        
+        if ( ! is_user_logged_in() ) {
+            wp_send_json_error( array( 'message' => __( 'You must be logged in.', 'oso-employer-portal' ) ) );
+        }
+        
+        $user = wp_get_current_user();
+        
+        // Only jobseekers can edit their profile
+        if ( ! in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, (array) $user->roles, true ) ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to edit this profile.', 'oso-employer-portal' ) ) );
+        }
+        
+        $jobseeker_id = isset( $_POST['jobseeker_id'] ) ? (int) $_POST['jobseeker_id'] : 0;
+        
+        if ( ! $jobseeker_id ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid jobseeker ID.', 'oso-employer-portal' ) ) );
+        }
+        
+        // Verify this jobseeker belongs to the current user
+        $jobseeker_email = get_post_meta( $jobseeker_id, '_oso_jobseeker_email', true );
+        if ( $jobseeker_email !== $user->user_email ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to edit this profile.', 'oso-employer-portal' ) ) );
+        }
+        
+        // Update post content (why interested)
+        if ( isset( $_POST['why_interested'] ) ) {
+            wp_update_post( array(
+                'ID'           => $jobseeker_id,
+                'post_content' => sanitize_textarea_field( $_POST['why_interested'] ),
+            ) );
+        }
+        
+        // Update post title (full name)
+        if ( isset( $_POST['full_name'] ) ) {
+            wp_update_post( array(
+                'ID'         => $jobseeker_id,
+                'post_title' => sanitize_text_field( $_POST['full_name'] ),
+            ) );
+            update_post_meta( $jobseeker_id, '_oso_jobseeker_full_name', sanitize_text_field( $_POST['full_name'] ) );
+        }
+        
+        // Update text fields
+        $text_fields = array(
+            'email'             => '_oso_jobseeker_email',
+            'location'          => '_oso_jobseeker_location',
+            'availability_start'=> '_oso_jobseeker_availability_start',
+            'availability_end'  => '_oso_jobseeker_availability_end',
+            'photo_url'         => '_oso_jobseeker_photo',
+            'resume_url'        => '_oso_jobseeker_resume',
+        );
+        
+        foreach ( $text_fields as $field => $meta_key ) {
+            if ( isset( $_POST[ $field ] ) ) {
+                $value = sanitize_text_field( $_POST[ $field ] );
+                update_post_meta( $jobseeker_id, $meta_key, $value );
+            }
+        }
+        
+        // Update checkbox groups
+        $checkbox_groups = class_exists( 'OSO_Jobs_Utilities' ) ? OSO_Jobs_Utilities::get_jobseeker_checkbox_groups() : array();
+        
+        foreach ( $checkbox_groups as $key => $config ) {
+            $posted_values = isset( $_POST[ $key ] ) && is_array( $_POST[ $key ] ) ? array_map( 'sanitize_text_field', $_POST[ $key ] ) : array();
+            $value_string = ! empty( $posted_values ) ? implode( ', ', $posted_values ) : '';
+            update_post_meta( $jobseeker_id, $config['meta'], $value_string );
+        }
+        
+        wp_send_json_success( array( 
+            'message'     => __( 'Profile updated successfully!', 'oso-employer-portal' ),
+            'redirect_url'=> get_permalink( $jobseeker_id ),
+        ) );
+    }
+
+    /**
+     * AJAX handler to upload profile files (photo/resume).
+     */
+    public function ajax_upload_profile_file() {
+        check_ajax_referer( 'oso_upload_profile_file', 'nonce' );
+        
+        if ( ! is_user_logged_in() ) {
+            wp_send_json_error( array( 'message' => __( 'You must be logged in.', 'oso-employer-portal' ) ) );
+        }
+        
+        $user = wp_get_current_user();
+        
+        if ( ! in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, (array) $user->roles, true ) ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to upload files.', 'oso-employer-portal' ) ) );
+        }
+        
+        if ( empty( $_FILES['file'] ) ) {
+            wp_send_json_error( array( 'message' => __( 'No file uploaded.', 'oso-employer-portal' ) ) );
+        }
+        
+        $file_type = isset( $_POST['file_type'] ) ? sanitize_text_field( $_POST['file_type'] ) : '';
+        
+        // Set allowed file types
+        $allowed_types = array();
+        if ( $file_type === 'photo' ) {
+            $allowed_types = array( 'jpg', 'jpeg', 'png', 'gif' );
+        } elseif ( $file_type === 'resume' ) {
+            $allowed_types = array( 'pdf', 'doc', 'docx' );
+        }
+        
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+        require_once ABSPATH . 'wp-admin/includes/image.php';
+        
+        $upload_overrides = array(
+            'test_form' => false,
+            'mimes'     => array(),
+        );
+        
+        // Add MIME types
+        foreach ( $allowed_types as $ext ) {
+            $mime = wp_check_filetype( 'file.' . $ext );
+            if ( ! empty( $mime['type'] ) ) {
+                $upload_overrides['mimes'][ $ext ] = $mime['type'];
+            }
+        }
+        
+        $file = wp_handle_upload( $_FILES['file'], $upload_overrides );
+        
+        if ( isset( $file['error'] ) ) {
+            wp_send_json_error( array( 'message' => $file['error'] ) );
+        }
+        
+        wp_send_json_success( array( 
+            'url'     => $file['url'],
+            'message' => __( 'File uploaded successfully!', 'oso-employer-portal' ),
+        ) );
     }
 
     /**

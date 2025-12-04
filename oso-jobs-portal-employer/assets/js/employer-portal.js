@@ -93,6 +93,119 @@
                 }
             });
         });
+        // Edit Profile Form Handling
+        $('#oso-edit-profile-form').on('submit', function(e) {
+            e.preventDefault();
+            
+            var $form = $(this);
+            var $message = $('#oso-form-message');
+            var $submitBtn = $form.find('button[type="submit"]');
+            
+            // Disable submit button
+            $submitBtn.prop('disabled', true);
+            
+            // Show loading message
+            $message.removeClass('success error').addClass('loading')
+                .text('Saving changes...').fadeIn();
+            
+            // Handle file uploads first
+            var photoFile = $('#photo')[0].files[0];
+            var resumeFile = $('#resume')[0].files[0];
+            var uploadPromises = [];
+            
+            if (photoFile) {
+                uploadPromises.push(uploadFile(photoFile, 'photo'));
+            }
+            
+            if (resumeFile) {
+                uploadPromises.push(uploadFile(resumeFile, 'resume'));
+            }
+            
+            // Wait for file uploads to complete
+            Promise.all(uploadPromises).then(function(results) {
+                // Update hidden fields with uploaded URLs
+                results.forEach(function(result) {
+                    if (result.type === 'photo' && result.url) {
+                        $('#photo_url').val(result.url);
+                    } else if (result.type === 'resume' && result.url) {
+                        $('#resume_url').val(result.url);
+                    }
+                });
+                
+                // Now submit the form data
+                var formData = new FormData($form[0]);
+                formData.append('action', 'oso_update_jobseeker_profile');
+                formData.append('nonce', $('#oso_profile_nonce').val());
+                formData.append('jobseeker_id', $form.data('jobseeker-id'));
+                
+                $.ajax({
+                    url: osoEmployerPortal.ajaxUrl,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            $message.removeClass('loading error').addClass('success')
+                                .text(response.data.message);
+                            
+                            // Redirect after 1 second
+                            setTimeout(function() {
+                                if (response.data.redirect_url) {
+                                    window.location.href = response.data.redirect_url;
+                                }
+                            }, 1000);
+                        } else {
+                            $message.removeClass('loading success').addClass('error')
+                                .text(response.data.message || 'An error occurred.');
+                            $submitBtn.prop('disabled', false);
+                        }
+                    },
+                    error: function() {
+                        $message.removeClass('loading success').addClass('error')
+                            .text('An error occurred. Please try again.');
+                        $submitBtn.prop('disabled', false);
+                    }
+                });
+            }).catch(function(error) {
+                $message.removeClass('loading success').addClass('error')
+                    .text(error || 'File upload failed. Please try again.');
+                $submitBtn.prop('disabled', false);
+            });
+        });
+        
+        // File upload helper function
+        function uploadFile(file, fileType) {
+            return new Promise(function(resolve, reject) {
+                var formData = new FormData();
+                formData.append('file', file);
+                formData.append('file_type', fileType);
+                formData.append('action', 'oso_upload_profile_file');
+                formData.append('nonce', wp.ajax.settings.nonce);
+                
+                $.ajax({
+                    url: osoEmployerPortal.ajaxUrl,
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            resolve({
+                                type: fileType,
+                                url: response.data.url
+                            });
+                        } else {
+                            reject(response.data.message || 'Upload failed');
+                        }
+                    },
+                    error: function() {
+                        reject('Upload failed');
+                    }
+                });
+            });
+        }
+
     });
 
 })(jQuery);

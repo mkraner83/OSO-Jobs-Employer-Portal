@@ -130,10 +130,42 @@ $resume = ! empty( $meta['_oso_jobseeker_resume'] ) ? $meta['_oso_jobseeker_resu
             <?php endforeach; ?>
 
             <div class="oso-profile-actions">
-                <a href="mailto:<?php echo esc_attr( ! empty( $meta['_oso_jobseeker_email'] ) ? $meta['_oso_jobseeker_email'] : '' ); ?>" class="oso-btn oso-btn-primary">
-                    <span class="dashicons dashicons-email"></span>
-                    <?php esc_html_e( 'Contact Candidate', 'oso-employer-portal' ); ?>
-                </a>
+                <?php
+                // Show edit button only if user is viewing their own profile
+                $current_user = wp_get_current_user();
+                $is_own_profile = false;
+                if ( is_user_logged_in() && in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, (array) $current_user->roles, true ) ) {
+                    $profile_email = ! empty( $meta['_oso_jobseeker_email'] ) ? $meta['_oso_jobseeker_email'] : '';
+                    if ( $profile_email === $current_user->user_email ) {
+                        $is_own_profile = true;
+                    }
+                }
+                
+                if ( $is_own_profile ) :
+                    // Find edit profile page
+                    $edit_url = '#';
+                    $pages = get_posts([
+                        'post_type'   => 'page',
+                        'post_status' => 'publish',
+                        'numberposts' => -1,
+                    ]);
+                    foreach ( $pages as $page ) {
+                        if ( has_shortcode( $page->post_content, 'oso_jobseeker_edit_profile' ) ) {
+                            $edit_url = get_permalink( $page->ID );
+                            break;
+                        }
+                    }
+                    ?>
+                    <a href="<?php echo esc_url( $edit_url ); ?>" class="oso-btn oso-btn-primary">
+                        <span class="dashicons dashicons-edit"></span>
+                        <?php esc_html_e( 'Edit Profile', 'oso-employer-portal' ); ?>
+                    </a>
+                <?php else : ?>
+                    <a href="mailto:<?php echo esc_attr( ! empty( $meta['_oso_jobseeker_email'] ) ? $meta['_oso_jobseeker_email'] : '' ); ?>" class="oso-btn oso-btn-primary">
+                        <span class="dashicons dashicons-email"></span>
+                        <?php esc_html_e( 'Contact Candidate', 'oso-employer-portal' ); ?>
+                    </a>
+                <?php endif; ?>
                 <a href="javascript:history.back()" class="oso-btn oso-btn-secondary">
                     <?php esc_html_e( 'Back to Search', 'oso-employer-portal' ); ?>
                 </a>

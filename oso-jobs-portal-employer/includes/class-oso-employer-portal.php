@@ -37,15 +37,25 @@ class OSO_Employer_Portal {
             'oso-employer-portal',
             OSO_EMPLOYER_PORTAL_URL . 'assets/css/employer-portal.css',
             array(),
-            '1.0.1'
+            '1.0.2'
         );
         
         wp_enqueue_script(
             'oso-employer-portal',
             OSO_EMPLOYER_PORTAL_URL . 'assets/js/employer-portal.js',
             array( 'jquery' ),
-            '1.0.1',
+            '1.0.2',
             true
+        );
+        
+        // Localize script with AJAX URL and nonce
+        wp_localize_script(
+            'oso-employer-portal',
+            'osoEmployerPortal',
+            array(
+                'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+                'nonce'   => wp_create_nonce( 'oso_upload_profile_file' ),
+            )
         );
     }
 }
