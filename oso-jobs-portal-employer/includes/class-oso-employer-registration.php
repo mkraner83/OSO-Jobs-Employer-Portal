@@ -13,6 +13,34 @@ class OSO_Employer_Registration {
             10,
             4
         );
+        
+        // Redirect employers to their dashboard after login
+        add_filter( 'login_redirect', [__CLASS__, 'employer_login_redirect'], 10, 3 );
+    }
+    
+    /**
+     * Redirect employers to their dashboard page instead of wp-admin
+     */
+    public static function employer_login_redirect( $redirect_to, $request, $user ) {
+        if ( isset( $user->roles ) && is_array( $user->roles ) ) {
+            // Check if user is an employer
+            if ( in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, $user->roles ) ) {
+                // Find the page with the employer dashboard shortcode
+                $pages = get_posts([
+                    'post_type'   => 'page',
+                    'post_status' => 'publish',
+                    'numberposts' => -1,
+                ]);
+                
+                foreach ( $pages as $page ) {
+                    if ( has_shortcode( $page->post_content, 'oso_employer_dashboard' ) ) {
+                        return get_permalink( $page->ID );
+                    }
+                }
+            }
+        }
+        
+        return $redirect_to;
     }
 
     public static function handle_employer_submission( $fields, $entry, $form_data, $entry_id ) {

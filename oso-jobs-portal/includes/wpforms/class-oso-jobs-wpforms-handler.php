@@ -199,7 +199,7 @@ class OSO_Jobs_WPForms_Handler {
         $location   = self::find_field_value( $fields, array( 'state', 'location' ) );
         $over_18    = self::find_field_value( $fields, array( 'over 18' ) );
         $email      = self::find_field_value( $fields, array( 'email' ) );
-        $interests  = self::format_list_value( self::find_field_value( $fields, array( 'job interests' ) ) );
+        $interests  = self::format_list_value( self::find_field_value( $fields, array( 'job interests', 'interest' ) ) );
         $sports     = self::format_list_value( self::find_field_value( $fields, array( 'sports skills' ) ) );
         $arts       = self::format_list_value( self::find_field_value( $fields, array( 'arts skills' ) ) );
         $adventure  = self::format_list_value( self::find_field_value( $fields, array( 'adventure skills' ) ) );
