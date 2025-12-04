@@ -176,12 +176,16 @@ if ( ! defined( 'ABSPATH' ) ) {
                         
                         <?php if ( ! empty( $job_interests ) ) : ?>
                             <div class="oso-card-interests">
-                                <?php foreach ( array_slice( $job_interests, 0, 3 ) as $interest ) : ?>
-                                    <span class="oso-interest-badge"><?php echo esc_html( $interest ); ?></span>
-                                <?php endforeach; ?>
-                                <?php if ( count( $job_interests ) > 3 ) : ?>
-                                    <span class="oso-interest-more">+<?php echo esc_html( count( $job_interests ) - 3 ); ?> more</span>
-                                <?php endif; ?>
+                                <strong><?php esc_html_e( 'Interests:', 'oso-employer-portal' ); ?></strong>
+                                <span class="oso-interests-text">
+                                    <?php 
+                                    $display_interests = array_slice( $job_interests, 0, 3 );
+                                    echo esc_html( implode( ', ', $display_interests ) );
+                                    if ( count( $job_interests ) > 3 ) {
+                                        echo esc_html( ' +' . ( count( $job_interests ) - 3 ) . ' more' );
+                                    }
+                                    ?>
+                                </span>
                             </div>
                         <?php endif; ?>
                     </div>

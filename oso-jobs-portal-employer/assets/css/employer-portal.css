@@ -272,31 +272,21 @@
     font-size: 0.9em;
 }
 
-/* Interest Badges */
+/* Job Interests */
 .oso-card-interests {
     margin-top: 15px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    font-size: 0.9em;
+    color: #555;
+    line-height: 1.5;
 }
 
-.oso-interest-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    background: #e3f2fd;
-    color: #1976d2;
-    border-radius: 12px;
-    font-size: 0.85em;
-    font-weight: 500;
+.oso-card-interests strong {
+    color: #333;
+    margin-right: 5px;
 }
 
-.oso-interest-more {
-    display: inline-block;
-    padding: 4px 10px;
-    background: #f5f5f5;
+.oso-interests-text {
     color: #666;
-    border-radius: 12px;
-    font-size: 0.85em;
 }
 
 /* Card Actions */
