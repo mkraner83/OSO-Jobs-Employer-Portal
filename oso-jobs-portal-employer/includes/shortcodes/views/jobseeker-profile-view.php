@@ -89,8 +89,23 @@ $resume = ! empty( $meta['_oso_jobseeker_resume'] ) ? $meta['_oso_jobseeker_resu
             <?php endif; ?>
 
             <?php
-            // Display all checkbox groups
+            // Display "Are You Over 18?" as plain text
+            if ( ! empty( $meta['_oso_jobseeker_over_18'] ) ) :
+                ?>
+                <div class="oso-profile-section">
+                    <h4><?php esc_html_e( 'Age Verification', 'oso-employer-portal' ); ?></h4>
+                    <p><?php echo esc_html( $meta['_oso_jobseeker_over_18'] ); ?></p>
+                </div>
+            <?php endif; ?>
+            
+            <?php
+            // Display all checkbox groups (excluding over_18)
             foreach ( $checkbox_groups as $key => $config ) :
+                // Skip "Are You Over 18?" - it's shown above as plain text
+                if ( $key === 'over_18' ) {
+                    continue;
+                }
+                
                 $value_raw = ! empty( $meta[ $config['meta'] ] ) ? $meta[ $config['meta'] ] : '';
                 if ( class_exists( 'OSO_Jobs_Utilities' ) ) {
                     $values = OSO_Jobs_Utilities::meta_string_to_array( $value_raw );
