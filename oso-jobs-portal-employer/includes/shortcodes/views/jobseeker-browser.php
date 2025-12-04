@@ -126,15 +126,20 @@ if ( ! defined( 'ABSPATH' ) ) {
                 $availability_start = ! empty( $meta['_oso_jobseeker_availability_start'] ) ? $meta['_oso_jobseeker_availability_start'] : '';
                 $availability_end = ! empty( $meta['_oso_jobseeker_availability_end'] ) ? $meta['_oso_jobseeker_availability_end'] : '';
                 
-                // Get "Why interested" text
-                $why_interested = wp_trim_words( $jobseeker->post_content, 20, '...' );
+                // Get "Why interested" text from post_content
+                $jobseeker = get_post( $jobseeker_id );
+                $why_interested = '';
+                if ( ! empty( $jobseeker->post_content ) ) {
+                    $why_interested = wp_trim_words( wp_strip_all_tags( $jobseeker->post_content ), 20, '...' );
+                }
                 
-                // Get job interests for badges (not "over 18" or "why")
+                // Get job interests for badges - from meta field, NOT post_content
                 $job_interests_raw = ! empty( $meta['_oso_jobseeker_job_interests'] ) ? $meta['_oso_jobseeker_job_interests'] : '';
-                if ( class_exists( 'OSO_Jobs_Utilities' ) ) {
+                $job_interests = array();
+                if ( class_exists( 'OSO_Jobs_Utilities' ) && ! empty( $job_interests_raw ) ) {
                     $job_interests = OSO_Jobs_Utilities::meta_string_to_array( $job_interests_raw );
-                } else {
-                    $job_interests = array();
+                    // Filter out any empty values
+                    $job_interests = array_filter( $job_interests );
                 }
                 
                 // Build profile URL - use dedicated profile page
