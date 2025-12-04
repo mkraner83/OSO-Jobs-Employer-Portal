@@ -1,5 +1,6 @@
 /**
  * OSO Employer Portal JavaScript
+ * Version: 1.0.7
  */
 
 (function($) {
@@ -212,6 +213,22 @@
             });
         }
         
+        // Remove photo handler
+        $(document).on('click', '.oso-remove-photo', function(e) {
+            e.preventDefault();
+            var $btn = $(this);
+            var photoUrl = $btn.data('url');
+            var $photosInput = $('#photos_urls');
+            var currentPhotos = $photosInput.val().split('\n').filter(function(url) {
+                return url.trim() !== '' && url.trim() !== photoUrl;
+            });
+            
+            $photosInput.val(currentPhotos.join('\n'));
+            $btn.closest('.oso-photo-item').fadeOut(300, function() {
+                $(this).remove();
+            });
+        });
+        
         // Employer Edit Profile Form Handling
         $('#oso-edit-employer-profile-form').on('submit', function(e) {
             e.preventDefault();
@@ -236,15 +253,77 @@
                 }
             }
             
+            // Handle file uploads first
+            var logoFile = $('#logo')[0].files[0];
+            var photoFiles = $('#photos')[0].files;
+            var uploadPromises = [];
+            
+            // Validate photo count
+            var currentPhotosCount = $('#photos_urls').val().split('\n').filter(function(url) {
+                return url.trim() !== '';
+            }).length;
+            var newPhotosCount = photoFiles ? photoFiles.length : 0;
+            var totalPhotosCount = currentPhotosCount + newPhotosCount;
+            
+            if (totalPhotosCount > 6) {
+                $message.removeClass('loading success').addClass('error')
+                    .text('You can only upload up to 6 photos total.');
+                $submitBtn.prop('disabled', false);
+                return;
+            }
+            
+            // Upload logo if selected
+            if (logoFile) {
+                if (logoFile.size > 16 * 1024 * 1024) {
+                    $message.removeClass('loading success').addClass('error')
+                        .text('Logo file size must be less than 16MB.');
+                    $submitBtn.prop('disabled', false);
+                    return;
+                }
+                uploadPromises.push(uploadFile(logoFile, 'logo'));
+            }
+            
+            // Upload photos if selected
+            if (photoFiles && photoFiles.length > 0) {
+                for (var i = 0; i < photoFiles.length; i++) {
+                    if (photoFiles[i].size > 16 * 1024 * 1024) {
+                        $message.removeClass('loading success').addClass('error')
+                            .text('Each photo must be less than 16MB.');
+                        $submitBtn.prop('disabled', false);
+                        return;
+                    }
+                    uploadPromises.push(uploadFile(photoFiles[i], 'photo'));
+                }
+            }
+            
+            // Wait for file uploads to complete
+            Promise.all(uploadPromises).then(function(results) {
+                // Update hidden fields with uploaded URLs
+                results.forEach(function(result) {
+                    if (result.type === 'logo' && result.url) {
+                        $('#logo_url').val(result.url);
+                    } else if (result.type === 'photo' && result.url) {
+                        var currentPhotos = $('#photos_urls').val();
+                        var newPhotos = currentPhotos ? currentPhotos + '\n' + result.url : result.url;
+                        $('#photos_urls').val(newPhotos);
+                    }
+                });
+                
+                // Now submit the form data
+                submitEmployerForm($form, $message, $submitBtn);
+            }).catch(function(error) {
+                $message.removeClass('loading success').addClass('error')
+                    .text(error || 'File upload failed. Please try again.');
+                $submitBtn.prop('disabled', false);
+            });
+        });
+        
+        // Helper function to submit employer form
+        function submitEmployerForm($form, $message, $submitBtn) {
             var formData = new FormData($form[0]);
             formData.append('action', 'oso_update_employer_profile');
             formData.append('nonce', $('#oso_employer_profile_nonce').val());
             formData.append('employer_id', $form.data('employer-id'));
-            
-            // Debug: log what we're sending
-            console.log('Submitting employer profile update...');
-            console.log('Employer ID:', $form.data('employer-id'));
-            console.log('Nonce:', $('#oso_employer_profile_nonce').val());
             
             $.ajax({
                 url: osoEmployerPortal.ajaxUrl,
@@ -253,7 +332,6 @@
                 processData: false,
                 contentType: false,
                 success: function(response) {
-                    console.log('AJAX Response:', response);
                     if (response.success) {
                         $message.removeClass('loading error').addClass('success')
                             .text(response.data.message);
@@ -265,21 +343,18 @@
                             }
                         }, 1000);
                     } else {
-                        console.error('Error:', response.data);
                         $message.removeClass('loading success').addClass('error')
                             .text(response.data.message || 'An error occurred.');
                         $submitBtn.prop('disabled', false);
                     }
                 },
-                error: function(xhr, status, error) {
-                    console.error('AJAX Error:', status, error);
-                    console.error('Response:', xhr.responseText);
+                error: function() {
                     $message.removeClass('loading success').addClass('error')
                         .text('An error occurred. Please try again.');
                     $submitBtn.prop('disabled', false);
                 }
             });
-        });
+        }
 
     });
 

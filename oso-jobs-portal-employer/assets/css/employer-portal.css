@@ -1,6 +1,7 @@
 /**
  * OSO Employer Portal Styles
  * Jobseeker Browser & Profile Views
+ * Version: 1.0.7
  */
 
 /* ========================================
@@ -1005,6 +1006,51 @@
     display: block;
     max-width: 150px;
     border-radius: 4px;
+}
+
+/* Photo Grid */
+.oso-current-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.oso-photo-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.oso-photo-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.oso-remove-photo {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+}
+
+.oso-remove-photo:hover {
+    background: rgba(255, 0, 0, 1);
 }
 
 .oso-current-file a {

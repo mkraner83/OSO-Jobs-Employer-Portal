@@ -81,12 +81,63 @@ $camp_name = ! empty( $meta['_oso_employer_company'] ) ? $meta['_oso_employer_co
         </div>
 
         <div class="oso-form-section">
+            <h3><?php esc_html_e( 'Images', 'oso-employer-portal' ); ?></h3>
+
+            <!-- Logo Upload -->
+            <div class="oso-form-group">
+                <label for="logo"><?php esc_html_e( 'Camp Logo', 'oso-employer-portal' ); ?></label>
+                <?php if ( ! empty( $meta['_oso_employer_logo'] ) ) : ?>
+                    <div class="oso-current-file">
+                        <img src="<?php echo esc_url( $meta['_oso_employer_logo'] ); ?>" alt="Current logo" style="max-width: 200px; margin-bottom: 10px; border-radius: 4px;" />
+                    </div>
+                <?php endif; ?>
+                <input type="file" id="logo" name="logo" accept="image/*" />
+                <input type="hidden" id="logo_url" name="logo_url" value="<?php echo esc_attr( ! empty( $meta['_oso_employer_logo'] ) ? $meta['_oso_employer_logo'] : '' ); ?>" />
+                <p class="oso-field-description"><?php esc_html_e( 'Upload your camp logo (max 16MB)', 'oso-employer-portal' ); ?></p>
+            </div>
+
+            <!-- Photos Upload -->
+            <div class="oso-form-group">
+                <label for="photos"><?php esc_html_e( 'Camp Photos', 'oso-employer-portal' ); ?></label>
+                <?php
+                $photos = ! empty( $meta['_oso_employer_photos'] ) ? $meta['_oso_employer_photos'] : '';
+                $photos_array = ! empty( $photos ) ? explode( '\n', $photos ) : array();
+                if ( ! empty( $photos_array ) ) :
+                ?>
+                    <div class="oso-current-photos" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px;">
+                        <?php foreach ( $photos_array as $photo_url ) : ?>
+                            <?php if ( ! empty( trim( $photo_url ) ) ) : ?>
+                                <div class="oso-photo-item" style="position: relative;">
+                                    <img src="<?php echo esc_url( trim( $photo_url ) ); ?>" alt="Camp photo" style="width: 100%; height: 150px; object-fit: cover; border-radius: 4px;" />
+                                    <button type="button" class="oso-remove-photo" data-url="<?php echo esc_attr( trim( $photo_url ) ); ?>" style="position: absolute; top: 5px; right: 5px; background: rgba(255,0,0,0.8); color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-size: 16px; line-height: 1;">&times;</button>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+                <input type="file" id="photos" name="photos[]" accept="image/*" multiple />
+                <input type="hidden" id="photos_urls" name="photos_urls" value="<?php echo esc_attr( $photos ); ?>" />
+                <p class="oso-field-description"><?php esc_html_e( 'Upload up to 6 photos (max 16MB each)', 'oso-employer-portal' ); ?></p>
+            </div>
+        </div>
+
+        <div class="oso-form-section">
             <h3><?php esc_html_e( 'Additional Details', 'oso-employer-portal' ); ?></h3>
 
             <!-- Training Start Date -->
             <div class="oso-form-group">
                 <label for="training_start"><?php esc_html_e( 'Start of Staff Training Date', 'oso-employer-portal' ); ?></label>
-                <input type="date" id="training_start" name="training_start" value="<?php echo esc_attr( ! empty( $meta['_oso_employer_training_start'] ) ? $meta['_oso_employer_training_start'] : '' ); ?>" />
+                <?php
+                // Convert MM/DD/YYYY to YYYY-MM-DD for HTML date input
+                $training_date = ! empty( $meta['_oso_employer_training_start'] ) ? $meta['_oso_employer_training_start'] : '';
+                if ( ! empty( $training_date ) ) {
+                    $date_obj = DateTime::createFromFormat( 'm/d/Y', $training_date );
+                    if ( $date_obj ) {
+                        $training_date = $date_obj->format( 'Y-m-d' );
+                    }
+                }
+                ?>
+                <input type="date" id="training_start" name="training_start" value="<?php echo esc_attr( $training_date ); ?>" />
             </div>
 
             <!-- Housing Provided -->
@@ -105,11 +156,11 @@ $camp_name = ! empty( $meta['_oso_employer_company'] ) ? $meta['_oso_employer_co
                 <textarea id="social_links" name="social_links" rows="4" placeholder="Instagram, Facebook, Twitter, etc."><?php echo esc_textarea( ! empty( $meta['_oso_employer_social_links'] ) ? $meta['_oso_employer_social_links'] : '' ); ?></textarea>
             </div>
 
-            <!-- Subscription Type (read-only) -->
+            <!-- Subscription Type (view-only) -->
             <div class="oso-form-group">
                 <label for="subscription_type"><?php esc_html_e( 'Subscription Type', 'oso-employer-portal' ); ?></label>
-                <input type="text" id="subscription_type" name="subscription_type" value="<?php echo esc_attr( ! empty( $meta['_oso_employer_subscription_type'] ) ? $meta['_oso_employer_subscription_type'] : '' ); ?>" readonly />
-                <p class="oso-field-description"><?php esc_html_e( 'This field cannot be edited here', 'oso-employer-portal' ); ?></p>
+                <input type="text" id="subscription_type" name="subscription_type" value="<?php echo esc_attr( ! empty( $meta['_oso_employer_subscription_type'] ) ? $meta['_oso_employer_subscription_type'] : '' ); ?>" disabled style="background: #f5f5f5; cursor: not-allowed;" />
+                <p class="oso-field-description"><?php esc_html_e( 'Contact support to change your subscription', 'oso-employer-portal' ); ?></p>
             </div>
         </div>
 

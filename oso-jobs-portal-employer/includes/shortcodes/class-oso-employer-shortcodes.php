@@ -170,6 +170,7 @@ class OSO_Employer_Shortcodes {
             '_oso_employer_social_links',
             '_oso_employer_subscription_type',
             '_oso_employer_logo',
+            '_oso_employer_photos',
             '_oso_employer_user_id',
             '_oso_employer_wpforms_entry',
         );
@@ -582,7 +583,9 @@ class OSO_Employer_Shortcodes {
         
         $user = wp_get_current_user();
         
-        if ( ! in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, (array) $user->roles, true ) ) {
+        // Allow both jobseekers and employers to upload files
+        if ( ! in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, (array) $user->roles, true ) && 
+             ! in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, (array) $user->roles, true ) ) {
             wp_send_json_error( array( 'message' => __( 'You do not have permission to upload files.', 'oso-employer-portal' ) ) );
         }
         
@@ -590,12 +593,17 @@ class OSO_Employer_Shortcodes {
             wp_send_json_error( array( 'message' => __( 'No file uploaded.', 'oso-employer-portal' ) ) );
         }
         
+        // Check file size (16MB max)
+        if ( $_FILES['file']['size'] > 16 * 1024 * 1024 ) {
+            wp_send_json_error( array( 'message' => __( 'File size must be less than 16MB.', 'oso-employer-portal' ) ) );
+        }
+        
         $file_type = isset( $_POST['file_type'] ) ? sanitize_text_field( $_POST['file_type'] ) : '';
         
         // Set allowed file types
         $allowed_types = array();
-        if ( $file_type === 'photo' ) {
-            $allowed_types = array( 'jpg', 'jpeg', 'png', 'gif' );
+        if ( $file_type === 'photo' || $file_type === 'logo' ) {
+            $allowed_types = array( 'jpg', 'jpeg', 'png', 'gif', 'webp' );
         } elseif ( $file_type === 'resume' ) {
             $allowed_types = array( 'pdf', 'doc', 'docx' );
         }
@@ -717,7 +725,8 @@ class OSO_Employer_Shortcodes {
             'training_start'   => '_oso_employer_training_start',
             'housing'          => '_oso_employer_housing',
             'social_links'     => '_oso_employer_social_links',
-            'subscription_type'=> '_oso_employer_subscription_type',
+            'logo_url'         => '_oso_employer_logo',
+            'photos_urls'      => '_oso_employer_photos',
         );
         
         $updated_fields = array();
@@ -726,7 +735,7 @@ class OSO_Employer_Shortcodes {
                 $value = $_POST[ $field ];
                 
                 // Sanitize based on field type
-                if ( in_array( $field, array( 'description', 'camp_types', 'social_links' ) ) ) {
+                if ( in_array( $field, array( 'description', 'camp_types', 'social_links', 'photos_urls' ) ) ) {
                     $value = sanitize_textarea_field( $value );
                 } elseif ( $field === 'website' ) {
                     // Auto-add https:// if not present
@@ -738,7 +747,16 @@ class OSO_Employer_Shortcodes {
                 } elseif ( $field === 'email' ) {
                     $value = sanitize_email( $value );
                 } elseif ( $field === 'training_start' ) {
-                    $value = sanitize_text_field( $value ); // Date format YYYY-MM-DD
+                    // Convert HTML date format (YYYY-MM-DD) to display format (MM/DD/YYYY)
+                    $value = sanitize_text_field( $value );
+                    if ( ! empty( $value ) ) {
+                        $date_obj = DateTime::createFromFormat( 'Y-m-d', $value );
+                        if ( $date_obj ) {
+                            $value = $date_obj->format( 'm/d/Y' );
+                        }
+                    }
+                } elseif ( $field === 'logo_url' ) {
+                    $value = esc_url_raw( $value );
                 } else {
                     $value = sanitize_text_field( $value );
                 }
