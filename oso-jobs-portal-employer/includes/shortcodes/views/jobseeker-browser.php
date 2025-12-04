@@ -126,7 +126,10 @@ if ( ! defined( 'ABSPATH' ) ) {
                 $availability_start = ! empty( $meta['_oso_jobseeker_availability_start'] ) ? $meta['_oso_jobseeker_availability_start'] : '';
                 $availability_end = ! empty( $meta['_oso_jobseeker_availability_end'] ) ? $meta['_oso_jobseeker_availability_end'] : '';
                 
-                // Get job interests
+                // Get "Why interested" text
+                $why_interested = wp_trim_words( $jobseeker->post_content, 20, '...' );
+                
+                // Get job interests for badges (not "over 18" or "why")
                 $job_interests_raw = ! empty( $meta['_oso_jobseeker_job_interests'] ) ? $meta['_oso_jobseeker_job_interests'] : '';
                 if ( class_exists( 'OSO_Jobs_Utilities' ) ) {
                     $job_interests = OSO_Jobs_Utilities::meta_string_to_array( $job_interests_raw );
@@ -171,6 +174,12 @@ if ( ! defined( 'ABSPATH' ) ) {
                                     echo esc_html( 'Until ' . $availability_end );
                                 }
                                 ?>
+                            </p>
+                        <?php endif; ?>
+                        
+                        <?php if ( $why_interested ) : ?>
+                            <p class="oso-card-why">
+                                <em><?php echo esc_html( $why_interested ); ?></em>
                             </p>
                         <?php endif; ?>
                         

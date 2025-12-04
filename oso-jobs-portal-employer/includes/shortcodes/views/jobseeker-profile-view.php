@@ -89,7 +89,7 @@ $resume = ! empty( $meta['_oso_jobseeker_resume'] ) ? $meta['_oso_jobseeker_resu
             <?php endif; ?>
 
             <?php
-            // Display all checkbox groups
+            // Display checkbox groups (badges for skills, text for over_18)
             foreach ( $checkbox_groups as $key => $config ) :
                 $value_raw = ! empty( $meta[ $config['meta'] ] ) ? $meta[ $config['meta'] ] : '';
                 if ( class_exists( 'OSO_Jobs_Utilities' ) ) {
@@ -100,6 +100,11 @@ $resume = ! empty( $meta['_oso_jobseeker_resume'] ) ? $meta['_oso_jobseeker_resu
                 
                 if ( empty( $values ) ) {
                     continue;
+                }
+                
+                // Display "over 18" as simple text in availability section, not as badges
+                if ( $key === 'over_18' ) {
+                    continue; // Skip - already shown in sidebar or can be omitted
                 }
                 ?>
                 <div class="oso-profile-section">
