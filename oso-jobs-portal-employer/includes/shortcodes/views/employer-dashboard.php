@@ -34,17 +34,18 @@ endif;
 // User is logged in
 ?>
 <div class="oso-employer-dashboard">
-    <h2><?php esc_html_e( 'Employer Profile', 'oso-employer-portal' ); ?></h2>
-    
-    <!-- Quick Links at Top -->
-    <div class="oso-dashboard-quick-links">
-        <h3><?php esc_html_e( 'Quick Links', 'oso-employer-portal' ); ?></h3>
-        <div class="oso-quick-links-grid">
-            <a href="<?php echo esc_url( home_url( '/job-portal/browse-jobseekers/' ) ); ?>" class="oso-quick-link">
-                <span class="dashicons dashicons-groups"></span>
-                <span><?php esc_html_e( 'Browse Jobseekers', 'oso-employer-portal' ); ?></span>
-            </a>
-        </div>
+    <!-- Full-Width Quick Link Banner -->
+    <div class="oso-quick-link-banner">
+        <a href="<?php echo esc_url( home_url( '/job-portal/browse-jobseekers/' ) ); ?>" class="oso-quick-link">
+            <span class="dashicons dashicons-groups"></span>
+            <span><?php esc_html_e( 'Browse Jobseekers', 'oso-employer-portal' ); ?></span>
+        </a>
+    </div>
+
+    <!-- Job Postings Section -->
+    <div class="oso-employer-jobs">
+        <h3><?php esc_html_e( 'Your Job Postings', 'oso-employer-portal' ); ?></h3>
+        <p><?php esc_html_e( 'You have not posted any jobs yet.', 'oso-employer-portal' ); ?></p>
     </div>
 
     <!-- Employer Profile Information -->

@@ -743,6 +743,39 @@
     gap: 15px;
 }
 
+/* Full-Width Banner Style for Quick Link */
+.oso-quick-link-banner {
+    margin: 0 0 30px 0;
+    width: 100%;
+}
+
+.oso-quick-link-banner .oso-quick-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px;
+    background: #8051B0;
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: all 0.3s;
+    border-radius: 0;
+}
+
+.oso-quick-link-banner .oso-quick-link:hover {
+    background: #6d3f96;
+    transform: none;
+    box-shadow: 0 2px 8px rgba(128, 81, 176, 0.3);
+}
+
+.oso-quick-link-banner .oso-quick-link .dashicons {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+}
+
 .oso-quick-link {
     display: flex;
     align-items: center;
@@ -768,6 +801,27 @@
     width: 24px;
     height: 24px;
     font-size: 24px;
+}
+
+/* Job Postings Section */
+.oso-employer-jobs {
+    margin: 0 0 30px 0;
+    padding: 25px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.oso-employer-jobs h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.3em;
+}
+
+.oso-employer-jobs p {
+    margin: 0;
+    color: #666;
+    font-size: 1em;
 }
 
 /* ========================================
