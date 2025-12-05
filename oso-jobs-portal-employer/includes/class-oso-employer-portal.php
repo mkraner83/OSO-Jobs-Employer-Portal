@@ -18,12 +18,18 @@ class OSO_Employer_Portal {
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/class-oso-employer-registration.php';
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/helpers/class-oso-employer-utils.php';
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/shortcodes/class-oso-employer-shortcodes.php';
+        require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/admin/class-oso-employer-admin.php';
 
         // Initialize employer registration handler
         OSO_Employer_Registration::init();
         
         // Initialize shortcodes
         OSO_Employer_Shortcodes::instance();
+        
+        // Initialize admin functionality
+        if ( is_admin() ) {
+            OSO_Employer_Admin::instance();
+        }
         
         // Enqueue frontend assets
         add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_assets' ] );
