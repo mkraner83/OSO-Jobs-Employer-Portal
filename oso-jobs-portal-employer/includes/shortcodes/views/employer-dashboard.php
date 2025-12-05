@@ -37,15 +37,37 @@ endif;
     <?php 
     // Check if employer is approved (admins always see the button)
     $is_approved = current_user_can( 'manage_options' ) || ( isset( $meta['_oso_employer_approved'] ) && $meta['_oso_employer_approved'] === '1' );
+    
+    // Check if subscription is expired
+    $is_expired = false;
+    if ( ! current_user_can( 'manage_options' ) && ! empty( $meta['_oso_employer_subscription_ends'] ) ) {
+        $expiration_date = strtotime( $meta['_oso_employer_subscription_ends'] );
+        if ( $expiration_date && $expiration_date < time() ) {
+            $is_expired = true;
+        }
+    }
     ?>
     
-    <?php if ( $is_approved ) : ?>
+    <?php if ( $is_approved && ! $is_expired ) : ?>
         <!-- Full-Width Quick Link Banner -->
         <div class="oso-quick-link-banner">
             <a href="<?php echo esc_url( home_url( '/job-portal/browse-jobseekers/' ) ); ?>" class="oso-quick-link">
                 <span class="dashicons dashicons-groups"></span>
                 <span><?php esc_html_e( 'Browse Jobseekers', 'oso-employer-portal' ); ?></span>
             </a>
+        </div>
+    <?php elseif ( $is_expired ) : ?>
+        <!-- Subscription Expired Message -->
+        <div style="padding: 20px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 8px; margin: 0 0 30px 0;">
+            <p style="margin: 0; color: #721c24;"><strong><?php esc_html_e( 'Subscription Expired', 'oso-employer-portal' ); ?></strong></p>
+            <p style="margin: 10px 0 0 0; color: #721c24;">
+                <?php 
+                printf( 
+                    esc_html__( 'Your subscription expired on %s. Please renew your subscription to continue browsing jobseeker profiles.', 'oso-employer-portal' ),
+                    '<strong>' . esc_html( date_i18n( get_option( 'date_format' ), strtotime( $meta['_oso_employer_subscription_ends'] ) ) ) . '</strong>'
+                );
+                ?>
+            </p>
         </div>
     <?php else : ?>
         <!-- Pending Approval Message -->
@@ -84,6 +106,7 @@ endif;
                 '_oso_employer_training_start' => array( 'label' => 'Start of Staff Training', 'required' => false, 'type' => 'date' ),
                 '_oso_employer_housing' => array( 'label' => 'Housing Provided', 'required' => false ),
                 '_oso_employer_subscription_type' => array( 'label' => 'Subscription Type', 'required' => false ),
+                '_oso_employer_subscription_ends' => array( 'label' => 'Subscription Ends', 'required' => false, 'type' => 'expiration_date' ),
                 '_oso_employer_camp_types' => array( 'label' => 'Type of Camp', 'required' => false, 'type' => 'list' ),
                 '_oso_employer_description' => array( 'label' => 'Brief Description', 'required' => false, 'full_width' => true, 'type' => 'textarea' ),
                 '_oso_employer_social_links' => array( 'label' => 'Social Media Links', 'required' => false, 'full_width' => true, 'type' => 'textarea' ),
@@ -109,6 +132,17 @@ endif;
                         <p><?php echo wp_kses_post( nl2br( $value ) ); ?></p>
                     <?php elseif ( $field_type === 'list' ) : ?>
                         <span><?php echo esc_html( str_replace( "\n", ', ', $value ) ); ?></span>
+                    <?php elseif ( $field_type === 'expiration_date' && ! empty( $value ) ) : ?>
+                        <?php
+                        $formatted_date = date_i18n( get_option( 'date_format' ), strtotime( $value ) );
+                        $expiration_timestamp = strtotime( $value );
+                        $is_expired_check = $expiration_timestamp && $expiration_timestamp < time();
+                        if ( $is_expired_check && ! current_user_can( 'manage_options' ) ) {
+                            echo '<span style="color: #d9534f; font-weight: bold;">' . esc_html( $formatted_date ) . ' (' . esc_html__( 'Expired', 'oso-employer-portal' ) . ')</span>';
+                        } else {
+                            echo '<span>' . esc_html( $formatted_date ) . '</span>';
+                        }
+                        ?>
                     <?php elseif ( $field_type === 'date' && ! empty( $value ) ) : ?>
                         <span><?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $value ) ) ); ?></span>
                     <?php else : ?>

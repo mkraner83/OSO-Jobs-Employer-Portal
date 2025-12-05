@@ -169,6 +169,7 @@ class OSO_Employer_Shortcodes {
             '_oso_employer_housing',
             '_oso_employer_social_links',
             '_oso_employer_subscription_type',
+            '_oso_employer_subscription_ends',
             '_oso_employer_logo',
             '_oso_employer_photos',
             '_oso_employer_approved',
@@ -210,14 +211,28 @@ class OSO_Employer_Shortcodes {
 
         // Check if employer is approved (unless admin)
         if ( ! current_user_can( 'manage_options' ) ) {
-            $employer_post = $this->get_employer_by_user_id( $user->ID );
+            $employer_post = $this->get_employer_by_user( $user->ID );
             if ( $employer_post ) {
                 $approved = get_post_meta( $employer_post->ID, '_oso_employer_approved', true );
+                $subscription_ends = get_post_meta( $employer_post->ID, '_oso_employer_subscription_ends', true );
+                
+                // Check if not approved
                 if ( $approved !== '1' ) {
                     return '<div style="padding: 20px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; margin: 20px 0;">' .
                            '<p style="margin: 0; color: #856404;"><strong>' . esc_html__( 'Account Pending Approval', 'oso-employer-portal' ) . '</strong></p>' .
                            '<p style="margin: 10px 0 0 0; color: #856404;">' . esc_html__( 'Your employer account is currently pending approval. You will be able to browse jobseekers once an administrator approves your account.', 'oso-employer-portal' ) . '</p>' .
                            '</div>';
+                }
+                
+                // Check if subscription expired
+                if ( ! empty( $subscription_ends ) ) {
+                    $expiration_date = strtotime( $subscription_ends );
+                    if ( $expiration_date && $expiration_date < time() ) {
+                        return '<div style="padding: 20px; background: #f8d7da; border: 1px solid #dc3545; border-radius: 8px; margin: 20px 0;">' .
+                               '<p style="margin: 0; color: #721c24;"><strong>' . esc_html__( 'Subscription Expired', 'oso-employer-portal' ) . '</strong></p>' .
+                               '<p style="margin: 10px 0 0 0; color: #721c24;">' . sprintf( esc_html__( 'Your subscription expired on %s. Please renew your subscription to continue browsing jobseekers.', 'oso-employer-portal' ), date_i18n( get_option( 'date_format' ), $expiration_date ) ) . '</p>' .
+                               '</div>';
+                    }
                 }
             }
         }
@@ -422,14 +437,27 @@ class OSO_Employer_Shortcodes {
 
         // Check if employer is approved (unless admin)
         if ( $is_employer && ! $is_admin ) {
-            $employer_post = $this->get_employer_by_user_id( $user->ID );
+            $employer_post = $this->get_employer_by_user( $user->ID );
             if ( $employer_post ) {
                 $approved = get_post_meta( $employer_post->ID, '_oso_employer_approved', true );
+                $subscription_ends = get_post_meta( $employer_post->ID, '_oso_employer_subscription_ends', true );
+                
                 if ( $approved !== '1' ) {
                     return '<div style="padding: 20px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; margin: 20px 0;">' .
                            '<p style="margin: 0; color: #856404;"><strong>' . esc_html__( 'Account Pending Approval', 'oso-employer-portal' ) . '</strong></p>' .
                            '<p style="margin: 10px 0 0 0; color: #856404;">' . esc_html__( 'Your employer account is currently pending approval. You will be able to view jobseeker profiles once an administrator approves your account.', 'oso-employer-portal' ) . '</p>' .
                            '</div>';
+                }
+                
+                // Check if subscription expired
+                if ( ! empty( $subscription_ends ) ) {
+                    $expiration_date = strtotime( $subscription_ends );
+                    if ( $expiration_date && $expiration_date < time() ) {
+                        return '<div style="padding: 20px; background: #f8d7da; border: 1px solid #dc3545; border-radius: 8px; margin: 20px 0;">' .
+                               '<p style="margin: 0; color: #721c24;"><strong>' . esc_html__( 'Subscription Expired', 'oso-employer-portal' ) . '</strong></p>' .
+                               '<p style="margin: 10px 0 0 0; color: #721c24;">' . sprintf( esc_html__( 'Your subscription expired on %s. Please renew your subscription to continue viewing jobseeker profiles.', 'oso-employer-portal' ), date_i18n( get_option( 'date_format' ), $expiration_date ) ) . '</p>' .
+                               '</div>';
+                    }
                 }
             }
         }

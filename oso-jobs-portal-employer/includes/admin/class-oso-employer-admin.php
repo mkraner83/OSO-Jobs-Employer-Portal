@@ -178,6 +178,13 @@ class OSO_Employer_Admin {
                     </tr>
                     <?php if ( current_user_can( 'manage_options' ) ) : ?>
                     <tr>
+                        <th scope="row"><label for="subscription_ends"><?php esc_html_e( 'Subscription Ends', 'oso-employer-portal' ); ?></label></th>
+                        <td>
+                            <input type="date" class="regular-text" id="subscription_ends" name="subscription_ends" value="<?php echo esc_attr( $meta['_oso_employer_subscription_ends'] ); ?>" />
+                            <p class="description"><?php esc_html_e( 'Set the subscription expiration date. Leave empty for no expiration. Only administrators can change this.', 'oso-employer-portal' ); ?></p>
+                        </td>
+                    </tr>
+                    <tr>
                         <th scope="row"><label for="approved"><?php esc_html_e( 'Approved', 'oso-employer-portal' ); ?></label></th>
                         <td>
                             <label>
@@ -271,6 +278,7 @@ class OSO_Employer_Admin {
             '_oso_employer_housing',
             '_oso_employer_social_links',
             '_oso_employer_subscription_type',
+            '_oso_employer_subscription_ends',
             '_oso_employer_logo',
             '_oso_employer_photos',
             '_oso_employer_approved',
@@ -336,10 +344,15 @@ class OSO_Employer_Admin {
             'photos_urls'       => '_oso_employer_photos',
         );
 
-        // Handle approved checkbox (only admins can change this)
+        // Handle approved checkbox and subscription ends (only admins can change these)
         if ( current_user_can( 'manage_options' ) ) {
             $approved = isset( $_POST['approved'] ) ? '1' : '0';
             update_post_meta( $post_id, '_oso_employer_approved', $approved );
+            
+            if ( isset( $_POST['subscription_ends'] ) ) {
+                $subscription_ends = sanitize_text_field( wp_unslash( $_POST['subscription_ends'] ) );
+                update_post_meta( $post_id, '_oso_employer_subscription_ends', $subscription_ends );
+            }
         }
 
         foreach ( $fields_to_save as $field => $meta_key ) {
