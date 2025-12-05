@@ -20,9 +20,11 @@ $resume = ! empty( $meta['_oso_jobseeker_resume'] ) ? $meta['_oso_jobseeker_resu
 
 <div class="oso-jobseeker-profile-view">
     <div class="oso-profile-header">
+        <?php if ( current_user_can( 'oso_employer' ) || current_user_can( 'manage_options' ) ) : ?>
         <a href="javascript:history.back()" class="oso-back-link">
             &laquo; <?php esc_html_e( 'Back to Search', 'oso-employer-portal' ); ?>
         </a>
+        <?php endif; ?>
         <h2><?php esc_html_e( 'Jobseeker Profile', 'oso-employer-portal' ); ?></h2>
     </div>
 
@@ -155,9 +157,11 @@ $resume = ! empty( $meta['_oso_jobseeker_resume'] ) ? $meta['_oso_jobseeker_resu
                         <?php esc_html_e( 'Contact Candidate', 'oso-employer-portal' ); ?>
                     </a>
                 <?php endif; ?>
+                <?php if ( current_user_can( 'oso_employer' ) || current_user_can( 'manage_options' ) ) : ?>
                 <a href="javascript:history.back()" class="oso-btn oso-btn-secondary">
                     <?php esc_html_e( 'Back to Search', 'oso-employer-portal' ); ?>
                 </a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
