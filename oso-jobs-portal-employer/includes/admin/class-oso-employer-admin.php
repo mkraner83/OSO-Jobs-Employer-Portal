@@ -37,9 +37,18 @@ class OSO_Employer_Admin {
      * Constructor.
      */
     private function __construct() {
+        add_action( 'init', array( $this, 'remove_employer_editor_support' ), 15 );
         add_action( 'add_meta_boxes', array( $this, 'add_employer_meta_boxes' ), 20 );
         add_action( 'save_post_oso_employer', array( $this, 'save_employer_meta' ), 10, 2 );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
+    }
+
+    /**
+     * Remove editor and excerpt support from employer post type.
+     */
+    public function remove_employer_editor_support() {
+        remove_post_type_support( 'oso_employer', 'editor' );
+        remove_post_type_support( 'oso_employer', 'excerpt' );
     }
 
     /**
