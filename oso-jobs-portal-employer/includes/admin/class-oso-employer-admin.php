@@ -41,6 +41,8 @@ class OSO_Employer_Admin {
         add_action( 'add_meta_boxes', array( $this, 'add_employer_meta_boxes' ), 20 );
         add_action( 'save_post_oso_employer', array( $this, 'save_employer_meta' ), 10, 2 );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
+        add_filter( 'manage_oso_employer_posts_columns', array( $this, 'add_employer_columns' ) );
+        add_action( 'manage_oso_employer_posts_custom_column', array( $this, 'render_employer_columns' ), 10, 2 );
     }
 
     /**
@@ -377,6 +379,99 @@ class OSO_Employer_Admin {
                 
                 update_post_meta( $post_id, $meta_key, $value );
             }
+        }
+    }
+
+    /**
+     * Add custom columns to employer list table.
+     *
+     * @param array $columns Existing columns.
+     * @return array Modified columns.
+     */
+    public function add_employer_columns( $columns ) {
+        $new_columns = array();
+        
+        // Keep checkbox
+        if ( isset( $columns['cb'] ) ) {
+            $new_columns['cb'] = $columns['cb'];
+        }
+        
+        // Add custom columns
+        $new_columns['camp_name']         = __( 'Camp Name', 'oso-employer-portal' );
+        $new_columns['logo']              = __( 'Logo', 'oso-employer-portal' );
+        $new_columns['email']             = __( 'Email', 'oso-employer-portal' );
+        $new_columns['subscription_type'] = __( 'Subscription Type', 'oso-employer-portal' );
+        $new_columns['subscription_ends'] = __( 'Subscription Ends', 'oso-employer-portal' );
+        
+        // Keep date at the end
+        if ( isset( $columns['date'] ) ) {
+            $new_columns['date'] = $columns['date'];
+        }
+        
+        return $new_columns;
+    }
+
+    /**
+     * Render custom column content.
+     *
+     * @param string $column  Column name.
+     * @param int    $post_id Post ID.
+     */
+    public function render_employer_columns( $column, $post_id ) {
+        switch ( $column ) {
+            case 'camp_name':
+                $camp_name = get_post_meta( $post_id, '_oso_employer_company', true );
+                echo esc_html( $camp_name ? $camp_name : '—' );
+                break;
+
+            case 'logo':
+                $logo_url = get_post_meta( $post_id, '_oso_employer_logo', true );
+                $website  = get_post_meta( $post_id, '_oso_employer_website', true );
+                
+                if ( $logo_url ) {
+                    $logo_html = '<img src="' . esc_url( $logo_url ) . '" alt="' . esc_attr__( 'Logo', 'oso-employer-portal' ) . '" style="max-width: 60px; height: auto; display: block; border-radius: 4px; border: 1px solid #ddd;">';
+                    
+                    if ( $website ) {
+                        echo '<a href="' . esc_url( $website ) . '" target="_blank" rel="noopener">' . $logo_html . '</a>';
+                    } else {
+                        echo $logo_html;
+                    }
+                } else {
+                    echo '—';
+                }
+                break;
+
+            case 'email':
+                $email = get_post_meta( $post_id, '_oso_employer_email', true );
+                if ( $email ) {
+                    echo '<a href="mailto:' . esc_attr( $email ) . '">' . esc_html( $email ) . '</a>';
+                } else {
+                    echo '—';
+                }
+                break;
+
+            case 'subscription_type':
+                $subscription_type = get_post_meta( $post_id, '_oso_employer_subscription_type', true );
+                echo esc_html( $subscription_type ? $subscription_type : '—' );
+                break;
+
+            case 'subscription_ends':
+                $subscription_ends = get_post_meta( $post_id, '_oso_employer_subscription_ends', true );
+                
+                if ( $subscription_ends ) {
+                    $formatted_date = date_i18n( get_option( 'date_format' ), strtotime( $subscription_ends ) );
+                    $expiration_timestamp = strtotime( $subscription_ends );
+                    $is_expired = $expiration_timestamp && $expiration_timestamp < time();
+                    
+                    if ( $is_expired ) {
+                        echo '<span style="color: #d9534f; font-weight: bold;">' . esc_html( $formatted_date ) . ' <br><small>(' . esc_html__( 'Expired', 'oso-employer-portal' ) . ')</small></span>';
+                    } else {
+                        echo '<span style="color: #5cb85c;">' . esc_html( $formatted_date ) . '</span>';
+                    }
+                } else {
+                    echo '—';
+                }
+                break;
         }
     }
 }
