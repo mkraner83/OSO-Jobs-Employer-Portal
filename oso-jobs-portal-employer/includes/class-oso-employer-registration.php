@@ -110,7 +110,7 @@ class OSO_Employer_Registration {
             return $redirect_to;
         }
 
-        // Check if user is an employer
+        // Only redirect employers - let core plugin handle jobseekers
         if ( in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, $user->roles ) ) {
             // Find the employer dashboard page
             $pages = get_posts([
@@ -126,13 +126,8 @@ class OSO_Employer_Registration {
                 }
             }
         }
-        
-        // Check if user is a jobseeker
-        if ( in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, $user->roles ) ) {
-            // Redirect to the jobseeker profile page
-            return home_url( '/job-portal/jobseeker-profile/' );
-        }
 
+        // Let other plugins/core handle other roles
         return $redirect_to;
     }
 
