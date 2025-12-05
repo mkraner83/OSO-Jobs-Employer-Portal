@@ -37,6 +37,8 @@ class OSO_Jobs_Admin_Menu {
      */
     protected function __construct() {
         add_action( 'admin_menu', array( $this, 'register_menu' ) );
+        add_action( 'admin_head', array( $this, 'add_admin_styles' ) );
+        add_action( 'admin_footer', array( $this, 'add_admin_scripts' ) );
     }
 
     /**
@@ -195,5 +197,58 @@ class OSO_Jobs_Admin_Menu {
         echo '<div class="notice notice-success"><p>';
         printf( esc_html__( 'Fixed %d jobseeker records.', 'oso-jobs-portal' ), $fixed );
         echo '</p></div>';
+    }
+
+    /**
+     * Add custom admin styles for OSO Jobs menu.
+     */
+    public function add_admin_styles() {
+        ?>
+        <style>
+            /* Style OSO Jobs menu title in purple */
+            #adminmenu #toplevel_page_oso-jobs-dashboard .wp-menu-name {
+                color: #8051B0 !important;
+                font-weight: 600;
+            }
+            
+            #adminmenu #toplevel_page_oso-jobs-dashboard:hover .wp-menu-name,
+            #adminmenu #toplevel_page_oso-jobs-dashboard.current .wp-menu-name,
+            #adminmenu #toplevel_page_oso-jobs-dashboard.wp-has-current-submenu .wp-menu-name {
+                color: #fff !important;
+            }
+            
+            /* Keep menu expanded */
+            #adminmenu #toplevel_page_oso-jobs-dashboard .wp-submenu {
+                display: block !important;
+            }
+            
+            #adminmenu #toplevel_page_oso-jobs-dashboard.wp-not-current-submenu .wp-submenu {
+                display: block !important;
+            }
+        </style>
+        <?php
+    }
+
+    /**
+     * Add JavaScript to move OSO Jobs menu to position 2 (after Dashboard).
+     */
+    public function add_admin_scripts() {
+        ?>
+        <script>
+        jQuery(document).ready(function($) {
+            // Move OSO Jobs menu to position 2 (right after Dashboard)
+            var osoMenu = $('#toplevel_page_oso-jobs-dashboard');
+            var dashboardMenu = $('#menu-dashboard');
+            
+            if (osoMenu.length && dashboardMenu.length) {
+                osoMenu.insertAfter(dashboardMenu);
+            }
+            
+            // Keep submenu always visible
+            $('#toplevel_page_oso-jobs-dashboard').addClass('wp-has-current-submenu wp-menu-open');
+            $('#toplevel_page_oso-jobs-dashboard > a').addClass('wp-has-current-submenu');
+        });
+        </script>
+        <?php
     }
 }
