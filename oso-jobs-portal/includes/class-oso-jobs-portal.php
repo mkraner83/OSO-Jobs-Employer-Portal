@@ -155,7 +155,8 @@ class OSO_Jobs_Portal {
             'rewrite'            => array( 'slug' => 'jobs' ),
             'supports'           => array( 'title', 'editor', 'excerpt', 'thumbnail' ),
             'show_in_rest'       => true,
-            'show_in_menu'       => false, // Hidden - use oso_job_posting instead
+            'show_ui'            => false, // Hidden from admin - use oso_job_posting instead
+            'show_in_menu'       => false,
         );
 
         register_post_type( self::POST_TYPE, $args );
