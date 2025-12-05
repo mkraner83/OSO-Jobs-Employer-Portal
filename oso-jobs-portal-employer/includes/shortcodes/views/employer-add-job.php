@@ -164,7 +164,7 @@ $selected_skills = $is_edit && ! empty( $job_meta['_oso_job_required_skills'] ) 
                 <span class="dashicons dashicons-yes"></span>
                 <?php echo $is_edit ? esc_html__( 'Update Job', 'oso-employer-portal' ) : esc_html__( 'Post Job', 'oso-employer-portal' ); ?>
             </button>
-            <a href="<?php echo esc_url( home_url( '/job-portal/employer-dashboard/' ) ); ?>" class="oso-btn oso-btn-secondary">
+            <a href="<?php echo esc_url( home_url( '/job-portal/employer-profile/' ) ); ?>" class="oso-btn oso-btn-secondary">
                 <?php esc_html_e( 'Cancel', 'oso-employer-portal' ); ?>
             </a>
             <span class="oso-form-status" id="oso-job-status"></span>
@@ -359,7 +359,7 @@ jQuery(document).ready(function($) {
                     
                     // Redirect to dashboard after 1 second
                     setTimeout(function() {
-                        window.location.href = '<?php echo esc_url( home_url( '/job-portal/employer-dashboard/' ) ); ?>';
+                        window.location.href = '<?php echo esc_url( home_url( '/job-portal/employer-profile/' ) ); ?>';
                     }, 1000);
                 } else {
                     $status.addClass('error').text(response.data.message || '<?php esc_html_e( 'Error saving job.', 'oso-employer-portal' ); ?>');
