@@ -187,6 +187,29 @@ class OSO_Employer_Admin {
                         </td>
                     </tr>
                     <tr>
+                        <th scope="row"><label for="job_limit"><?php esc_html_e( 'Job Posting Limit', 'oso-employer-portal' ); ?></label></th>
+                        <td>
+                            <input type="number" class="small-text" id="job_limit" name="job_limit" value="<?php echo esc_attr( ! empty( $meta['_oso_employer_job_limit'] ) ? $meta['_oso_employer_job_limit'] : 5 ); ?>" min="0" step="1" />
+                            <p class="description">
+                                <?php 
+                                $current_jobs = class_exists( 'OSO_Job_Manager' ) ? OSO_Job_Manager::instance()->get_employer_jobs( $post->ID ) : array();
+                                $active_count = 0;
+                                foreach ( $current_jobs as $job ) {
+                                    if ( $job->post_status === 'publish' ) {
+                                        $active_count++;
+                                    }
+                                }
+                                $limit = ! empty( $meta['_oso_employer_job_limit'] ) ? $meta['_oso_employer_job_limit'] : 5;
+                                printf( 
+                                    esc_html__( 'Currently: %1$d / %2$s jobs posted. Set to 0 for unlimited.', 'oso-employer-portal' ),
+                                    $active_count,
+                                    $limit == 0 ? '∞' : $limit
+                                );
+                                ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
                         <th scope="row"><label for="approved"><?php esc_html_e( 'Approved', 'oso-employer-portal' ); ?></label></th>
                         <td>
                             <label>
@@ -281,6 +304,7 @@ class OSO_Employer_Admin {
             '_oso_employer_social_links',
             '_oso_employer_subscription_type',
             '_oso_employer_subscription_ends',
+            '_oso_employer_job_limit',
             '_oso_employer_logo',
             '_oso_employer_photos',
             '_oso_employer_approved',
@@ -346,7 +370,7 @@ class OSO_Employer_Admin {
             'photos_urls'       => '_oso_employer_photos',
         );
 
-        // Handle approved checkbox and subscription ends (only admins can change these)
+        // Handle admin-only fields (approved checkbox, subscription ends, job limit)
         if ( current_user_can( 'manage_options' ) ) {
             $approved = isset( $_POST['approved'] ) ? '1' : '0';
             update_post_meta( $post_id, '_oso_employer_approved', $approved );
@@ -354,6 +378,11 @@ class OSO_Employer_Admin {
             if ( isset( $_POST['subscription_ends'] ) ) {
                 $subscription_ends = sanitize_text_field( wp_unslash( $_POST['subscription_ends'] ) );
                 update_post_meta( $post_id, '_oso_employer_subscription_ends', $subscription_ends );
+            }
+            
+            if ( isset( $_POST['job_limit'] ) ) {
+                $job_limit = absint( $_POST['job_limit'] );
+                update_post_meta( $post_id, '_oso_employer_job_limit', $job_limit );
             }
         }
 

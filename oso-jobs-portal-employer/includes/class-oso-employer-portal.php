@@ -19,9 +19,16 @@ class OSO_Employer_Portal {
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/helpers/class-oso-employer-utils.php';
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/shortcodes/class-oso-employer-shortcodes.php';
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/admin/class-oso-employer-admin.php';
+        require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/class-oso-job-manager.php';
+
+        // Register custom post type for job postings
+        add_action( 'init', [ $this, 'register_job_post_type' ] );
 
         // Initialize employer registration handler
         OSO_Employer_Registration::init();
+        
+        // Initialize job manager
+        OSO_Job_Manager::instance();
         
         // Initialize shortcodes
         OSO_Employer_Shortcodes::instance();
@@ -33,6 +40,46 @@ class OSO_Employer_Portal {
         
         // Enqueue frontend assets
         add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_frontend_assets' ] );
+    }
+
+    /**
+     * Register job posting custom post type.
+     */
+    public function register_job_post_type() {
+        $labels = array(
+            'name'                  => _x( 'Job Postings', 'Post type general name', 'oso-employer-portal' ),
+            'singular_name'         => _x( 'Job Posting', 'Post type singular name', 'oso-employer-portal' ),
+            'menu_name'             => _x( 'Job Postings', 'Admin Menu text', 'oso-employer-portal' ),
+            'name_admin_bar'        => _x( 'Job Posting', 'Add New on Toolbar', 'oso-employer-portal' ),
+            'add_new'               => __( 'Add New', 'oso-employer-portal' ),
+            'add_new_item'          => __( 'Add New Job Posting', 'oso-employer-portal' ),
+            'new_item'              => __( 'New Job Posting', 'oso-employer-portal' ),
+            'edit_item'             => __( 'Edit Job Posting', 'oso-employer-portal' ),
+            'view_item'             => __( 'View Job Posting', 'oso-employer-portal' ),
+            'all_items'             => __( 'All Job Postings', 'oso-employer-portal' ),
+            'search_items'          => __( 'Search Job Postings', 'oso-employer-portal' ),
+            'not_found'             => __( 'No job postings found.', 'oso-employer-portal' ),
+            'not_found_in_trash'    => __( 'No job postings found in Trash.', 'oso-employer-portal' ),
+        );
+
+        $args = array(
+            'labels'             => $labels,
+            'public'             => true,
+            'publicly_queryable' => true,
+            'show_ui'            => true,
+            'show_in_menu'       => false, // We'll add it manually to OSO Jobs menu
+            'query_var'          => true,
+            'rewrite'            => array( 'slug' => 'job-posting' ),
+            'capability_type'    => 'post',
+            'has_archive'        => true,
+            'hierarchical'       => false,
+            'menu_position'      => null,
+            'menu_icon'          => 'dashicons-portfolio',
+            'supports'           => array( 'title', 'editor' ),
+            'show_in_rest'       => false,
+        );
+
+        register_post_type( 'oso_job_posting', $args );
     }
     
     /**
