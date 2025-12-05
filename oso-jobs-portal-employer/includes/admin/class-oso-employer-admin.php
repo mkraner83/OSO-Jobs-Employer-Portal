@@ -189,7 +189,21 @@ class OSO_Employer_Admin {
                     <tr>
                         <th scope="row"><label for="job_limit"><?php esc_html_e( 'Job Posting Limit', 'oso-employer-portal' ); ?></label></th>
                         <td>
-                            <input type="number" class="small-text" id="job_limit" name="job_limit" value="<?php echo esc_attr( ! empty( $meta['_oso_employer_job_limit'] ) ? $meta['_oso_employer_job_limit'] : 5 ); ?>" min="0" step="1" />
+                            <select id="job_limit" name="job_limit" class="regular-text">
+                                <?php
+                                $current_limit = ! empty( $meta['_oso_employer_job_limit'] ) ? intval( $meta['_oso_employer_job_limit'] ) : 5;
+                                for ( $i = 1; $i <= 20; $i++ ) {
+                                    printf(
+                                        '<option value="%d" %s>%d %s</option>',
+                                        $i,
+                                        selected( $current_limit, $i, false ),
+                                        $i,
+                                        $i === 1 ? esc_html__( 'job', 'oso-employer-portal' ) : esc_html__( 'jobs', 'oso-employer-portal' )
+                                    );
+                                }
+                                ?>
+                                <option value="0" <?php selected( $current_limit, 0 ); ?>><?php esc_html_e( 'Unlimited', 'oso-employer-portal' ); ?></option>
+                            </select>
                             <p class="description">
                                 <?php 
                                 $current_jobs = class_exists( 'OSO_Job_Manager' ) ? OSO_Job_Manager::instance()->get_employer_jobs( $post->ID ) : array();
@@ -201,7 +215,7 @@ class OSO_Employer_Admin {
                                 }
                                 $limit = ! empty( $meta['_oso_employer_job_limit'] ) ? $meta['_oso_employer_job_limit'] : 5;
                                 printf( 
-                                    esc_html__( 'Currently: %1$d / %2$s jobs posted. Set to 0 for unlimited.', 'oso-employer-portal' ),
+                                    esc_html__( 'Currently: %1$d / %2$s jobs posted.', 'oso-employer-portal' ),
                                     $active_count,
                                     $limit == 0 ? '∞' : $limit
                                 );
