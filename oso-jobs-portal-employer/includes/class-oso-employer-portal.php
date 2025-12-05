@@ -19,6 +19,7 @@ class OSO_Employer_Portal {
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/helpers/class-oso-employer-utils.php';
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/shortcodes/class-oso-employer-shortcodes.php';
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/admin/class-oso-employer-admin.php';
+        require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/admin/class-oso-job-admin.php';
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/class-oso-job-manager.php';
 
         // Register custom post types
@@ -37,6 +38,7 @@ class OSO_Employer_Portal {
         // Initialize admin functionality
         if ( is_admin() ) {
             OSO_Employer_Admin::instance();
+            OSO_Job_Admin::instance();
         }
         
         // Enqueue frontend assets
