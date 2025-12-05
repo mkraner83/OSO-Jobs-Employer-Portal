@@ -21,8 +21,9 @@ class OSO_Employer_Portal {
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/admin/class-oso-employer-admin.php';
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/class-oso-job-manager.php';
 
-        // Register custom post type for job postings
+        // Register custom post types
         add_action( 'init', [ $this, 'register_job_post_type' ] );
+        add_action( 'init', [ $this, 'register_job_application_post_type' ] );
 
         // Initialize employer registration handler
         OSO_Employer_Registration::init();
@@ -80,6 +81,46 @@ class OSO_Employer_Portal {
         );
 
         register_post_type( 'oso_job_posting', $args );
+    }
+
+    /**
+     * Register job application custom post type.
+     */
+    public function register_job_application_post_type() {
+        $labels = array(
+            'name'                  => _x( 'Job Applications', 'Post type general name', 'oso-employer-portal' ),
+            'singular_name'         => _x( 'Job Application', 'Post type singular name', 'oso-employer-portal' ),
+            'menu_name'             => _x( 'Applications', 'Admin Menu text', 'oso-employer-portal' ),
+            'name_admin_bar'        => _x( 'Job Application', 'Add New on Toolbar', 'oso-employer-portal' ),
+            'add_new'               => __( 'Add New', 'oso-employer-portal' ),
+            'add_new_item'          => __( 'Add New Application', 'oso-employer-portal' ),
+            'new_item'              => __( 'New Application', 'oso-employer-portal' ),
+            'edit_item'             => __( 'Edit Application', 'oso-employer-portal' ),
+            'view_item'             => __( 'View Application', 'oso-employer-portal' ),
+            'all_items'             => __( 'All Applications', 'oso-employer-portal' ),
+            'search_items'          => __( 'Search Applications', 'oso-employer-portal' ),
+            'not_found'             => __( 'No applications found.', 'oso-employer-portal' ),
+            'not_found_in_trash'    => __( 'No applications found in Trash.', 'oso-employer-portal' ),
+        );
+
+        $args = array(
+            'labels'             => $labels,
+            'public'             => false,
+            'publicly_queryable' => false,
+            'show_ui'            => true,
+            'show_in_menu'       => false, // We'll add it to OSO Jobs menu
+            'query_var'          => true,
+            'rewrite'            => false,
+            'capability_type'    => 'post',
+            'has_archive'        => false,
+            'hierarchical'       => false,
+            'menu_position'      => null,
+            'menu_icon'          => 'dashicons-businessman',
+            'supports'           => array( 'title', 'editor' ),
+            'show_in_rest'       => false,
+        );
+
+        register_post_type( 'oso_job_application', $args );
     }
     
     /**

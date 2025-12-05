@@ -41,6 +41,7 @@ class OSO_Employer_Shortcodes {
         add_shortcode( 'oso_employer_edit_profile', array( $this, 'shortcode_employer_edit_profile' ) );
         add_shortcode( 'oso_employer_add_job', array( $this, 'shortcode_employer_add_job' ) );
         add_shortcode( 'oso_job_browser', array( $this, 'shortcode_job_browser' ) );
+        add_shortcode( 'oso_job_details', array( $this, 'shortcode_job_details' ) );
         add_shortcode( 'oso_jobseeker_browser', array( $this, 'shortcode_jobseeker_browser' ) );
         add_shortcode( 'oso_jobseeker_profile', array( $this, 'shortcode_jobseeker_profile' ) );
         add_shortcode( 'oso_jobseeker_edit_profile', array( $this, 'shortcode_jobseeker_edit_profile' ) );
@@ -49,6 +50,7 @@ class OSO_Employer_Shortcodes {
         add_action( 'wp_ajax_oso_update_jobseeker_profile', array( $this, 'ajax_update_jobseeker_profile' ) );
         add_action( 'wp_ajax_oso_update_employer_profile', array( $this, 'ajax_update_employer_profile' ) );
         add_action( 'wp_ajax_oso_upload_profile_file', array( $this, 'ajax_upload_profile_file' ) );
+        add_action( 'wp_ajax_oso_submit_job_application', array( $this, 'ajax_submit_job_application' ) );
     }
 
     /**
@@ -861,6 +863,136 @@ class OSO_Employer_Shortcodes {
      */
     public function shortcode_job_browser() {
         return $this->load_template( 'job-browser.php' );
+    }
+
+    /**
+     * Job Details Shortcode - Single job view with application form.
+     *
+     * @return string
+     */
+    public function shortcode_job_details() {
+        return $this->load_template( 'job-details.php' );
+    }
+
+    /**
+     * AJAX handler for job application submission.
+     */
+    public function ajax_submit_job_application() {
+        check_ajax_referer( 'oso-job-nonce', 'nonce' );
+
+        if ( ! is_user_logged_in() ) {
+            wp_send_json_error( array( 'message' => __( 'You must be logged in to apply.', 'oso-employer-portal' ) ) );
+        }
+
+        $job_id = isset( $_POST['job_id'] ) ? intval( $_POST['job_id'] ) : 0;
+        $jobseeker_id = isset( $_POST['jobseeker_id'] ) ? intval( $_POST['jobseeker_id'] ) : 0;
+        $cover_letter = isset( $_POST['cover_letter'] ) ? sanitize_textarea_field( wp_unslash( $_POST['cover_letter'] ) ) : '';
+
+        // Validate inputs
+        if ( ! $job_id || ! $jobseeker_id || empty( $cover_letter ) ) {
+            wp_send_json_error( array( 'message' => __( 'Please fill in all required fields.', 'oso-employer-portal' ) ) );
+        }
+
+        // Verify job exists and is not expired
+        $job = get_post( $job_id );
+        if ( ! $job || $job->post_type !== 'oso_job_posting' || $job->post_status !== 'publish' ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid job posting.', 'oso-employer-portal' ) ) );
+        }
+
+        if ( OSO_Job_Manager::instance()->is_job_expired( $job_id ) ) {
+            wp_send_json_error( array( 'message' => __( 'This job posting has expired.', 'oso-employer-portal' ) ) );
+        }
+
+        // Verify jobseeker profile belongs to current user
+        $jobseeker_user_id = get_post_meta( $jobseeker_id, '_oso_jobseeker_user_id', true );
+        if ( intval( $jobseeker_user_id ) !== get_current_user_id() ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid jobseeker profile.', 'oso-employer-portal' ) ) );
+        }
+
+        // Check for duplicate application
+        $existing = get_posts( array(
+            'post_type'      => 'oso_job_application',
+            'post_status'    => 'any',
+            'posts_per_page' => 1,
+            'meta_query'     => array(
+                'relation' => 'AND',
+                array(
+                    'key'   => '_oso_application_job_id',
+                    'value' => $job_id,
+                ),
+                array(
+                    'key'   => '_oso_application_jobseeker_id',
+                    'value' => $jobseeker_id,
+                ),
+            ),
+        ) );
+
+        if ( ! empty( $existing ) ) {
+            wp_send_json_error( array( 'message' => __( 'You have already applied for this position.', 'oso-employer-portal' ) ) );
+        }
+
+        // Get employer info
+        $employer_id = get_post_meta( $job_id, '_oso_job_employer_id', true );
+
+        // Create application post
+        $application_data = array(
+            'post_type'   => 'oso_job_application',
+            'post_title'  => get_the_title( $jobseeker_id ) . ' - ' . get_the_title( $job_id ),
+            'post_status' => 'publish',
+            'post_content' => $cover_letter,
+        );
+
+        $application_id = wp_insert_post( $application_data );
+
+        if ( is_wp_error( $application_id ) ) {
+            wp_send_json_error( array( 'message' => __( 'Failed to submit application. Please try again.', 'oso-employer-portal' ) ) );
+        }
+
+        // Save application meta
+        update_post_meta( $application_id, '_oso_application_job_id', $job_id );
+        update_post_meta( $application_id, '_oso_application_jobseeker_id', $jobseeker_id );
+        update_post_meta( $application_id, '_oso_application_employer_id', $employer_id );
+        update_post_meta( $application_id, '_oso_application_status', 'pending' );
+        update_post_meta( $application_id, '_oso_application_date', current_time( 'mysql' ) );
+
+        // Send email notification to employer
+        $this->send_application_notification( $application_id );
+
+        wp_send_json_success( array( 'message' => __( 'Application submitted successfully!', 'oso-employer-portal' ) ) );
+    }
+
+    /**
+     * Send email notification to employer about new application.
+     *
+     * @param int $application_id Application post ID.
+     */
+    private function send_application_notification( $application_id ) {
+        $job_id = get_post_meta( $application_id, '_oso_application_job_id', true );
+        $jobseeker_id = get_post_meta( $application_id, '_oso_application_jobseeker_id', true );
+        $employer_id = get_post_meta( $application_id, '_oso_application_employer_id', true );
+
+        // Get employer email
+        $employer_user_id = get_post_meta( $employer_id, '_oso_employer_user_id', true );
+        $employer_user = get_userdata( $employer_user_id );
+        
+        if ( ! $employer_user ) {
+            return;
+        }
+
+        $job_title = get_the_title( $job_id );
+        $jobseeker_name = get_the_title( $jobseeker_id );
+        $camp_name = get_post_meta( $employer_id, '_oso_employer_company', true );
+
+        $subject = sprintf( __( 'New Job Application: %s', 'oso-employer-portal' ), $job_title );
+        
+        $message = sprintf(
+            __( "Hello %s,\n\nYou have received a new job application for the position: %s\n\nApplicant: %s\n\nYou can view and manage this application in your employer dashboard.\n\nBest regards,\nOSO Jobs Team", 'oso-employer-portal' ),
+            $camp_name,
+            $job_title,
+            $jobseeker_name
+        );
+
+        wp_mail( $employer_user->user_email, $subject, $message );
     }
 
     /**
