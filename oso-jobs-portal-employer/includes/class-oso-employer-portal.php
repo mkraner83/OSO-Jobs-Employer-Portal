@@ -68,7 +68,7 @@ class OSO_Employer_Portal {
             'public'             => true,
             'publicly_queryable' => true,
             'show_ui'            => true,
-            'show_in_menu'       => false, // We'll add it manually to OSO Jobs menu
+            'show_in_menu'       => 'oso-jobs-dashboard',
             'query_var'          => true,
             'rewrite'            => array( 'slug' => 'job-posting' ),
             'capability_type'    => 'post',
@@ -108,7 +108,7 @@ class OSO_Employer_Portal {
             'public'             => false,
             'publicly_queryable' => false,
             'show_ui'            => true,
-            'show_in_menu'       => false, // We'll add it to OSO Jobs menu
+            'show_in_menu'       => 'oso-jobs-dashboard',
             'query_var'          => true,
             'rewrite'            => false,
             'capability_type'    => 'post',

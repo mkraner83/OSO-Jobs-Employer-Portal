@@ -84,6 +84,24 @@ class OSO_Jobs_Admin_Menu {
 
         add_submenu_page(
             'oso-jobs-dashboard',
+            __( 'Job Postings', 'oso-jobs-portal' ),
+            __( 'Job Postings', 'oso-jobs-portal' ),
+            'edit_posts',
+            'edit.php?post_type=oso_job_posting',
+            null
+        );
+
+        add_submenu_page(
+            'oso-jobs-dashboard',
+            __( 'Applications', 'oso-jobs-portal' ),
+            __( 'Applications', 'oso-jobs-portal' ),
+            'edit_posts',
+            'edit.php?post_type=oso_job_application',
+            null
+        );
+
+        add_submenu_page(
+            'oso-jobs-dashboard',
             __( 'Settings', 'oso-jobs-portal' ),
             __( 'Settings', 'oso-jobs-portal' ),
             'manage_options',

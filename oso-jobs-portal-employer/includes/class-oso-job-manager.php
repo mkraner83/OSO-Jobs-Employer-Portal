@@ -45,6 +45,10 @@ class OSO_Job_Manager {
         add_filter( 'manage_oso_job_posting_posts_columns', array( $this, 'add_job_columns' ) );
         add_action( 'manage_oso_job_posting_posts_custom_column', array( $this, 'render_job_columns' ), 10, 2 );
         
+        // Add custom columns to application listing in admin
+        add_filter( 'manage_oso_job_application_posts_columns', array( $this, 'add_application_columns' ) );
+        add_action( 'manage_oso_job_application_posts_custom_column', array( $this, 'render_application_columns' ), 10, 2 );
+        
         // Hide expired jobs from public queries
         add_action( 'pre_get_posts', array( $this, 'hide_expired_jobs' ) );
     }
@@ -423,6 +427,100 @@ class OSO_Job_Manager {
             );
             
             $query->set( 'meta_query', $meta_query );
+        }
+    }
+
+    /**
+     * Add custom columns to application listing.
+     *
+     * @param array $columns Existing columns.
+     * @return array
+     */
+    public function add_application_columns( $columns ) {
+        $new_columns = array();
+        
+        foreach ( $columns as $key => $title ) {
+            if ( $key === 'title' ) {
+                $new_columns['applicant'] = __( 'Applicant', 'oso-employer-portal' );
+                $new_columns['job'] = __( 'Job Position', 'oso-employer-portal' );
+                $new_columns['employer'] = __( 'Employer', 'oso-employer-portal' );
+            } elseif ( $key === 'date' ) {
+                $new_columns['status'] = __( 'Status', 'oso-employer-portal' );
+                $new_columns[$key] = $title;
+            } else {
+                $new_columns[$key] = $title;
+            }
+        }
+        
+        return $new_columns;
+    }
+
+    /**
+     * Render custom columns for application listing.
+     *
+     * @param string $column  Column name.
+     * @param int    $post_id Post ID.
+     */
+    public function render_application_columns( $column, $post_id ) {
+        switch ( $column ) {
+            case 'applicant':
+                $jobseeker_id = get_post_meta( $post_id, '_oso_application_jobseeker_id', true );
+                if ( $jobseeker_id ) {
+                    $jobseeker_name = get_the_title( $jobseeker_id );
+                    $jobseeker_url = add_query_arg( array(
+                        'post' => $jobseeker_id,
+                        'action' => 'edit',
+                    ), admin_url( 'post.php' ) );
+                    echo '<a href="' . esc_url( $jobseeker_url ) . '">' . esc_html( $jobseeker_name ) . '</a>';
+                } else {
+                    echo '—';
+                }
+                break;
+
+            case 'job':
+                $job_id = get_post_meta( $post_id, '_oso_application_job_id', true );
+                if ( $job_id ) {
+                    $job_title = get_the_title( $job_id );
+                    $job_url = add_query_arg( array(
+                        'post' => $job_id,
+                        'action' => 'edit',
+                    ), admin_url( 'post.php' ) );
+                    echo '<a href="' . esc_url( $job_url ) . '">' . esc_html( $job_title ) . '</a>';
+                } else {
+                    echo '—';
+                }
+                break;
+
+            case 'employer':
+                $employer_id = get_post_meta( $post_id, '_oso_application_employer_id', true );
+                if ( $employer_id ) {
+                    $employer_name = get_post_meta( $employer_id, '_oso_employer_company', true );
+                    $employer_url = add_query_arg( array(
+                        'post' => $employer_id,
+                        'action' => 'edit',
+                    ), admin_url( 'post.php' ) );
+                    echo '<a href="' . esc_url( $employer_url ) . '">' . esc_html( $employer_name ) . '</a>';
+                } else {
+                    echo '—';
+                }
+                break;
+
+            case 'status':
+                $status = get_post_meta( $post_id, '_oso_application_status', true );
+                $status_labels = array(
+                    'pending'  => __( 'Pending', 'oso-employer-portal' ),
+                    'approved' => __( 'Approved', 'oso-employer-portal' ),
+                    'rejected' => __( 'Rejected', 'oso-employer-portal' ),
+                );
+                $status_colors = array(
+                    'pending'  => '#ffc107',
+                    'approved' => '#28a745',
+                    'rejected' => '#dc3545',
+                );
+                $label = isset( $status_labels[ $status ] ) ? $status_labels[ $status ] : ucfirst( $status );
+                $color = isset( $status_colors[ $status ] ) ? $status_colors[ $status ] : '#999';
+                echo '<span style="display:inline-block;padding:4px 10px;background:' . esc_attr( $color ) . ';color:#fff;border-radius:3px;font-size:11px;font-weight:600;text-transform:uppercase;">' . esc_html( $label ) . '</span>';
+                break;
         }
     }
 }
