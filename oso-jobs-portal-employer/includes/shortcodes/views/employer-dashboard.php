@@ -34,13 +34,26 @@ endif;
 // User is logged in
 ?>
 <div class="oso-employer-dashboard">
-    <!-- Full-Width Quick Link Banner -->
-    <div class="oso-quick-link-banner">
-        <a href="<?php echo esc_url( home_url( '/job-portal/browse-jobseekers/' ) ); ?>" class="oso-quick-link">
-            <span class="dashicons dashicons-groups"></span>
-            <span><?php esc_html_e( 'Browse Jobseekers', 'oso-employer-portal' ); ?></span>
-        </a>
-    </div>
+    <?php 
+    // Check if employer is approved (admins always see the button)
+    $is_approved = current_user_can( 'manage_options' ) || ( isset( $meta['_oso_employer_approved'] ) && $meta['_oso_employer_approved'] === '1' );
+    ?>
+    
+    <?php if ( $is_approved ) : ?>
+        <!-- Full-Width Quick Link Banner -->
+        <div class="oso-quick-link-banner">
+            <a href="<?php echo esc_url( home_url( '/job-portal/browse-jobseekers/' ) ); ?>" class="oso-quick-link">
+                <span class="dashicons dashicons-groups"></span>
+                <span><?php esc_html_e( 'Browse Jobseekers', 'oso-employer-portal' ); ?></span>
+            </a>
+        </div>
+    <?php else : ?>
+        <!-- Pending Approval Message -->
+        <div style="padding: 20px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; margin: 0 0 30px 0;">
+            <p style="margin: 0; color: #856404;"><strong><?php esc_html_e( 'Account Pending Approval', 'oso-employer-portal' ); ?></strong></p>
+            <p style="margin: 10px 0 0 0; color: #856404;"><?php esc_html_e( 'Your employer account is currently pending approval. You will be able to browse jobseekers once an administrator approves your account.', 'oso-employer-portal' ); ?></p>
+        </div>
+    <?php endif; ?>
 
     <!-- Job Postings Section -->
     <div class="oso-employer-jobs">

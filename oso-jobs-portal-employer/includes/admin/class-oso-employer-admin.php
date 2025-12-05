@@ -158,8 +158,14 @@ class OSO_Employer_Admin {
                     </tr>
                     <tr>
                         <th scope="row"><label for="camp_types"><?php esc_html_e( 'Type of Camp', 'oso-employer-portal' ); ?></label></th>
-                        <td><textarea class="large-text" rows="3" id="camp_types" name="camp_types"><?php echo esc_textarea( $meta['_oso_employer_camp_types'] ); ?></textarea>
-                        <p class="description"><?php esc_html_e( 'One per line (e.g., Day Camp, Overnight Camp, Sport Camp)', 'oso-employer-portal' ); ?></p></td>
+                        <td>
+                            <?php
+                            // Convert newlines to commas for display
+                            $camp_types_display = ! empty( $meta['_oso_employer_camp_types'] ) ? str_replace( "\n", ', ', $meta['_oso_employer_camp_types'] ) : '';
+                            ?>
+                            <input type="text" class="large-text" id="camp_types" name="camp_types" value="<?php echo esc_attr( $camp_types_display ); ?>" />
+                            <p class="description"><?php esc_html_e( 'Separate multiple types with commas (e.g., Day Camp, Overnight Camp, Sport Camp)', 'oso-employer-portal' ); ?></p>
+                        </td>
                     </tr>
                     <tr>
                         <th scope="row"><label for="social_links"><?php esc_html_e( 'Social Media Links', 'oso-employer-portal' ); ?></label></th>
@@ -170,6 +176,18 @@ class OSO_Employer_Admin {
                         <th scope="row"><label for="subscription_type"><?php esc_html_e( 'Subscription Type', 'oso-employer-portal' ); ?></label></th>
                         <td><input type="text" class="regular-text" id="subscription_type" name="subscription_type" value="<?php echo esc_attr( $meta['_oso_employer_subscription_type'] ); ?>" /></td>
                     </tr>
+                    <?php if ( current_user_can( 'manage_options' ) ) : ?>
+                    <tr>
+                        <th scope="row"><label for="approved"><?php esc_html_e( 'Approved', 'oso-employer-portal' ); ?></label></th>
+                        <td>
+                            <label>
+                                <input type="checkbox" id="approved" name="approved" value="1" <?php checked( $meta['_oso_employer_approved'], '1' ); ?> />
+                                <?php esc_html_e( 'Allow this employer to browse jobseekers', 'oso-employer-portal' ); ?>
+                            </label>
+                            <p class="description"><?php esc_html_e( 'Only administrators can change this setting', 'oso-employer-portal' ); ?></p>
+                        </td>
+                    </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
 
@@ -255,6 +273,7 @@ class OSO_Employer_Admin {
             '_oso_employer_subscription_type',
             '_oso_employer_logo',
             '_oso_employer_photos',
+            '_oso_employer_approved',
         );
 
         $meta = array();
@@ -317,13 +336,24 @@ class OSO_Employer_Admin {
             'photos_urls'       => '_oso_employer_photos',
         );
 
+        // Handle approved checkbox (only admins can change this)
+        if ( current_user_can( 'manage_options' ) ) {
+            $approved = isset( $_POST['approved'] ) ? '1' : '0';
+            update_post_meta( $post_id, '_oso_employer_approved', $approved );
+        }
+
         foreach ( $fields_to_save as $field => $meta_key ) {
             if ( isset( $_POST[ $field ] ) ) {
                 $value = wp_unslash( $_POST[ $field ] );
                 
                 // Sanitize based on field type
-                if ( in_array( $field, array( 'description', 'camp_types', 'social_links', 'photos_urls' ) ) ) {
+                if ( in_array( $field, array( 'description', 'social_links', 'photos_urls' ) ) ) {
                     $value = sanitize_textarea_field( $value );
+                } elseif ( $field === 'camp_types' ) {
+                    // Convert comma-separated list back to newlines for storage
+                    $value = sanitize_text_field( $value );
+                    $value = str_replace( ', ', "\n", $value );
+                    $value = str_replace( ',', "\n", $value );
                 } elseif ( in_array( $field, array( 'website', 'logo_url' ) ) ) {
                     $value = esc_url_raw( $value );
                 } elseif ( $field === 'email' ) {

@@ -171,6 +171,7 @@ class OSO_Employer_Shortcodes {
             '_oso_employer_subscription_type',
             '_oso_employer_logo',
             '_oso_employer_photos',
+            '_oso_employer_approved',
             '_oso_employer_user_id',
             '_oso_employer_wpforms_entry',
         );
@@ -205,6 +206,20 @@ class OSO_Employer_Shortcodes {
         // Check if user has employer role
         if ( ! in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, (array) $user->roles, true ) ) {
             return '<p>' . esc_html__( 'You do not have permission to browse jobseekers.', 'oso-employer-portal' ) . '</p>';
+        }
+
+        // Check if employer is approved (unless admin)
+        if ( ! current_user_can( 'manage_options' ) ) {
+            $employer_post = $this->get_employer_by_user_id( $user->ID );
+            if ( $employer_post ) {
+                $approved = get_post_meta( $employer_post->ID, '_oso_employer_approved', true );
+                if ( $approved !== '1' ) {
+                    return '<div style="padding: 20px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; margin: 20px 0;">' .
+                           '<p style="margin: 0; color: #856404;"><strong>' . esc_html__( 'Account Pending Approval', 'oso-employer-portal' ) . '</strong></p>' .
+                           '<p style="margin: 10px 0 0 0; color: #856404;">' . esc_html__( 'Your employer account is currently pending approval. You will be able to browse jobseekers once an administrator approves your account.', 'oso-employer-portal' ) . '</p>' .
+                           '</div>';
+                }
+            }
         }
 
         // Get pagination
@@ -404,6 +419,20 @@ class OSO_Employer_Shortcodes {
         $is_employer = in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, (array) $user->roles, true );
         $is_jobseeker = in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, (array) $user->roles, true );
         $is_admin = in_array( 'administrator', (array) $user->roles, true );
+
+        // Check if employer is approved (unless admin)
+        if ( $is_employer && ! $is_admin ) {
+            $employer_post = $this->get_employer_by_user_id( $user->ID );
+            if ( $employer_post ) {
+                $approved = get_post_meta( $employer_post->ID, '_oso_employer_approved', true );
+                if ( $approved !== '1' ) {
+                    return '<div style="padding: 20px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; margin: 20px 0;">' .
+                           '<p style="margin: 0; color: #856404;"><strong>' . esc_html__( 'Account Pending Approval', 'oso-employer-portal' ) . '</strong></p>' .
+                           '<p style="margin: 10px 0 0 0; color: #856404;">' . esc_html__( 'Your employer account is currently pending approval. You will be able to view jobseeker profiles once an administrator approves your account.', 'oso-employer-portal' ) . '</p>' .
+                           '</div>';
+                }
+            }
+        }
         
         if ( ! $is_employer && ! $is_admin && $is_jobseeker && $jobseeker_id ) {
             // Jobseekers can only view their own profile
