@@ -4,6 +4,26 @@
 **Requires:** OSO Jobs Portal (Core Plugin)  
 **WordPress Version:** 5.0 or higher
 
+## 🔖 Restore Point - December 5, 2025
+
+**Stable Release:** All features tested and working  
+**Git Commit:** [0aa7885](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/commit/0aa7885)  
+**Downloads:**
+- [oso-jobs-portal-updated.zip](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/raw/main/oso-jobs-portal-updated.zip) (Core Plugin)
+- [oso-jobs-portal-employer-updated.zip](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/raw/main/oso-jobs-portal-employer-updated.zip) (Employer Extension)
+
+### Major Features Implemented
+✅ Complete employer registration and profile management  
+✅ Jobseeker browser with advanced filtering (location, skills, certifications)  
+✅ Full profile editing with image uploads (logo + 6 photos)  
+✅ Admin approval system with subscription expiration control  
+✅ Custom admin columns (camp name, logo, email, subscription info)  
+✅ Dashboard with card-based profile display and hover effects  
+✅ Access control: Unapproved employers see pending approval message  
+✅ Expired subscriptions block jobseeker browsing with clear warnings  
+✅ "Back to Search" links only visible to employers (hidden for jobseekers)  
+✅ OSO Jobs admin menu: Always expanded, purple title, positioned after Dashboard
+
 ## Description
 
 The Employer Extension adds a complete employer portal to the OSO Jobs Portal system, allowing employers to register, manage their profiles, browse jobseeker candidates, and view detailed candidate profiles.
@@ -85,20 +105,43 @@ The Employer Extension adds a complete employer portal to the OSO Jobs Portal sy
 - Back to search navigation (purple link)
 - Contact candidate email button
 
-### Access Control
-- Employers cannot access wp-admin (auto-redirected to dashboard)
-- Administrators retain full wp-admin access
-- Login redirect sends employers to their dashboard page
-- Role-based shortcode access
+### Access Control & Approval System
+- **Approval Required**: Admin-only "Approved" checkbox in employer edit screen (unchecked by default)
+- **Pending Approval**: Unapproved employers see yellow warning message, cannot browse jobseekers
+- **Subscription Expiration**: Admin sets "Subscription Ends" date
+  - Expired subscriptions block jobseeker browsing with red warning message
+  - Expiration date shown in profile with "(Expired)" label if past
+  - Admins bypass all access restrictions
+- **Login Redirect**: Employers auto-redirect to dashboard, jobseekers to their profile
+- **Role-Based Access**: Employers cannot access wp-admin (auto-redirected to dashboard)
+- **Back to Search Links**: Only visible to employers/admins (hidden from jobseekers viewing their own profile)
+
+### Admin Features
+- **Custom List Columns**: Employer admin list shows:
+  1. Camp Name
+  2. Logo (thumbnail linked to website if available)
+  3. Email (clickable mailto link)
+  4. Subscription Type
+  5. Subscription Ends (color-coded: green if active, red with "Expired" if past)
+- **Custom Meta Box**: All employer fields editable in WordPress admin
+  - 5 organized sections: Camp Information, Location, Additional Details, Images, Linked User Account
+  - Admin-only fields: Approved checkbox, Subscription Ends date picker
+  - Camp types as comma-separated input (converts to newlines on save)
+  - Image previews for logo and photos
+- **OSO Jobs Menu**: Always expanded, purple title (#8051B0), positioned after Dashboard
 
 ### Styling & Design
-- Teal primary buttons: rgb(82, 125, 128)
-- Purple accents: #8051B0 (badges, links, advanced filters toggle)
-- Professional card-based layouts
-- Responsive grid system
-- Hover effects and transitions
-- Photo placeholder with matching color scheme
-- Lightbox functionality for profile photos
+- **Card-Based Profile Display**: Individual white boxes with shadows and hover effects
+  - Each field in its own card with border and subtle shadow
+  - Hover effect: Cards lift slightly with enhanced shadow
+  - Teal labels (#548A8F), purple links (#8051B0)
+  - Full-width cards for description and social media
+- **Teal Primary Buttons**: rgb(82, 125, 128)
+- **Purple Accents**: #8051B0 (badges, links, advanced filters toggle, menu title)
+- **Professional Layouts**: Responsive grid system with auto-fit columns
+- **Transitions & Effects**: Smooth hover animations
+- **Photo Placeholder**: Matching color scheme with dashicons
+- **Lightbox Functionality**: Profile photos and employer images
 
 ## Installation
 
@@ -220,7 +263,61 @@ Handled by core OSO Jobs Portal plugin. Refer to core plugin documentation.
 
 ## Changelog
 
-### Version 1.0.8 (December 4, 2025) - RESTORE POINT
+### Version 1.1.0 (December 5, 2025) - CURRENT RESTORE POINT ✨
+**Complete Approval System, Subscription Management, Admin Enhancements**
+
+**Approval & Access Control:**
+- Added "Approved" checkbox in admin employer editor (admin-only, unchecked by default)
+- Unapproved employers see yellow pending approval message on dashboard
+- Unapproved employers cannot access jobseeker browser or profiles
+- "Browse Jobseekers" button hidden for unapproved employers
+
+**Subscription Expiration System:**
+- Added "Subscription Ends" date field in admin (admin-only, date picker)
+- Expired subscriptions block jobseeker browser access with red warning message
+- Expired subscriptions shown in profile with "(Expired)" label in red
+- Active subscriptions shown in green in admin list
+- Access checks combined: Must be approved AND not expired
+
+**Admin Improvements:**
+- Custom list columns for employer post type:
+  - Camp Name (text)
+  - Logo (thumbnail image, linked to website URL)
+  - Email (clickable mailto link)
+  - Subscription Type (full plan name)
+  - Subscription Ends (color-coded: green if active, red with "Expired" if past)
+- Enhanced custom meta box with 5 organized sections
+- Camp types converted to comma-separated input (was textarea)
+- Added admin-only fields section (Approved checkbox, Subscription Ends date)
+
+**Dashboard & Profile Styling:**
+- Card-based profile display with individual white boxes
+- Each field has shadow, border, rounded corners
+- Hover effects: Cards lift with enhanced shadow
+- Better spacing and typography
+- Full-width cards for description and social media
+- Purple links (#8051B0), teal labels (#548A8F)
+- Improved version cache busting (v1.0.9)
+
+**Core Plugin Updates:**
+- OSO Jobs admin menu always expanded
+- Menu title in purple (#8051B0)
+- Positioned after Dashboard (position 2)
+- Custom CSS and JavaScript for menu behavior
+
+**Bug Fixes:**
+- Fixed fatal error: get_employer_by_user_id() → get_employer_by_user()
+- "Back to Search" links now only visible to employers (hidden from jobseekers)
+- Subscription expiration check prevents access even with approval
+- Proper role-based access control throughout
+
+**Technical Details:**
+- Added 18 employer meta fields total (including approval and subscription_ends)
+- Hook priority 5 prevents conflicts with core plugin
+- Admin scripts move menu to position 2 on page load
+- CSS keeps submenu expanded at all times
+
+### Version 1.0.8 (December 4, 2025) - Previous Restore Point
 **Employer Profile Editing & Dashboard Redesign**
 - Added employer profile editing functionality with all WPForms fields
 - Edit form includes: Camp Name, Email, Website, Description, Camp Types, State, Address, Major City, Training Start Date, Housing, Social Links
@@ -242,8 +339,6 @@ Handled by core OSO Jobs Portal plugin. Refer to core plugin documentation.
   - Added 8px border radius to Browse Jobseekers banner
   - Added 40px spacing before logout button
 - Password reset shortcode [oso_employer_password_link] for WPForms confirmation
-
-### Version 1.1.0 (December 4, 2025)
 - Added full-width search field in jobseeker browser
 - Added "Over 18?" filter (Yes/No/Any) to jobseeker browser
 - Updated all skill badges to purple (#8051B0) with white text
