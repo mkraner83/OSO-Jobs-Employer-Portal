@@ -37,6 +37,7 @@ class OSO_Jobs_Admin_Menu {
      */
     protected function __construct() {
         add_action( 'admin_menu', array( $this, 'register_menu' ) );
+        add_action( 'admin_menu', array( $this, 'remove_duplicate_menus' ), 999 );
         add_action( 'admin_head', array( $this, 'add_admin_styles' ) );
         add_action( 'admin_footer', array( $this, 'add_admin_scripts' ) );
     }
@@ -102,6 +103,28 @@ class OSO_Jobs_Admin_Menu {
             'oso-jobs-tools',
             array( $this, 'render_tools' )
         );
+    }
+
+    /**
+     * Remove duplicate menu items that WordPress auto-adds.
+     */
+    public function remove_duplicate_menus() {
+        global $submenu;
+        
+        if ( isset( $submenu['oso-jobs-dashboard'] ) ) {
+            $seen = array();
+            foreach ( $submenu['oso-jobs-dashboard'] as $key => $item ) {
+                // Item[2] is the slug/URL
+                $slug = $item[2];
+                
+                // If we've seen this slug before, remove it
+                if ( isset( $seen[ $slug ] ) ) {
+                    unset( $submenu['oso-jobs-dashboard'][ $key ] );
+                } else {
+                    $seen[ $slug ] = true;
+                }
+            }
+        }
     }
 
     /**
