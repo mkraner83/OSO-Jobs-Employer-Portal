@@ -1219,13 +1219,15 @@
 /* No Jobs State */
 .oso-no-jobs {
     text-align: center;
-    padding: 40px 20px;
+    padding: 60px 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
 }
 
 .oso-no-jobs p {
     margin: 0 0 20px 0;
     color: #666;
-    font-size: 1em;
+    font-size: 1.1em;
 }
 
 /* Dashboard Actions (Logout Button) */
