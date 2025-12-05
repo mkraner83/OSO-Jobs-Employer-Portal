@@ -115,6 +115,7 @@ class OSO_Employer_Portal {
             array(
                 'ajaxUrl' => admin_url( 'admin-ajax.php' ),
                 'nonce'   => wp_create_nonce( 'oso_upload_profile_file' ),
+                'jobNonce' => wp_create_nonce( 'oso_job_nonce' ),
             )
         );
     }

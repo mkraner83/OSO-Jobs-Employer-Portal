@@ -39,6 +39,7 @@ class OSO_Employer_Shortcodes {
         add_shortcode( 'oso_employer_dashboard', array( $this, 'shortcode_employer_dashboard' ) );
         add_shortcode( 'oso_employer_profile', array( $this, 'shortcode_employer_dashboard' ) ); // Alias
         add_shortcode( 'oso_employer_edit_profile', array( $this, 'shortcode_employer_edit_profile' ) );
+        add_shortcode( 'oso_employer_add_job', array( $this, 'shortcode_employer_add_job' ) );
         add_shortcode( 'oso_jobseeker_browser', array( $this, 'shortcode_jobseeker_browser' ) );
         add_shortcode( 'oso_jobseeker_profile', array( $this, 'shortcode_jobseeker_profile' ) );
         add_shortcode( 'oso_jobseeker_edit_profile', array( $this, 'shortcode_jobseeker_edit_profile' ) );
@@ -834,6 +835,22 @@ class OSO_Employer_Shortcodes {
             'redirect_url'=> home_url( '/job-portal/employer-profile/' ),
             'debug' => $updated_fields
         ) );
+    }
+
+    /**
+     * Render add/edit job posting form shortcode.
+     */
+    public function shortcode_employer_add_job( $atts ) {
+        if ( ! is_user_logged_in() ) {
+            return '<p>' . esc_html__( 'You must be logged in to post jobs.', 'oso-employer-portal' ) . '</p>';
+        }
+
+        $user = wp_get_current_user();
+        if ( ! in_array( 'oso_employer', $user->roles ) && ! current_user_can( 'manage_options' ) ) {
+            return '<p>' . esc_html__( 'You do not have permission to post jobs.', 'oso-employer-portal' ) . '</p>';
+        }
+
+        return $this->load_template( 'employer-add-job.php' );
     }
 
     /**
