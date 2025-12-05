@@ -15,7 +15,7 @@ $job_id = isset( $_GET['job_id'] ) ? intval( $_GET['job_id'] ) : 0;
 if ( ! $job_id ) {
     echo '<div class="oso-error-message">';
     echo '<p>' . esc_html__( 'Job not found.', 'oso-employer-portal' ) . '</p>';
-    echo '<a href="' . esc_url( home_url( '/job-portal/jobs/' ) ) . '" class="oso-btn oso-btn-primary">' . esc_html__( 'Back to Jobs', 'oso-employer-portal' ) . '</a>';
+    echo '<a href="' . esc_url( home_url( '/job-portal/all-jobs/' ) ) . '" class="oso-btn oso-btn-primary">' . esc_html__( 'Back to Jobs', 'oso-employer-portal' ) . '</a>';
     echo '</div>';
     return;
 }
@@ -26,7 +26,7 @@ $job = get_post( $job_id );
 if ( ! $job || $job->post_type !== 'oso_job_posting' || $job->post_status !== 'publish' ) {
     echo '<div class="oso-error-message">';
     echo '<p>' . esc_html__( 'Job not found.', 'oso-employer-portal' ) . '</p>';
-    echo '<a href="' . esc_url( home_url( '/job-portal/jobs/' ) ) . '" class="oso-btn oso-btn-primary">' . esc_html__( 'Back to Jobs', 'oso-employer-portal' ) . '</a>';
+    echo '<a href="' . esc_url( home_url( '/job-portal/all-jobs/' ) ) . '" class="oso-btn oso-btn-primary">' . esc_html__( 'Back to Jobs', 'oso-employer-portal' ) . '</a>';
     echo '</div>';
     return;
 }
@@ -81,7 +81,7 @@ $application_success = isset( $_GET['application'] ) && $_GET['application'] ===
 
 <div class="oso-job-details">
     <div class="oso-job-details-header">
-        <a href="<?php echo esc_url( home_url( '/job-portal/jobs/' ) ); ?>" class="oso-back-link">
+        <a href="<?php echo esc_url( home_url( '/job-portal/all-jobs/' ) ); ?>" class="oso-back-link">
             <span class="dashicons dashicons-arrow-left-alt2"></span>
             <?php esc_html_e( 'Back to Jobs', 'oso-employer-portal' ); ?>
         </a>
