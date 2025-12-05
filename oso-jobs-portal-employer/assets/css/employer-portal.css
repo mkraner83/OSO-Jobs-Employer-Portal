@@ -964,6 +964,258 @@
     background: #c82333;
 }
 
+/* Job Applications Section */
+.oso-job-applications-section {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.oso-job-applications-section h3 {
+    margin: 0 0 25px 0;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.oso-applications-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.oso-stat-card {
+    background: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+.oso-stat-number {
+    display: block;
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #8051B0;
+    margin-bottom: 5px;
+}
+
+.oso-stat-label {
+    display: block;
+    font-size: 0.9em;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.oso-applications-table-wrapper {
+    overflow-x: auto;
+}
+
+.oso-applications-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.oso-applications-table thead {
+    background: #f5f5f5;
+}
+
+.oso-applications-table th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.oso-applications-table td {
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: middle;
+}
+
+.oso-applications-table tbody tr:hover {
+    background: #f9f9f9;
+}
+
+.oso-applicant-link {
+    color: #8051B0;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.oso-applicant-link:hover {
+    color: #5a3880;
+}
+
+.oso-applicant-link .dashicons {
+    font-size: 16px;
+}
+
+.oso-application-status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.oso-status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.oso-status-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.oso-status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.oso-actions-cell {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.oso-btn-small {
+    padding: 6px 12px;
+    font-size: 0.85em;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.oso-btn-small .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.oso-btn-success {
+    background: #28a745;
+    color: #fff;
+}
+
+.oso-btn-success:hover {
+    background: #218838;
+}
+
+.oso-no-applications {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.oso-no-applications p {
+    margin: 0 0 10px 0;
+    color: #666;
+}
+
+.oso-no-applications p:first-child {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Modal Styles */
+.oso-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999999;
+}
+
+.oso-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.oso-modal-content {
+    position: relative;
+    max-width: 700px;
+    margin: 50px auto;
+    background: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+}
+
+.oso-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 30px;
+    cursor: pointer;
+    color: #999;
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+}
+
+.oso-modal-close:hover {
+    color: #333;
+}
+
+.oso-modal-content h3 {
+    margin: 0 0 20px 0;
+    font-size: 1.5em;
+    color: #333;
+    padding-right: 40px;
+}
+
+.oso-modal-content #oso-modal-body {
+    color: #555;
+    line-height: 1.8;
+}
+
+@media (max-width: 768px) {
+    .oso-applications-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .oso-actions-cell {
+        flex-direction: column;
+    }
+    
+    .oso-btn-small {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .oso-modal-content {
+        margin: 20px;
+        padding: 20px;
+    }
+}
+
 /* No Jobs State */
 .oso-no-jobs {
     text-align: center;

@@ -405,4 +405,129 @@
 
     });
 
+    // ============================================
+    // Application Management
+    // ============================================
+
+    // View Cover Letter Modal
+    $(document).on('click', '.oso-view-cover-letter', function() {
+        var applicant = $(this).data('applicant');
+        var job = $(this).data('job');
+        var coverLetter = $(this).data('cover-letter');
+        
+        $('#oso-modal-title').text('Application from ' + applicant + ' for ' + job);
+        $('#oso-modal-body').html('<strong>Cover Letter:</strong><br><br>' + coverLetter);
+        $('#oso-cover-letter-modal').fadeIn(300);
+    });
+
+    // Close Modal
+    $('.oso-modal-close, .oso-modal-overlay').on('click', function() {
+        $('#oso-cover-letter-modal').fadeOut(300);
+    });
+
+    // Approve Application
+    $(document).on('click', '.oso-approve-application', function() {
+        var $btn = $(this);
+        var applicationId = $btn.data('application-id');
+        
+        if (!confirm('Are you sure you want to approve this application?')) {
+            return;
+        }
+        
+        $btn.prop('disabled', true).text('Approving...');
+        
+        $.ajax({
+            url: osoEmployerPortal.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'oso_update_application_status',
+                nonce: osoEmployerPortal.jobNonce,
+                application_id: applicationId,
+                status: 'approved'
+            },
+            success: function(response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    alert(response.data.message || 'Failed to approve application.');
+                    $btn.prop('disabled', false).text('Approve');
+                }
+            },
+            error: function() {
+                alert('An error occurred. Please try again.');
+                $btn.prop('disabled', false).text('Approve');
+            }
+        });
+    });
+
+    // Reject Application
+    $(document).on('click', '.oso-reject-application', function() {
+        var $btn = $(this);
+        var applicationId = $btn.data('application-id');
+        
+        if (!confirm('Are you sure you want to reject this application?')) {
+            return;
+        }
+        
+        $btn.prop('disabled', true).text('Rejecting...');
+        
+        $.ajax({
+            url: osoEmployerPortal.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'oso_update_application_status',
+                nonce: osoEmployerPortal.jobNonce,
+                application_id: applicationId,
+                status: 'rejected'
+            },
+            success: function(response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    alert(response.data.message || 'Failed to reject application.');
+                    $btn.prop('disabled', false).text('Reject');
+                }
+            },
+            error: function() {
+                alert('An error occurred. Please try again.');
+                $btn.prop('disabled', false).text('Reject');
+            }
+        });
+    });
+
+    // Reset Application
+    $(document).on('click', '.oso-reset-application', function() {
+        var $btn = $(this);
+        var applicationId = $btn.data('application-id');
+        
+        if (!confirm('Are you sure you want to reset this application to pending status?')) {
+            return;
+        }
+        
+        $btn.prop('disabled', true).text('Resetting...');
+        
+        $.ajax({
+            url: osoEmployerPortal.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'oso_update_application_status',
+                nonce: osoEmployerPortal.jobNonce,
+                application_id: applicationId,
+                status: 'pending'
+            },
+            success: function(response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    alert(response.data.message || 'Failed to reset application.');
+                    $btn.prop('disabled', false).text('Reset');
+                }
+            },
+            error: function() {
+                alert('An error occurred. Please try again.');
+                $btn.prop('disabled', false).text('Reset');
+            }
+        });
+    });
+
 })(jQuery);

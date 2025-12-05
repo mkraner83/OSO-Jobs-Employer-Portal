@@ -51,6 +51,7 @@ class OSO_Employer_Shortcodes {
         add_action( 'wp_ajax_oso_update_employer_profile', array( $this, 'ajax_update_employer_profile' ) );
         add_action( 'wp_ajax_oso_upload_profile_file', array( $this, 'ajax_upload_profile_file' ) );
         add_action( 'wp_ajax_oso_submit_job_application', array( $this, 'ajax_submit_job_application' ) );
+        add_action( 'wp_ajax_oso_update_application_status', array( $this, 'ajax_update_application_status' ) );
     }
 
     /**
@@ -993,6 +994,56 @@ class OSO_Employer_Shortcodes {
         );
 
         wp_mail( $employer_user->user_email, $subject, $message );
+    }
+
+    /**
+     * AJAX handler to update application status.
+     */
+    public function ajax_update_application_status() {
+        check_ajax_referer( 'oso-job-nonce', 'nonce' );
+
+        if ( ! is_user_logged_in() ) {
+            wp_send_json_error( array( 'message' => __( 'You must be logged in.', 'oso-employer-portal' ) ) );
+        }
+
+        $application_id = isset( $_POST['application_id'] ) ? intval( $_POST['application_id'] ) : 0;
+        $status = isset( $_POST['status'] ) ? sanitize_text_field( wp_unslash( $_POST['status'] ) ) : '';
+
+        // Validate inputs
+        if ( ! $application_id || ! in_array( $status, array( 'pending', 'approved', 'rejected' ), true ) ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid request.', 'oso-employer-portal' ) ) );
+        }
+
+        // Get application
+        $application = get_post( $application_id );
+        if ( ! $application || $application->post_type !== 'oso_job_application' ) {
+            wp_send_json_error( array( 'message' => __( 'Application not found.', 'oso-employer-portal' ) ) );
+        }
+
+        // Verify employer owns this application
+        $employer_id = get_post_meta( $application_id, '_oso_application_employer_id', true );
+        $current_user_id = get_current_user_id();
+        
+        // Get employer post by user ID
+        $employer_posts = get_posts( array(
+            'post_type'      => 'oso_employer',
+            'post_status'    => 'publish',
+            'posts_per_page' => 1,
+            'meta_key'       => '_oso_employer_user_id',
+            'meta_value'     => $current_user_id,
+        ) );
+
+        if ( empty( $employer_posts ) || intval( $employer_posts[0]->ID ) !== intval( $employer_id ) ) {
+            // Not the owner unless admin
+            if ( ! current_user_can( 'manage_options' ) ) {
+                wp_send_json_error( array( 'message' => __( 'You do not have permission to update this application.', 'oso-employer-portal' ) ) );
+            }
+        }
+
+        // Update status
+        update_post_meta( $application_id, '_oso_application_status', $status );
+
+        wp_send_json_success( array( 'message' => __( 'Application status updated.', 'oso-employer-portal' ) ) );
     }
 
     /**
