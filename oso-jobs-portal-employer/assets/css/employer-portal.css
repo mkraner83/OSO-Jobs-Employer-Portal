@@ -812,14 +812,166 @@
     border-radius: 8px;
 }
 
-.oso-employer-jobs h3 {
-    margin: 0 0 15px 0;
+.oso-jobs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.oso-jobs-header h3 {
+    margin: 0;
     color: #333;
     font-size: 1.3em;
 }
 
-.oso-employer-jobs p {
+.oso-jobs-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.oso-job-count {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.oso-job-limit-reached {
+    font-size: 0.9em;
+    color: #d9534f;
+    font-weight: 600;
+}
+
+/* Job Cards Grid */
+.oso-jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.oso-job-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.oso-job-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.oso-job-card.oso-job-expired {
+    opacity: 0.7;
+    background: #f9f9f9;
+}
+
+.oso-job-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    gap: 10px;
+}
+
+.oso-job-card-header h4 {
     margin: 0;
+    font-size: 1.1em;
+    color: #333;
+    flex: 1;
+    line-height: 1.4;
+}
+
+.oso-job-status {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.oso-status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.oso-status-expired {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.oso-job-types {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.oso-job-type-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #8051B0;
+    color: #fff;
+    font-size: 0.8em;
+    border-radius: 4px;
+}
+
+.oso-job-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+    padding: 10px 0;
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.oso-job-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.oso-job-meta .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #548A8F;
+}
+
+.oso-job-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.oso-btn-sm {
+    padding: 8px 16px;
+    font-size: 0.9em;
+}
+
+.oso-btn-danger {
+    background: #dc3545;
+    color: #fff;
+}
+
+.oso-btn-danger:hover {
+    background: #c82333;
+}
+
+/* No Jobs State */
+.oso-no-jobs {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.oso-no-jobs p {
+    margin: 0 0 20px 0;
     color: #666;
     font-size: 1em;
 }

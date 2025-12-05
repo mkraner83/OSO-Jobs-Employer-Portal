@@ -356,6 +356,53 @@
             });
         }
 
+        // Delete Job Posting
+        $(document).on('click', '.oso-delete-job', function() {
+            var $btn = $(this);
+            var jobId = $btn.data('job-id');
+            var jobTitle = $btn.data('job-title');
+            
+            if (!confirm('Are you sure you want to delete "' + jobTitle + '"? This action cannot be undone.')) {
+                return;
+            }
+            
+            // Disable button
+            $btn.prop('disabled', true);
+            var originalHtml = $btn.html();
+            $btn.html('<span class="dashicons dashicons-update"></span> Deleting...');
+            
+            $.ajax({
+                url: osoEmployerPortal.ajaxUrl,
+                type: 'POST',
+                data: {
+                    action: 'oso_delete_job_posting',
+                    nonce: osoEmployerPortal.jobNonce,
+                    job_id: jobId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // Fade out and remove the job card
+                        $btn.closest('.oso-job-card').fadeOut(300, function() {
+                            $(this).remove();
+                            
+                            // Check if there are any jobs left
+                            if ($('.oso-job-card').length === 0) {
+                                // Reload page to show "no jobs" state
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        alert(response.data.message || 'Failed to delete job posting.');
+                        $btn.prop('disabled', false).html(originalHtml);
+                    }
+                },
+                error: function() {
+                    alert('Network error. Please try again.');
+                    $btn.prop('disabled', false).html(originalHtml);
+                }
+            });
+        });
+
     });
 
 })(jQuery);

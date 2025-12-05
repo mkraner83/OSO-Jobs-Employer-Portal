@@ -79,8 +79,128 @@ endif;
 
     <!-- Job Postings Section -->
     <div class="oso-employer-jobs">
-        <h3><?php esc_html_e( 'Your Job Postings', 'oso-employer-portal' ); ?></h3>
-        <p><?php esc_html_e( 'You have not posted any jobs yet.', 'oso-employer-portal' ); ?></p>
+        <div class="oso-jobs-header">
+            <h3><?php esc_html_e( 'Your Job Postings', 'oso-employer-portal' ); ?></h3>
+            <?php
+            // Get job manager and employer jobs
+            $job_manager = class_exists( 'OSO_Job_Manager' ) ? OSO_Job_Manager::instance() : null;
+            $jobs = $job_manager ? $job_manager->get_employer_jobs( $employer_post->ID ) : array();
+            $can_post = $job_manager ? $job_manager->can_post_job( $employer_post->ID ) : false;
+            $job_limit = $job_manager ? $job_manager->get_job_limit( $employer_post->ID ) : 5;
+            
+            // Count active jobs
+            $active_count = 0;
+            foreach ( $jobs as $job ) {
+                if ( $job->post_status === 'publish' && ! $job_manager->is_job_expired( $job->ID ) ) {
+                    $active_count++;
+                }
+            }
+            ?>
+            <div class="oso-jobs-actions">
+                <?php if ( $can_post ) : ?>
+                    <a href="<?php echo esc_url( home_url( '/job-portal/add-job/' ) ); ?>" class="oso-btn oso-btn-primary">
+                        <span class="dashicons dashicons-plus-alt"></span>
+                        <?php esc_html_e( 'Add New Job', 'oso-employer-portal' ); ?>
+                    </a>
+                <?php else : ?>
+                    <span class="oso-job-limit-reached">
+                        <?php 
+                        printf( 
+                            esc_html__( 'Job limit reached (%1$d / %2$s)', 'oso-employer-portal' ),
+                            $active_count,
+                            $job_limit == 0 ? '∞' : $job_limit
+                        );
+                        ?>
+                    </span>
+                <?php endif; ?>
+                <span class="oso-job-count">
+                    <?php 
+                    printf( 
+                        esc_html__( '%1$d / %2$s jobs posted', 'oso-employer-portal' ),
+                        $active_count,
+                        $job_limit == 0 ? '∞' : $job_limit
+                    );
+                    ?>
+                </span>
+            </div>
+        </div>
+        
+        <?php if ( ! empty( $jobs ) ) : ?>
+            <div class="oso-jobs-grid">
+                <?php foreach ( $jobs as $job ) : 
+                    $job_meta = $job_manager->get_job_meta( $job->ID );
+                    $is_expired = $job_manager->is_job_expired( $job->ID );
+                    $job_types = ! empty( $job_meta['_oso_job_type'] ) ? explode( "\n", $job_meta['_oso_job_type'] ) : array();
+                    ?>
+                    <div class="oso-job-card <?php echo $is_expired ? 'oso-job-expired' : ''; ?>">
+                        <div class="oso-job-card-header">
+                            <h4><?php echo esc_html( $job->post_title ); ?></h4>
+                            <?php if ( $is_expired ) : ?>
+                                <span class="oso-job-status oso-status-expired"><?php esc_html_e( 'Expired', 'oso-employer-portal' ); ?></span>
+                            <?php else : ?>
+                                <span class="oso-job-status oso-status-active"><?php esc_html_e( 'Active', 'oso-employer-portal' ); ?></span>
+                            <?php endif; ?>
+                        </div>
+                        
+                        <?php if ( ! empty( $job_types ) ) : ?>
+                            <div class="oso-job-types">
+                                <?php foreach ( array_slice( $job_types, 0, 3 ) as $type ) : ?>
+                                    <span class="oso-job-type-badge"><?php echo esc_html( trim( $type ) ); ?></span>
+                                <?php endforeach; ?>
+                                <?php if ( count( $job_types ) > 3 ) : ?>
+                                    <span class="oso-job-type-badge">+<?php echo count( $job_types ) - 3; ?></span>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <div class="oso-job-meta">
+                            <?php if ( ! empty( $job_meta['_oso_job_start_date'] ) && ! empty( $job_meta['_oso_job_end_date'] ) ) : ?>
+                                <span class="oso-job-dates">
+                                    <span class="dashicons dashicons-calendar-alt"></span>
+                                    <?php 
+                                    echo esc_html( date_i18n( 'M j', strtotime( $job_meta['_oso_job_start_date'] ) ) );
+                                    echo ' - ';
+                                    echo esc_html( date_i18n( 'M j, Y', strtotime( $job_meta['_oso_job_end_date'] ) ) );
+                                    ?>
+                                </span>
+                            <?php endif; ?>
+                            <?php if ( ! empty( $job_meta['_oso_job_positions'] ) ) : ?>
+                                <span class="oso-job-positions">
+                                    <span class="dashicons dashicons-groups"></span>
+                                    <?php 
+                                    printf( 
+                                        esc_html( _n( '%d position', '%d positions', $job_meta['_oso_job_positions'], 'oso-employer-portal' ) ),
+                                        $job_meta['_oso_job_positions']
+                                    );
+                                    ?>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                        
+                        <div class="oso-job-actions">
+                            <a href="<?php echo esc_url( home_url( '/job-portal/add-job/?job_id=' . $job->ID ) ); ?>" class="oso-btn oso-btn-sm oso-btn-secondary">
+                                <span class="dashicons dashicons-edit"></span>
+                                <?php esc_html_e( 'Edit', 'oso-employer-portal' ); ?>
+                            </a>
+                            <button type="button" class="oso-btn oso-btn-sm oso-btn-danger oso-delete-job" data-job-id="<?php echo esc_attr( $job->ID ); ?>" data-job-title="<?php echo esc_attr( $job->post_title ); ?>">
+                                <span class="dashicons dashicons-trash"></span>
+                                <?php esc_html_e( 'Delete', 'oso-employer-portal' ); ?>
+                            </button>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else : ?>
+            <div class="oso-no-jobs">
+                <p><?php esc_html_e( 'You have not posted any jobs yet.', 'oso-employer-portal' ); ?></p>
+                <?php if ( $can_post ) : ?>
+                    <a href="<?php echo esc_url( home_url( '/job-portal/add-job/' ) ); ?>" class="oso-btn oso-btn-primary">
+                        <span class="dashicons dashicons-plus-alt"></span>
+                        <?php esc_html_e( 'Post Your First Job', 'oso-employer-portal' ); ?>
+                    </a>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
     </div>
 
     <!-- Employer Profile Information -->
