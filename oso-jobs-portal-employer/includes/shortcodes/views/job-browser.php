@@ -1,12 +1,48 @@
 <?php
 /**
- * Job Browser Template - Public job listings
+ * Job Browser Template - Public job listings (requires login for jobseekers)
  *
  * @package OSO_Employer_Portal\Shortcodes\Views
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
+}
+
+// Check if user is logged in
+if ( ! is_user_logged_in() ) {
+    $current_url = home_url();
+    if ( isset( $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'] ) ) {
+        $current_url = ( is_ssl() ? 'https://' : 'http://' ) . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) . sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
+    }
+    ?>
+    <div class="oso-job-browser oso-login-required">
+        <div class="oso-login-box">
+            <div class="oso-login-header">
+                <span class="dashicons dashicons-lock"></span>
+                <h3><?php esc_html_e( 'Login Required', 'oso-employer-portal' ); ?></h3>
+                <p><?php esc_html_e( 'Please log in to browse available job postings', 'oso-employer-portal' ); ?></p>
+            </div>
+            
+            <div class="oso-login-form">
+                <?php
+                $login_form = wp_login_form(
+                    array(
+                        'echo'     => false,
+                        'redirect' => esc_url( $current_url ),
+                    )
+                );
+                echo $login_form; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                ?>
+            </div>
+            
+            <p class="oso-lost-password">
+                <a href="<?php echo esc_url( wp_lostpassword_url( $current_url ) ); ?>"><?php esc_html_e( 'Lost your password?', 'oso-employer-portal' ); ?></a>
+            </p>
+        </div>
+    </div>
+    <?php
+    return;
 }
 
 // Get job types for filter

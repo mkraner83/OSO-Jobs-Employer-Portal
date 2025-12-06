@@ -44,6 +44,7 @@ class OSO_Employer_Shortcodes {
         add_shortcode( 'oso_job_details', array( $this, 'shortcode_job_details' ) );
         add_shortcode( 'oso_jobseeker_browser', array( $this, 'shortcode_jobseeker_browser' ) );
         add_shortcode( 'oso_jobseeker_profile', array( $this, 'shortcode_jobseeker_profile' ) );
+        add_shortcode( 'oso_jobseeker_dashboard', array( $this, 'shortcode_jobseeker_dashboard' ) );
         add_shortcode( 'oso_jobseeker_edit_profile', array( $this, 'shortcode_jobseeker_edit_profile' ) );
         
         // AJAX handlers
@@ -507,6 +508,86 @@ class OSO_Employer_Shortcodes {
     /**
      * Render jobseeker edit profile shortcode.
      */
+    /**
+     * Render jobseeker dashboard shortcode.
+     */
+    public function shortcode_jobseeker_dashboard( $atts ) {
+        $atts = shortcode_atts(
+            array(
+                'redirect_url' => wp_login_url(),
+            ),
+            $atts,
+            'oso_jobseeker_dashboard'
+        );
+
+        // Check if user is logged in
+        if ( ! is_user_logged_in() ) {
+            $current_url = home_url();
+            if ( isset( $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'] ) ) {
+                $current_url = ( is_ssl() ? 'https://' : 'http://' ) . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) . sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
+            }
+
+            $login_form = wp_login_form(
+                array(
+                    'echo'     => false,
+                    'redirect' => esc_url( $current_url ),
+                )
+            );
+
+            return $this->load_template(
+                'jobseeker-dashboard.php',
+                array(
+                    'is_logged_in' => false,
+                    'login_form'   => $login_form,
+                    'lost_url'     => wp_lostpassword_url( $current_url ),
+                )
+            );
+        }
+
+        $user = wp_get_current_user();
+
+        // Check if user has jobseeker role
+        if ( ! in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, (array) $user->roles, true ) ) {
+            return '<p>' . esc_html__( 'You do not have permission to access the jobseeker dashboard.', 'oso-employer-portal' ) . '</p>';
+        }
+
+        // Find jobseeker post linked to this user
+        $jobseeker_posts = get_posts( array(
+            'post_type'      => OSO_Jobs_Portal::POST_TYPE_JOBSEEKER,
+            'posts_per_page' => 1,
+            'meta_query'     => array(
+                array(
+                    'key'     => '_oso_jobseeker_email',
+                    'value'   => $user->user_email,
+                    'compare' => '=',
+                ),
+            ),
+        ) );
+
+        if ( empty( $jobseeker_posts ) ) {
+            return '<p>' . esc_html__( 'No jobseeker profile found for your account.', 'oso-employer-portal' ) . '</p>';
+        }
+
+        $jobseeker_post = $jobseeker_posts[0];
+
+        // Get jobseeker metadata
+        if ( class_exists( 'OSO_Jobs_Utilities' ) ) {
+            $meta = OSO_Jobs_Utilities::get_jobseeker_meta( $jobseeker_post->ID );
+        } else {
+            $meta = array();
+        }
+
+        return $this->load_template(
+            'jobseeker-dashboard.php',
+            array(
+                'is_logged_in'   => true,
+                'jobseeker_post' => $jobseeker_post,
+                'meta'           => $meta,
+                'user'           => $user,
+            )
+        );
+    }
+
     public function shortcode_jobseeker_edit_profile( $atts ) {
         // Check if user is logged in
         if ( ! is_user_logged_in() ) {
