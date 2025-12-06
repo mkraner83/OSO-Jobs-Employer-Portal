@@ -136,7 +136,7 @@ class OSO_Employer_Portal {
             'oso-employer-portal',
             OSO_EMPLOYER_PORTAL_URL . 'assets/css/employer-portal.css',
             array( 'dashicons' ),
-            '1.0.10'
+            '1.0.11'
         );
         
         // Deregister conflicting lightbox scripts that might cause duplicates
@@ -147,7 +147,7 @@ class OSO_Employer_Portal {
             'oso-employer-portal',
             OSO_EMPLOYER_PORTAL_URL . 'assets/js/employer-portal.js',
             array( 'jquery' ),
-            '1.0.10',
+            '1.0.11',
             true
         );
         
@@ -158,7 +158,7 @@ class OSO_Employer_Portal {
             array(
                 'ajaxUrl' => admin_url( 'admin-ajax.php' ),
                 'nonce'   => wp_create_nonce( 'oso_upload_profile_file' ),
-                'jobNonce' => wp_create_nonce( 'oso_job_nonce' ),
+                'jobNonce' => wp_create_nonce( 'oso-job-nonce' ),
             )
         );
     }
