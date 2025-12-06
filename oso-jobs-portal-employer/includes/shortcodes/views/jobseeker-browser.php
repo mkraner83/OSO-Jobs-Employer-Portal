@@ -8,9 +8,35 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
+
+// Get employer info for header
+$employer_post = OSO_Employer_Shortcodes::instance()->get_employer_by_user( get_current_user_id() );
+$employer_meta = $employer_post ? OSO_Employer_Shortcodes::instance()->get_employer_meta( $employer_post->ID ) : array();
+$logo_url = ! empty( $employer_meta['_oso_employer_logo'] ) ? $employer_meta['_oso_employer_logo'] : '';
+$camp_name = ! empty( $employer_meta['_oso_employer_company'] ) ? $employer_meta['_oso_employer_company'] : ( $employer_post ? $employer_post->post_title : '' );
 ?>
 
 <div class="oso-jobseeker-browser">
+    <!-- Employer Header -->
+    <div class="oso-employer-header">
+        <div class="oso-employer-header-left">
+            <?php if ( $logo_url ) : ?>
+                <div class="oso-employer-logo">
+                    <img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $camp_name ); ?>" />
+                </div>
+            <?php endif; ?>
+            <div class="oso-employer-info">
+                <h1><?php echo esc_html( $camp_name ); ?></h1>
+                <p class="oso-employer-subtitle"><?php esc_html_e( 'Browse Jobseekers', 'oso-employer-portal' ); ?></p>
+            </div>
+        </div>
+        <div class="oso-employer-header-right">
+            <a href="<?php echo esc_url( home_url( '/job-portal/employer-profile/' ) ); ?>" class="oso-btn oso-btn-dashboard">
+                <span class="dashicons dashicons-dashboard"></span> <?php esc_html_e( 'Dashboard', 'oso-employer-portal' ); ?>
+            </a>
+        </div>
+    </div>
+    
     <!-- Search and Filter Form -->
     <div class="oso-filter-section">
         <form method="get" class="oso-filter-form" id="jobseeker-filter-form">

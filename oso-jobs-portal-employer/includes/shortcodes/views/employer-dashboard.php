@@ -34,6 +34,23 @@ endif;
 // User is logged in
 ?>
 <div class="oso-employer-dashboard">
+    <!-- Employer Header -->
+    <div class="oso-employer-header">
+        <div class="oso-employer-header-left">
+            <?php 
+            $logo_url = ! empty( $meta['_oso_employer_logo'] ) ? $meta['_oso_employer_logo'] : '';
+            $camp_name = ! empty( $meta['_oso_employer_company'] ) ? $meta['_oso_employer_company'] : $employer->post_title;
+            if ( $logo_url ) : ?>
+                <div class="oso-employer-logo">
+                    <img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $camp_name ); ?>" />
+                </div>
+            <?php endif; ?>
+            <div class="oso-employer-info">
+                <h1><?php echo esc_html( $camp_name ); ?></h1>
+                <p class="oso-employer-subtitle"><?php esc_html_e( 'Employer Dashboard', 'oso-employer-portal' ); ?></p>
+            </div>
+        </div>
+    </div>
     <?php 
     // Check if employer is approved (admins always see the button)
     $is_approved = current_user_can( 'manage_options' ) || ( isset( $meta['_oso_employer_approved'] ) && $meta['_oso_employer_approved'] === '1' );

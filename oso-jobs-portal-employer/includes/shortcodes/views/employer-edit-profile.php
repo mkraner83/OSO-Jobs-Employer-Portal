@@ -10,14 +10,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $camp_name = ! empty( $meta['_oso_employer_company'] ) ? $meta['_oso_employer_company'] : $employer->post_title;
+$logo_url = ! empty( $meta['_oso_employer_logo'] ) ? $meta['_oso_employer_logo'] : '';
 ?>
 
 <div class="oso-employer-edit-profile">
-    <div class="oso-profile-header">
-        <a href="<?php echo esc_url( home_url( '/job-portal/employer-profile/' ) ); ?>" class="oso-back-link">
-            &laquo; <?php esc_html_e( 'Back to Profile', 'oso-employer-portal' ); ?>
-        </a>
-        <h2><?php esc_html_e( 'Edit My Profile', 'oso-employer-portal' ); ?></h2>
+    <!-- Employer Header -->
+    <div class="oso-employer-header">
+        <div class="oso-employer-header-left">
+            <?php if ( $logo_url ) : ?>
+                <div class="oso-employer-logo">
+                    <img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $camp_name ); ?>" />
+                </div>
+            <?php endif; ?>
+            <div class="oso-employer-info">
+                <h1><?php echo esc_html( $camp_name ); ?></h1>
+                <p class="oso-employer-subtitle"><?php esc_html_e( 'Edit Employer Profile', 'oso-employer-portal' ); ?></p>
+            </div>
+        </div>
+        <div class="oso-employer-header-right">
+            <a href="<?php echo esc_url( home_url( '/job-portal/employer-profile/' ) ); ?>" class="oso-btn oso-btn-dashboard">
+                <span class="dashicons dashicons-dashboard"></span> <?php esc_html_e( 'Dashboard', 'oso-employer-portal' ); ?>
+            </a>
+        </div>
     </div>
 
     <form id="oso-edit-employer-profile-form" class="oso-edit-profile-form" data-employer-id="<?php echo esc_attr( $employer->ID ); ?>">

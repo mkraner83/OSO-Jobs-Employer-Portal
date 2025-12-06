@@ -9,6 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+// Get employer info for header
+$employer_post = OSO_Employer_Shortcodes::instance()->get_employer_by_user( get_current_user_id() );
+$employer_meta = $employer_post ? OSO_Employer_Shortcodes::instance()->get_employer_meta( $employer_post->ID ) : array();
+$logo_url = ! empty( $employer_meta['_oso_employer_logo'] ) ? $employer_meta['_oso_employer_logo'] : '';
+$camp_name = ! empty( $employer_meta['_oso_employer_company'] ) ? $employer_meta['_oso_employer_company'] : ( $employer_post ? $employer_post->post_title : '' );
+
 $job_id = isset( $_GET['job_id'] ) ? absint( $_GET['job_id'] ) : 0;
 $is_edit = $job_id > 0;
 
@@ -70,6 +76,25 @@ $selected_skills = $is_edit && ! empty( $job_meta['_oso_job_required_skills'] ) 
 ?>
 
 <div class="oso-employer-add-job">
+    <!-- Employer Header -->\n    <div class="oso-employer-header">
+        <div class="oso-employer-header-left">
+            <?php if ( $logo_url ) : ?>
+                <div class="oso-employer-logo">
+                    <img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $camp_name ); ?>" />
+                </div>
+            <?php endif; ?>
+            <div class="oso-employer-info">
+                <h1><?php echo esc_html( $camp_name ); ?></h1>
+                <p class="oso-employer-subtitle"><?php echo $is_edit ? esc_html__( 'Edit Job Posting', 'oso-employer-portal' ) : esc_html__( 'Add New Job', 'oso-employer-portal' ); ?></p>
+            </div>
+        </div>
+        <div class="oso-employer-header-right">
+            <a href="<?php echo esc_url( home_url( '/job-portal/employer-profile/' ) ); ?>" class="oso-btn oso-btn-dashboard">
+                <span class="dashicons dashicons-dashboard"></span> <?php esc_html_e( 'Dashboard', 'oso-employer-portal' ); ?>
+            </a>
+        </div>
+    </div>
+    
     <h2><?php echo $is_edit ? esc_html__( 'Edit Job Posting', 'oso-employer-portal' ) : esc_html__( 'Add New Job Posting', 'oso-employer-portal' ); ?></h2>
     
     <form id="oso-job-form" class="oso-job-form">

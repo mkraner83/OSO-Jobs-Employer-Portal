@@ -1,8 +1,154 @@
 /**
  * OSO Employer Portal Styles
  * Jobseeker Browser & Profile Views
- * Version: 1.0.9
+ * Version: 1.0.11
  */
+
+/* ========================================
+   Employer Header (Logo & Dashboard Button)
+   ======================================== */
+
+.oso-employer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #8051B0 0%, #548A8F 100%);
+    padding: 20px 30px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px rgba(128, 81, 176, 0.2);
+}
+
+.oso-employer-header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.oso-employer-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #fff;
+    padding: 5px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+}
+
+.oso-employer-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.oso-employer-info h1 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.8em;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.oso-employer-info .oso-employer-subtitle {
+    margin: 5px 0 0 0;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1em;
+}
+
+.oso-employer-header-right {
+    display: flex;
+    gap: 10px;
+}
+
+.oso-btn-dashboard {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    color: #8051B0;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.oso-btn-dashboard:hover {
+    background: #f8f8f8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    color: #8051B0;
+}
+
+.oso-btn-dashboard .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.oso-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.oso-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #fff;
+}
+
+.oso-btn-secondary .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .oso-employer-header {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .oso-employer-header-left {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .oso-employer-logo {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .oso-employer-info h1 {
+        font-size: 1.5em;
+    }
+    
+    .oso-employer-header-right {
+        width: 100%;
+        flex-direction: column;
+    }
+    
+    .oso-btn-dashboard,
+    .oso-btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+}
 
 /* ========================================
    Employer Dashboard & Login

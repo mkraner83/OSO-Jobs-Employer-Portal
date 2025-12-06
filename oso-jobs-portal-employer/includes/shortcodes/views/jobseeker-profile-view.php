@@ -16,17 +16,49 @@ $checkbox_groups = class_exists( 'OSO_Jobs_Utilities' ) ? OSO_Jobs_Utilities::ge
 $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_full_name'] : $jobseeker->post_title;
 $photo = ! empty( $meta['_oso_jobseeker_photo'] ) ? $meta['_oso_jobseeker_photo'] : '';
 $resume = ! empty( $meta['_oso_jobseeker_resume'] ) ? $meta['_oso_jobseeker_resume'] : '';
+
+// Get employer info for header if viewing as employer
+$employer_post = null;
+$employer_meta = array();
+$logo_url = '';
+$camp_name = '';
+if ( current_user_can( 'oso_employer' ) || current_user_can( 'manage_options' ) ) {
+    $employer_post = OSO_Employer_Shortcodes::instance()->get_employer_by_user( get_current_user_id() );
+    $employer_meta = $employer_post ? OSO_Employer_Shortcodes::instance()->get_employer_meta( $employer_post->ID ) : array();
+    $logo_url = ! empty( $employer_meta['_oso_employer_logo'] ) ? $employer_meta['_oso_employer_logo'] : '';
+    $camp_name = ! empty( $employer_meta['_oso_employer_company'] ) ? $employer_meta['_oso_employer_company'] : ( $employer_post ? $employer_post->post_title : '' );
+}
 ?>
 
 <div class="oso-jobseeker-profile-view">
+    <?php if ( $employer_post ) : ?>
+    <!-- Employer Header -->
+    <div class="oso-employer-header">
+        <div class="oso-employer-header-left">
+            <?php if ( $logo_url ) : ?>
+                <div class="oso-employer-logo">
+                    <img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $camp_name ); ?>" />
+                </div>
+            <?php endif; ?>
+            <div class="oso-employer-info">
+                <h1><?php echo esc_html( $camp_name ); ?></h1>
+                <p class="oso-employer-subtitle"><?php esc_html_e( 'Jobseeker Profile', 'oso-employer-portal' ); ?></p>
+            </div>
+        </div>
+        <div class="oso-employer-header-right">
+            <a href="javascript:history.back()" class="oso-btn oso-btn-secondary">
+                <span class="dashicons dashicons-arrow-left-alt2"></span> <?php esc_html_e( 'Back', 'oso-employer-portal' ); ?>
+            </a>
+            <a href="<?php echo esc_url( home_url( '/job-portal/employer-profile/' ) ); ?>" class="oso-btn oso-btn-dashboard">
+                <span class="dashicons dashicons-dashboard"></span> <?php esc_html_e( 'Dashboard', 'oso-employer-portal' ); ?>
+            </a>
+        </div>
+    </div>
+    <?php else : ?>
     <div class="oso-profile-header">
-        <?php if ( current_user_can( 'oso_employer' ) || current_user_can( 'manage_options' ) ) : ?>
-        <a href="javascript:history.back()" class="oso-back-link">
-            &laquo; <?php esc_html_e( 'Back to Search', 'oso-employer-portal' ); ?>
-        </a>
-        <?php endif; ?>
         <h2><?php esc_html_e( 'Jobseeker Profile', 'oso-employer-portal' ); ?></h2>
     </div>
+    <?php endif; ?>
 
     <div class="oso-profile-main">
         <div class="oso-profile-sidebar">
