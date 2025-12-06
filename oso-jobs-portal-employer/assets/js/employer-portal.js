@@ -431,7 +431,17 @@
         var applicationId = $btn.data('application-id');
         var applicantName = $btn.closest('.oso-application-card-item').find('.oso-applicant-link').text().trim();
         
-        if (!confirm('Are you sure you want to approve this application?')) {
+        var confirmMessage = '✅ Approve Application for ' + applicantName + '?\n\n' +
+            '📧 The candidate will receive an approval email with your contact information.\n\n' +
+            '📋 IMPORTANT - Next Steps:\n' +
+            '• Please contact the candidate directly to discuss:\n' +
+            '   - Start date and schedule details\n' +
+            '   - Orientation and onboarding process\n' +
+            '   - Required paperwork and documentation\n' +
+            '   - Position-specific requirements\n\n' +
+            'Click OK to approve and send notification email.';
+        
+        if (!confirm(confirmMessage)) {
             return;
         }
         
@@ -448,31 +458,8 @@
             },
             success: function(response) {
                 if (response.success) {
-                    // Show success modal with instructions
-                    var modalContent = '<div style="text-align: center; padding: 20px;">' +
-                        '<span class="dashicons dashicons-yes-alt" style="font-size: 48px; color: #28a745; width: 48px; height: 48px;"></span>' +
-                        '<h2 style="color: #28a745; margin: 20px 0 10px;">Application Approved!</h2>' +
-                        '<p style="font-size: 16px; color: #333; margin-bottom: 20px;">The candidate <strong>' + applicantName + '</strong> has been notified via email.</p>' +
-                        '<div style="background: #f8f9fa; border-left: 4px solid #28a745; padding: 15px; text-align: left; margin: 20px 0;">' +
-                        '<p style="margin: 0 0 10px 0; font-weight: 600; color: #333;">📋 Next Steps:</p>' +
-                        '<p style="margin: 5px 0; color: #555;">• The candidate will receive an approval email with your contact information</p>' +
-                        '<p style="margin: 5px 0; color: #555;">• <strong>Please contact them directly</strong> to discuss:</p>' +
-                        '<p style="margin: 5px 0 5px 20px; color: #555;">- Start date and schedule details</p>' +
-                        '<p style="margin: 5px 0 5px 20px; color: #555;">- Orientation and onboarding process</p>' +
-                        '<p style="margin: 5px 0 5px 20px; color: #555;">- Required paperwork and documentation</p>' +
-                        '<p style="margin: 5px 0 5px 20px; color: #555;">- Any other position-specific requirements</p>' +
-                        '</div>' +
-                        '<p style="color: #666; font-size: 14px; margin-top: 15px;">The page will refresh automatically...</p>' +
-                        '</div>';
-                    
-                    $('#oso-modal-title').text('Success');
-                    $('#oso-modal-body').html(modalContent);
-                    $('#oso-cover-letter-modal').fadeIn(300);
-                    
-                    // Auto-reload after 5 seconds
-                    setTimeout(function() {
-                        location.reload();
-                    }, 5000);
+                    // Reload page to show updated status
+                    location.reload();
                 } else {
                     alert(response.data.message || 'Failed to approve application.');
                     $btn.prop('disabled', false).text('Approve');
