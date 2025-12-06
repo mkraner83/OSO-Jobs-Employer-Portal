@@ -416,7 +416,7 @@
         var coverLetter = $(this).data('cover-letter');
         
         $('#oso-modal-title').text('Application from ' + applicant + ' for ' + job);
-        $('#oso-modal-body').html('<strong>Cover Letter:</strong><br><br>' + coverLetter);
+        $('#oso-modal-body').html('<strong>Message from Applicant:</strong><br><br>' + coverLetter);
         $('#oso-cover-letter-modal').fadeIn(300);
     });
 

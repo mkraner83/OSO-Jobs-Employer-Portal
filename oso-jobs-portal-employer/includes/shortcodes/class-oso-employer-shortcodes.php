@@ -1079,14 +1079,26 @@ class OSO_Employer_Shortcodes {
         $job_title = get_the_title( $job_id );
         $jobseeker_name = get_the_title( $jobseeker_id );
         $camp_name = get_post_meta( $employer_id, '_oso_employer_company', true );
+        
+        // Get jobseeker contact info
+        $jobseeker_email = get_post_meta( $jobseeker_id, '_oso_jobseeker_email', true );
+        $jobseeker_phone = get_post_meta( $jobseeker_id, '_oso_jobseeker_phone', true );
+        
+        // Get application message
+        $application_post = get_post( $application_id );
+        $message_content = $application_post ? $application_post->post_content : '';
 
-        $subject = sprintf( __( 'New Job Application: %s', 'oso-employer-portal' ), $job_title );
+        $subject = sprintf( __( '🎉 New Application for %s - %s', 'oso-employer-portal' ), $job_title, $jobseeker_name );
         
         $message = sprintf(
-            __( "Hello %s,\n\nYou have received a new job application for the position: %s\n\nApplicant: %s\n\nYou can view and manage this application in your employer dashboard.\n\nBest regards,\nOSO Jobs Team", 'oso-employer-portal' ),
+            __( "Hello %s,\n\nGreat news! You have received a new job application.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAPPLICATION DETAILS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nPosition: %s\nApplicant: %s\nEmail: %s\nPhone: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nMESSAGE FROM APPLICANT\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n%s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nYou can view the full applicant profile and manage this application in your employer dashboard:\n%s\n\nBest regards,\nOSO Jobs Team", 'oso-employer-portal' ),
             $camp_name,
             $job_title,
-            $jobseeker_name
+            $jobseeker_name,
+            $jobseeker_email ?: 'Not provided',
+            $jobseeker_phone ?: 'Not provided',
+            $message_content,
+            home_url( '/job-portal/employer-profile/' )
         );
 
         wp_mail( $employer_user->user_email, $subject, $message );
@@ -1137,9 +1149,71 @@ class OSO_Employer_Shortcodes {
         }
 
         // Update status
+        $old_status = get_post_meta( $application_id, '_oso_application_status', true );
         update_post_meta( $application_id, '_oso_application_status', $status );
 
+        // Send email to jobseeker if status changed to approved
+        if ( $status === 'approved' && $old_status !== 'approved' ) {
+            $this->send_approval_notification( $application_id );
+        }
+
         wp_send_json_success( array( 'message' => __( 'Application status updated.', 'oso-employer-portal' ) ) );
+    }
+
+    /**
+     * Send email notification to jobseeker when application is approved.
+     *
+     * @param int $application_id Application post ID.
+     */
+    private function send_approval_notification( $application_id ) {
+        $job_id = get_post_meta( $application_id, '_oso_application_job_id', true );
+        $jobseeker_id = get_post_meta( $application_id, '_oso_application_jobseeker_id', true );
+        $employer_id = get_post_meta( $application_id, '_oso_application_employer_id', true );
+
+        // Get jobseeker email
+        $jobseeker_user_id = get_post_meta( $jobseeker_id, '_oso_jobseeker_user_id', true );
+        $jobseeker_user = get_userdata( $jobseeker_user_id );
+        
+        if ( ! $jobseeker_user ) {
+            return;
+        }
+
+        // Get data for email
+        $job_title = get_the_title( $job_id );
+        $jobseeker_name = get_the_title( $jobseeker_id );
+        $camp_name = get_post_meta( $employer_id, '_oso_employer_company', true );
+        $employer_email = get_post_meta( $employer_id, '_oso_employer_email', true );
+        $employer_phone = get_post_meta( $employer_id, '_oso_employer_phone', true );
+        $employer_website = get_post_meta( $employer_id, '_oso_employer_website', true );
+        
+        // Get job details
+        $job_start_date = get_post_meta( $job_id, '_oso_job_start_date', true );
+        $job_compensation = get_post_meta( $job_id, '_oso_job_compensation', true );
+
+        $subject = sprintf( __( '🎉 Congratulations! Your Application Has Been Approved - %s', 'oso-employer-portal' ), $camp_name );
+        
+        $contact_info = '';
+        if ( $employer_email ) {
+            $contact_info .= sprintf( "\nEmail: %s", $employer_email );
+        }
+        if ( $employer_phone ) {
+            $contact_info .= sprintf( "\nPhone: %s", $employer_phone );
+        }
+        if ( $employer_website ) {
+            $contact_info .= sprintf( "\nWebsite: %s", $employer_website );
+        }
+        
+        $message = sprintf(
+            __( "Hello %s,\n\nExciting news! Your application has been approved!\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nJOB DETAILS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nPosition: %s\nEmployer: %s%s%s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nNEXT STEPS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nThe employer will contact you directly to discuss the next steps. Please make sure to respond promptly to their communication.\n\nYou can view this application and all your other applications in your dashboard:\n%s\n\nGood luck with your new position!\n\nBest regards,\nOSO Jobs Team", 'oso-employer-portal' ),
+            $jobseeker_name,
+            $job_title,
+            $camp_name,
+            $contact_info,
+            $job_start_date ? sprintf( "\nStart Date: %s", date_i18n( 'F j, Y', strtotime( $job_start_date ) ) ) : '',
+            home_url( '/job-portal/jobseeker-dashboard/' )
+        );
+
+        wp_mail( $jobseeker_user->user_email, $subject, $message );
     }
 
     /**

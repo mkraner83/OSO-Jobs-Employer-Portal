@@ -241,13 +241,13 @@ $application_success = isset( $_GET['application'] ) && $_GET['application'] ===
                             <input type="hidden" name="jobseeker_id" value="<?php echo esc_attr( $jobseeker_id ); ?>">
                             
                             <div class="oso-form-group">
-                                <label for="cover_letter"><?php esc_html_e( 'Cover Letter', 'oso-employer-portal' ); ?> *</label>
+                                <label for="cover_letter"><?php esc_html_e( 'Message to Employer', 'oso-employer-portal' ); ?> *</label>
                                 <textarea 
                                     id="cover_letter" 
                                     name="cover_letter" 
                                     rows="8" 
                                     required
-                                    placeholder="<?php esc_attr_e( 'Tell the employer why you\'re a great fit for this position...', 'oso-employer-portal' ); ?>"
+                                    placeholder="<?php esc_attr_e( 'Introduce yourself and explain why you\'re interested in this position...', 'oso-employer-portal' ); ?>"
                                 ></textarea>
                             </div>
 
