@@ -1400,7 +1400,11 @@
 
 /* Subscription fields with gray background */
 .oso-subscription-field {
-    background: #f9f9f9 !important;
+    background: #f0f0f0 !important;
+}
+
+.oso-subscription-field strong {
+    color: #8051B0 !important;
 }
 
 /* ========================================
