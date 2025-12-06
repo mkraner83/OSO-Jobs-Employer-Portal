@@ -1,16 +1,16 @@
 # OSO Jobs Portal - Employer Extension
 
-**Version:** 1.1.0  
+**Version:** 1.2.0  
 **Requires:** OSO Jobs Portal (Core Plugin)  
 **WordPress Version:** 5.0 or higher
 
-## 🔖 Restore Point - December 5, 2025
+## 🔖 Restore Point - December 6, 2025
 
-**Stable Release:** All features tested and working  
-**Git Commit:** [0aa7885](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/commit/0aa7885)  
+**Stable Release:** Job Posting System Complete - All features tested and working  
+**Git Commit:** [2cd78ea](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/commit/2cd78ea)  
 **Downloads:**
-- [oso-jobs-portal-updated.zip](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/raw/main/oso-jobs-portal-updated.zip) (Core Plugin)
-- [oso-jobs-portal-employer-updated.zip](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/raw/main/oso-jobs-portal-employer-updated.zip) (Employer Extension)
+- [oso-jobs-portal.zip](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/raw/main/oso-jobs-portal.zip) (Core Plugin)
+- [oso-jobs-portal-employer.zip](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/raw/main/oso-jobs-portal-employer.zip) (Employer Extension)
 
 ### Major Features Implemented
 ✅ Complete employer registration and profile management  
@@ -22,7 +22,15 @@
 ✅ Access control: Unapproved employers see pending approval message  
 ✅ Expired subscriptions block jobseeker browsing with clear warnings  
 ✅ "Back to Search" links only visible to employers (hidden for jobseekers)  
-✅ OSO Jobs admin menu: Always expanded, purple title, positioned after Dashboard
+✅ OSO Jobs admin menu: Always expanded, purple title, positioned after Dashboard  
+✅ **Complete Job Posting System with Add/Edit/Delete functionality**  
+✅ **Public job browser with filters, search, and pagination**  
+✅ **Job details page with application submission**  
+✅ **Application management dashboard with status tracking**  
+✅ **Custom admin screens for job postings and applications**  
+✅ **Per-employer job posting limits (1-20 or unlimited)**  
+✅ **Automatic job expiration based on end date**  
+✅ **Email notifications for job applications**
 
 ## Description
 
@@ -263,7 +271,79 @@ Handled by core OSO Jobs Portal plugin. Refer to core plugin documentation.
 
 ## Changelog
 
-### Version 1.1.0 (December 5, 2025) - CURRENT RESTORE POINT ✨
+### Version 1.2.0 (December 6, 2025) - CURRENT RESTORE POINT ✨
+**Complete Job Posting System with Applications**
+
+**Job Posting System:**
+- Custom post type `oso_job_posting` with full CRUD operations
+- Add/Edit job form with 10 fields (accessible via `[oso_employer_add_job]`)
+  - Job Title, Description (rich text), Job Type (Full-Time/Part-Time/Seasonal/Internship/Contract)
+  - Required Skills/Qualifications, Start Date, End Date, Compensation, Number of Positions, Application Instructions
+- Dynamic job listing on employer dashboard with card-based layout
+- Edit and Delete buttons with confirmation dialogs
+- Empty state with "Post Your First Job" button
+- Job count display showing "X / Y jobs posted" (only counts active, non-expired jobs)
+- Add New Job button (disabled when limit reached)
+- Per-employer job posting limits (configurable in admin: 1-20 or Unlimited dropdown)
+- Automatic job expiration based on end date (hidden from public after end date)
+- Jobs remain in database after expiration but marked as "Expired"
+
+**Public Job Browser:**
+- Public job listing page with `[oso_job_browser]` shortcode
+- Advanced filtering: Location (state), Job Type (Full-Time, Part-Time, etc.), Sort options
+- Search functionality across job title and description
+- Pagination support (12 jobs per page)
+- Responsive card grid layout with job details
+- Auto-hides expired jobs from public view
+- Links to individual job detail pages
+
+**Job Details & Applications:**
+- Individual job detail page with `[oso_job_details]` shortcode
+- Full job information display with employer card (logo, name, location)
+- Application form for logged-in jobseekers (cover letter required)
+- Custom post type `oso_job_application` for application submissions
+- AJAX submission with email notifications to employer
+- Duplicate application prevention
+- Application status tracking (pending/approved/rejected)
+
+**Application Management:**
+- Applications section added to employer dashboard
+- Statistics cards showing Pending, Approved, Rejected, and Total counts
+- Full applications table with:
+  - Applicant name (linked to jobseeker profile)
+  - Job position applied for
+  - Application status with color-coded badges
+  - Submission date
+  - Action buttons: View Cover Letter, Approve, Reject, Reset Status
+- View cover letter modal with full text display
+- Status update actions with AJAX (no page reload)
+
+**Admin Features:**
+- Custom admin edit screen for job postings with all fields
+- Job Postings and Applications added to OSO Jobs admin menu
+- Custom admin columns for job postings:
+  - Job Title, Employer, Job Type, Start/End Dates, Number of Positions, Status (Active/Expired)
+- Custom admin columns for applications:
+  - Applicant, Job Position, Employer, Status, Date
+- Status badges with color coding (green for active, red for expired/rejected)
+- Automatic duplicate menu item removal system
+- Job posting limit field in employer admin (dropdown selector 1-20 or unlimited)
+
+**Bug Fixes:**
+- Fixed job count calculation to exclude expired jobs from limits
+- Fixed job browser URL to /job-portal/all-jobs/
+- Fixed employer dashboard redirect to /job-portal/employer-profile/
+- Fixed duplicate admin menu items
+- Hidden old unused "Jobs" post type from admin UI
+
+**Styling Updates:**
+- Gray background (#f0f0f0) for subscription fields on employer dashboard
+- Purple labels (#8051B0) for subscription type and ends date
+- Gray background for empty jobs state for better visual separation
+- Consistent card-based styling across all components
+- Responsive design for mobile and tablet devices
+
+### Version 1.1.0 (December 5, 2025)
 **Complete Approval System, Subscription Management, Admin Enhancements**
 
 **Approval & Access Control:**
@@ -371,7 +451,9 @@ Handled by core OSO Jobs Portal plugin. Refer to core plugin documentation.
 ### Post Types Used
 - `oso_employer` - Employer profiles
 - `oso_jobseeker` - Jobseeker profiles (from core plugin)
-- `oso_job` - Job postings (from core plugin)
+- `oso_job_posting` - Job postings (NEW in v1.2.0)
+- `oso_job_application` - Job applications (NEW in v1.2.0)
+- `oso_job` - Old job postings (deprecated, hidden from UI)
 
 ### User Roles
 - `oso_employer` - Employer role with limited access
@@ -391,9 +473,29 @@ Handled by core OSO Jobs Portal plugin. Refer to core plugin documentation.
 - `_oso_employer_housing` - Housing Provided
 - `_oso_employer_social_links` - Social Media Links
 - `_oso_employer_subscription_type` - Subscription Type (read-only)
+- `_oso_employer_subscription_ends` - Subscription expiration date (admin-only)
+- `_oso_employer_approved` - Approval status (admin-only checkbox)
+- `_oso_employer_job_limit` - Job posting limit (admin-only, 1-20 or 0 for unlimited)
 - `_oso_employer_logo` - Logo image URL
 - `_oso_employer_photos` - Photo URLs (newline-separated)
 - `_oso_employer_wpforms_entry` - WPForms entry ID
+
+### Meta Fields (Job Posting) - NEW in v1.2.0
+- `_oso_job_employer_id` - Employer post ID (links job to employer)
+- `_oso_job_type` - Job Type (Full-Time, Part-Time, Seasonal, Internship, Contract)
+- `_oso_job_required_skills` - Required skills/qualifications (textarea)
+- `_oso_job_start_date` - Position start date
+- `_oso_job_end_date` - Position end date (auto-expire jobs after this date)
+- `_oso_job_compensation` - Salary/wage information
+- `_oso_job_positions` - Number of open positions
+- `_oso_job_application_instructions` - Special instructions for applicants
+
+### Meta Fields (Job Application) - NEW in v1.2.0
+- `_oso_application_job_id` - Job posting ID
+- `_oso_application_jobseeker_id` - Jobseeker post ID
+- `_oso_application_employer_id` - Employer post ID
+- `_oso_application_status` - Application status (pending/approved/rejected)
+- `_oso_application_date` - Submission date
 
 ### Meta Fields (Jobseeker - from core plugin)
 - `_oso_jobseeker_full_name`
@@ -412,10 +514,25 @@ Handled by core OSO Jobs Portal plugin. Refer to core plugin documentation.
 - `_oso_jobseeker_support_skills`
 - `_oso_jobseeker_certifications`
 
+### Shortcodes Available
+- `[oso_employer_dashboard]` or `[oso_employer_profile]` - Employer dashboard with jobs and applications
+- `[oso_employer_edit_profile]` - Employer profile editing form
+- `[oso_employer_password_link]` - Password reset link
+- `[oso_jobseeker_browser]` - Browse jobseekers (employers only)
+- `[oso_jobseeker_profile]` - View individual jobseeker profile
+- `[oso_employer_add_job]` - Add/edit job posting form
+- `[oso_job_browser]` - Public job listings with filters
+- `[oso_job_details]` - Individual job page with application form
+
 ### Hooks Used
 - `wpforms_process_complete_{FORM_ID}` - Handle employer registration
 - `login_redirect` - Redirect employers to dashboard
 - `admin_init` - Block wp-admin access for employers
+- `wp_ajax_oso_save_job_posting` - AJAX handler for job save
+- `wp_ajax_oso_delete_job_posting` - AJAX handler for job delete
+- `wp_ajax_oso_submit_job_application` - AJAX handler for application submission
+- `wp_ajax_oso_update_application_status` - AJAX handler for application status updates
+- `pre_get_posts` - Filter to hide expired jobs from public queries
 
 ## Support
 
