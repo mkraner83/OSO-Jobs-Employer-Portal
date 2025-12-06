@@ -1,16 +1,16 @@
 # OSO Jobs Portal - Employer Extension
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **Requires:** OSO Jobs Portal (Core Plugin)  
 **WordPress Version:** 5.0 or higher
 
-## 🔖 Restore Point - December 6, 2025
+## 🔖 Restore Point - December 6, 2025 (v1.3.0)
 
-**Stable Release:** Job Posting System Complete - All features tested and working  
-**Git Commit:** [2cd78ea](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/commit/2cd78ea)  
+**Stable Release:** Complete Jobseeker Dashboard + Job Application System - All features working  
+**Git Commit:** [23835b9](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/commit/23835b9)  
 **Downloads:**
 - [oso-jobs-portal.zip](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/raw/main/oso-jobs-portal.zip) (Core Plugin)
-- [oso-jobs-portal-employer.zip](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/raw/main/oso-jobs-portal-employer.zip) (Employer Extension)
+- [oso-jobs-portal-employer.zip](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/raw/main/oso-jobs-portal-employer.zip) (Employer Extension v1.0.9)
 
 ### Major Features Implemented
 ✅ Complete employer registration and profile management  
@@ -23,14 +23,26 @@
 ✅ Expired subscriptions block jobseeker browsing with clear warnings  
 ✅ "Back to Search" links only visible to employers (hidden for jobseekers)  
 ✅ OSO Jobs admin menu: Always expanded, purple title, positioned after Dashboard  
-✅ **Complete Job Posting System with Add/Edit/Delete functionality**  
-✅ **Public job browser with filters, search, and pagination**  
-✅ **Job details page with application submission**  
-✅ **Application management dashboard with status tracking**  
-✅ **Custom admin screens for job postings and applications**  
-✅ **Per-employer job posting limits (1-20 or unlimited)**  
-✅ **Automatic job expiration based on end date**  
-✅ **Email notifications for job applications**
+✅ Complete Job Posting System with Add/Edit/Delete functionality  
+✅ Public job browser with filters, search, and pagination  
+✅ Job details page with application submission  
+✅ Application management dashboard with status tracking  
+✅ Custom admin screens for job postings and applications  
+✅ Per-employer job posting limits (1-20 or unlimited)  
+✅ Automatic job expiration based on end date  
+✅ Email notifications for job applications  
+✅ **NEW: Complete Jobseeker Dashboard with profile, applications, and camps**  
+✅ **NEW: Job browser requires login - shows login form if not authenticated**  
+✅ **NEW: Job application system with cover letter and consent**  
+✅ **NEW: Application status tracking (pending/approved/rejected)**  
+✅ **NEW: My Applications section showing all submitted applications**  
+✅ **NEW: All Camps section showing approved employers**  
+✅ **NEW: Fixed job application nonce verification issue**
+
+## 🔖 Previous Restore Point - December 6, 2025 (v1.2.0)
+
+**Git Commit:** [2cd78ea](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/commit/2cd78ea)  
+**Status:** Job Posting System Complete - Before jobseeker dashboard implementation
 
 ## Description
 
@@ -271,7 +283,66 @@ Handled by core OSO Jobs Portal plugin. Refer to core plugin documentation.
 
 ## Changelog
 
-### Version 1.2.0 (December 6, 2025) - CURRENT RESTORE POINT ✨
+### Version 1.3.0 (December 6, 2025) - CURRENT RESTORE POINT ✨
+**Jobseeker Dashboard & Job Application System Complete**
+
+**Jobseeker Dashboard:**
+- New shortcode `[oso_jobseeker_dashboard]` for jobseeker landing page
+- Full-width purple "Browse All Jobs" banner (matches employer dashboard style)
+- My Applications section:
+  - Grid of application cards showing submitted applications
+  - Displays: Employer logo, job title, company name, location, application date
+  - Color-coded status badges (yellow=pending, green=approved, red=rejected)
+  - "View Job" button linking to job details page
+  - Empty state message when no applications exist
+- All Camps section:
+  - Grid of approved employer cards with logos
+  - Shows: Camp name, location, number of open positions
+  - "Visit Website" and "View Jobs" buttons
+  - Only displays approved employers
+- My Profile section:
+  - Complete profile information display (name, email, phone, location, availability, skills, certifications)
+  - Card-based layout matching employer dashboard style
+  - Teal "Edit Profile" button in header
+- Login form for non-authenticated users
+- Logout button
+- Role verification (ensures user is a jobseeker)
+
+**Job Browser Access Control:**
+- Job browser now requires login
+- Non-authenticated users see login form with lock icon
+- "Login Required to View Jobs" message
+- Returns early if user not logged in (prevents job display)
+
+**Job Application System:**
+- Fixed nonce verification issue (changed from `oso_job_nonce` to `oso-job-nonce`)
+- Added comprehensive error logging for debugging
+- Enhanced JavaScript error handling with console logging
+- Better error messages for specific failure scenarios
+- AJAX application submission with cover letter and consent
+- Application creates `oso_job_application` custom post
+- Links application to job, jobseeker, and employer
+- Sends email notification to employer
+- Redirects to success page after submission
+- Prevents duplicate applications
+
+**Login System Updates:**
+- Jobseeker login redirect changed from `/jobseeker-profile/` to `/job-portal/jobseeker-dashboard/`
+- Role-based redirects: employers → dashboard, jobseekers → jobseeker dashboard
+
+**Bug Fixes:**
+- Fixed nonce verification causing "An error occurred. Please try again." error
+- Fixed edit profile URL from `/job-portal/job-portal/jobseeker-edit-profile/` to `/job-portal/edit-jobseeker-profile/`
+- Bumped plugin version to 1.0.9 to force cache refresh
+- Bumped asset versions to 1.0.11 for cache busting
+
+**Documentation:**
+- Added comprehensive TROUBLESHOOTING.md guide
+- Detailed debugging instructions for job application errors
+- Common issues and solutions documented
+- Step-by-step error log checking procedures
+
+### Version 1.2.0 (December 6, 2025) - Previous Restore Point
 **Complete Job Posting System with Applications**
 
 **Job Posting System:**
@@ -515,13 +586,21 @@ Handled by core OSO Jobs Portal plugin. Refer to core plugin documentation.
 - `_oso_jobseeker_certifications`
 
 ### Shortcodes Available
+
+**Employer Shortcodes:**
 - `[oso_employer_dashboard]` or `[oso_employer_profile]` - Employer dashboard with jobs and applications
 - `[oso_employer_edit_profile]` - Employer profile editing form
-- `[oso_employer_password_link]` - Password reset link
-- `[oso_jobseeker_browser]` - Browse jobseekers (employers only)
-- `[oso_jobseeker_profile]` - View individual jobseeker profile
 - `[oso_employer_add_job]` - Add/edit job posting form
-- `[oso_job_browser]` - Public job listings with filters
+- `[oso_employer_password_link]` - Password reset link
+
+**Jobseeker Shortcodes:**
+- `[oso_jobseeker_dashboard]` - Jobseeker landing page/dashboard with applications and camps (NEW in v1.3.0)
+- `[oso_jobseeker_edit_profile]` - Jobseeker profile editing form
+- `[oso_jobseeker_profile]` - View individual jobseeker profile (for employers)
+
+**Job Browsing Shortcodes:**
+- `[oso_jobseeker_browser]` - Browse jobseekers (employers only)
+- `[oso_job_browser]` - Public job listings with filters (requires login as of v1.3.0)
 - `[oso_job_details]` - Individual job page with application form
 
 ### Hooks Used
