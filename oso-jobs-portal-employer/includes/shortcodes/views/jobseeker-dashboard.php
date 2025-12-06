@@ -269,7 +269,7 @@ endif;
     <div class="oso-profile-section">
         <div class="oso-section-header">
             <h3><?php esc_html_e( 'My Profile', 'oso-employer-portal' ); ?></h3>
-            <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-edit-profile/' ) ); ?>" class="oso-btn oso-btn-primary">
+            <a href="<?php echo esc_url( home_url( '/job-portal/edit-jobseeker-profile/' ) ); ?>" class="oso-btn oso-btn-primary">
                 <span class="dashicons dashicons-edit"></span>
                 <?php esc_html_e( 'Edit Profile', 'oso-employer-portal' ); ?>
             </a>
