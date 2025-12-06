@@ -1156,6 +1156,15 @@ class OSO_Employer_Shortcodes {
         if ( $status === 'approved' && $old_status !== 'approved' ) {
             $this->send_approval_notification( $application_id );
             $this->send_admin_approval_notification( $application_id );
+            
+            // Decrease position count for the job
+            $job_id = get_post_meta( $application_id, '_oso_application_job_id', true );
+            if ( $job_id ) {
+                $positions = (int) get_post_meta( $job_id, '_oso_job_positions', true );
+                if ( $positions > 0 ) {
+                    update_post_meta( $job_id, '_oso_job_positions', $positions - 1 );
+                }
+            }
         }
 
         wp_send_json_success( array( 'message' => __( 'Application status updated.', 'oso-employer-portal' ) ) );
