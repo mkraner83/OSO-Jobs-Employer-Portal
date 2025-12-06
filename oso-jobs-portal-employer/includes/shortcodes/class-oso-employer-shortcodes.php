@@ -53,6 +53,7 @@ class OSO_Employer_Shortcodes {
         add_action( 'wp_ajax_oso_upload_profile_file', array( $this, 'ajax_upload_profile_file' ) );
         add_action( 'wp_ajax_oso_submit_job_application', array( $this, 'ajax_submit_job_application' ) );
         add_action( 'wp_ajax_oso_update_application_status', array( $this, 'ajax_update_application_status' ) );
+        add_action( 'wp_ajax_oso_delete_employer_profile', array( $this, 'ajax_delete_employer_profile' ) );
     }
 
     /**
@@ -1320,5 +1321,51 @@ class OSO_Employer_Shortcodes {
         extract( $data ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract
         include $template_path;
         return ob_get_clean();
+    }
+
+    /**
+     * AJAX handler to delete employer profile
+     */
+    public function ajax_delete_employer_profile() {
+        check_ajax_referer( 'oso-job-nonce', 'nonce' );
+
+        if ( ! is_user_logged_in() ) {
+            wp_send_json_error( array( 'message' => __( 'You must be logged in.', 'oso-employer-portal' ) ) );
+        }
+
+        $employer_id = isset( $_POST['employer_id'] ) ? absint( $_POST['employer_id'] ) : 0;
+        if ( ! $employer_id ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid employer ID.', 'oso-employer-portal' ) ) );
+        }
+
+        $user_id = get_current_user_id();
+        $employer_user_id = get_post_meta( $employer_id, '_oso_employer_user_id', true );
+
+        // Verify ownership
+        if ( $employer_user_id != $user_id && ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to delete this profile.', 'oso-employer-portal' ) ) );
+        }
+
+        // Delete all associated jobs first
+        $jobs = get_posts( array(
+            'post_type'      => 'oso_job_posting',
+            'post_status'    => 'any',
+            'posts_per_page' => -1,
+            'meta_key'       => '_oso_job_employer_id',
+            'meta_value'     => $employer_id,
+        ) );
+
+        foreach ( $jobs as $job ) {
+            wp_delete_post( $job->ID, true );
+        }
+
+        // Delete the employer profile
+        $result = wp_delete_post( $employer_id, true );
+
+        if ( ! $result ) {
+            wp_send_json_error( array( 'message' => __( 'Failed to delete profile.', 'oso-employer-portal' ) ) );
+        }
+
+        wp_send_json_success( array( 'message' => __( 'Profile deleted successfully.', 'oso-employer-portal' ) ) );
     }
 }

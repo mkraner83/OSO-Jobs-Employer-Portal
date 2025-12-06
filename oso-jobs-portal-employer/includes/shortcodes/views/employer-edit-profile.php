@@ -186,6 +186,10 @@ $logo_url = ! empty( $meta['_oso_employer_logo'] ) ? $meta['_oso_employer_logo']
             <a href="<?php echo esc_url( home_url( '/job-portal/employer-profile/' ) ); ?>" class="oso-btn oso-btn-secondary">
                 <?php esc_html_e( 'Cancel', 'oso-employer-portal' ); ?>
             </a>
+            <button type="button" class="oso-btn oso-btn-danger oso-delete-employer-profile" data-employer-id="<?php echo esc_attr( $employer->ID ); ?>" style="margin-left: auto;">
+                <span class="dashicons dashicons-trash"></span>
+                <?php esc_html_e( 'Delete Profile', 'oso-employer-portal' ); ?>
+            </button>
         </div>
 
         <div id="oso-employer-form-message" class="oso-form-message" style="display: none;"></div>

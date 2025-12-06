@@ -14,21 +14,32 @@ $text_fields = class_exists( 'OSO_Jobs_Utilities' ) ? OSO_Jobs_Utilities::get_jo
 $checkbox_groups = class_exists( 'OSO_Jobs_Utilities' ) ? OSO_Jobs_Utilities::get_jobseeker_checkbox_groups() : array();
 
 $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_full_name'] : $jobseeker->post_title;
+$photo = ! empty( $meta['_oso_jobseeker_photo'] ) ? $meta['_oso_jobseeker_photo'] : '';
+$profile_url = home_url( '/job-portal/jobseeker-profile/' );
 
 // Debug: Uncomment to see what's in meta
 // echo '<pre>'; print_r($meta); echo '</pre>';
 ?>
 
 <div class="oso-jobseeker-edit-profile">
-    <div class="oso-profile-header">
-        <?php
-        // Use direct URL for profile page
-        $profile_url = home_url( '/job-portal/jobseeker-profile/' );
-        ?>
-        <a href="<?php echo esc_url( $profile_url ); ?>" class="oso-back-link">
-            &laquo; <?php esc_html_e( 'Back to Profile', 'oso-employer-portal' ); ?>
-        </a>
-        <h2><?php esc_html_e( 'Edit My Profile', 'oso-employer-portal' ); ?></h2>
+    <!-- Jobseeker Header -->
+    <div class="oso-employer-header">
+        <div class="oso-employer-header-left">
+            <?php if ( $photo ) : ?>
+                <div class="oso-employer-logo">
+                    <img src="<?php echo esc_url( $photo ); ?>" alt="<?php echo esc_attr( $name ); ?>" />
+                </div>
+            <?php endif; ?>
+            <div class="oso-employer-info">
+                <h1><?php echo esc_html( $name ); ?></h1>
+                <p class="oso-employer-subtitle"><?php esc_html_e( 'Edit Jobseeker Profile', 'oso-employer-portal' ); ?></p>
+            </div>
+        </div>
+        <div class="oso-employer-header-right">
+            <a href="<?php echo esc_url( $profile_url ); ?>" class="oso-btn oso-btn-dashboard">
+                <span class="dashicons dashicons-dashboard"></span> <?php esc_html_e( 'Dashboard', 'oso-employer-portal' ); ?>
+            </a>
+        </div>
     </div>
 
     <form id="oso-edit-profile-form" class="oso-edit-profile-form" data-jobseeker-id="<?php echo esc_attr( $jobseeker->ID ); ?>">

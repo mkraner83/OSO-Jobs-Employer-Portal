@@ -861,6 +861,17 @@
     color: #333;
 }
 
+.oso-btn-danger {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+}
+
+.oso-btn-danger:hover {
+    background: #c82333;
+    color: #fff;
+}
+
 .oso-btn .dashicons {
     width: 20px;
     height: 20px;

@@ -32,8 +32,24 @@ if ( ! $is_logged_in ) :
 endif;
 
 // User is logged in
+$photo = ! empty( $meta['_oso_jobseeker_photo'] ) ? $meta['_oso_jobseeker_photo'] : '';
+$name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_full_name'] : $jobseeker->post_title;
 ?>
 <div class="oso-jobseeker-dashboard">
+    <!-- Jobseeker Header -->
+    <div class="oso-employer-header">
+        <div class="oso-employer-header-left">
+            <?php if ( $photo ) : ?>
+                <div class="oso-employer-logo">
+                    <img src="<?php echo esc_url( $photo ); ?>" alt="<?php echo esc_attr( $name ); ?>" />
+                </div>
+            <?php endif; ?>
+            <div class="oso-employer-info">
+                <h1><?php echo esc_html( $name ); ?></h1>
+                <p class="oso-employer-subtitle"><?php esc_html_e( 'Jobseeker Dashboard', 'oso-employer-portal' ); ?></p>
+            </div>
+        </div>
+    </div>
     
     <!-- Full-Width Browse Jobs Button -->
     <div class="oso-quick-link-banner">

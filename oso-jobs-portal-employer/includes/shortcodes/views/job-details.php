@@ -34,6 +34,15 @@ if ( ! $job || $job->post_type !== 'oso_job_posting' || $job->post_status !== 'p
 // Check if job is expired
 $is_expired = OSO_Job_Manager::instance()->is_job_expired( $job_id );
 
+// If expired and user is not an employer/admin, show not found
+if ( $is_expired && ! current_user_can( 'oso_employer' ) && ! current_user_can( 'manage_options' ) ) {
+    echo '<div class="oso-error-message">';
+    echo '<p>' . esc_html__( 'Job not found.', 'oso-employer-portal' ) . '</p>';
+    echo '<a href="' . esc_url( home_url( '/job-portal/all-jobs/' ) ) . '" class="oso-btn oso-btn-primary">' . esc_html__( 'Back to Jobs', 'oso-employer-portal' ) . '</a>';
+    echo '</div>';
+    return;
+}
+
 // Get job meta
 $job_meta = OSO_Job_Manager::instance()->get_job_meta( $job_id );
 $employer_id = ! empty( $job_meta['_oso_job_employer_id'] ) ? $job_meta['_oso_job_employer_id'] : 0;
