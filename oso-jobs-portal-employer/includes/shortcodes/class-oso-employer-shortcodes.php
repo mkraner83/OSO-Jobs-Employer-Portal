@@ -1150,20 +1150,28 @@ class OSO_Employer_Shortcodes {
 
         // Update status
         $old_status = get_post_meta( $application_id, '_oso_application_status', true );
+        $job_id = get_post_meta( $application_id, '_oso_application_job_id', true );
+        
         update_post_meta( $application_id, '_oso_application_status', $status );
 
-        // Send email to jobseeker if status changed to approved
-        if ( $status === 'approved' && $old_status !== 'approved' ) {
-            $this->send_approval_notification( $application_id );
-            $this->send_admin_approval_notification( $application_id );
-            
-            // Decrease position count for the job
-            $job_id = get_post_meta( $application_id, '_oso_application_job_id', true );
-            if ( $job_id ) {
+        // Handle position count changes
+        if ( $job_id ) {
+            // If changing TO approved from another status, decrease count
+            if ( $status === 'approved' && $old_status !== 'approved' ) {
                 $positions = (int) get_post_meta( $job_id, '_oso_job_positions', true );
                 if ( $positions > 0 ) {
                     update_post_meta( $job_id, '_oso_job_positions', $positions - 1 );
                 }
+                
+                // Send notifications
+                $this->send_approval_notification( $application_id );
+                $this->send_admin_approval_notification( $application_id );
+            }
+            
+            // If changing FROM approved to another status, increase count back
+            if ( $old_status === 'approved' && $status !== 'approved' ) {
+                $positions = (int) get_post_meta( $job_id, '_oso_job_positions', true );
+                update_post_meta( $job_id, '_oso_job_positions', $positions + 1 );
             }
         }
 
