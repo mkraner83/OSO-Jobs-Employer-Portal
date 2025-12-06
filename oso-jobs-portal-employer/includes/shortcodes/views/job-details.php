@@ -642,8 +642,23 @@ jQuery(document).ready(function($) {
                 alert(response.data.message || '<?php esc_html_e( 'Failed to submit application. Please try again.', 'oso-employer-portal' ); ?>');
                 $submitBtn.prop('disabled', false).text('<?php esc_html_e( 'Submit Application', 'oso-employer-portal' ); ?>');
             }
-        }).fail(function() {
-            alert('<?php esc_html_e( 'An error occurred. Please try again.', 'oso-employer-portal' ); ?>');
+        }).fail(function(xhr, status, error) {
+            console.error('Application submission error:', status, error, xhr.responseText);
+            var errorMessage = '<?php esc_html_e( 'An error occurred. Please try again.', 'oso-employer-portal' ); ?>';
+            
+            // Try to parse server error response
+            if (xhr.responseText) {
+                try {
+                    var errorData = JSON.parse(xhr.responseText);
+                    if (errorData.data && errorData.data.message) {
+                        errorMessage = errorData.data.message;
+                    }
+                } catch(e) {
+                    console.error('Could not parse error response:', e);
+                }
+            }
+            
+            alert(errorMessage + ' <?php esc_html_e( 'Please check your internet connection and try again. If the problem persists, contact support.', 'oso-employer-portal' ); ?>');
             $submitBtn.prop('disabled', false).text('<?php esc_html_e( 'Submit Application', 'oso-employer-portal' ); ?>');
         });
     });

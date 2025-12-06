@@ -960,9 +960,17 @@ class OSO_Employer_Shortcodes {
      * AJAX handler for job application submission.
      */
     public function ajax_submit_job_application() {
-        check_ajax_referer( 'oso-job-nonce', 'nonce' );
+        // Enable error logging for debugging
+        error_log( 'OSO Job Application: AJAX handler called' );
+        
+        // Verify nonce
+        if ( ! check_ajax_referer( 'oso-job-nonce', 'nonce', false ) ) {
+            error_log( 'OSO Job Application: Nonce verification failed' );
+            wp_send_json_error( array( 'message' => __( 'Security check failed. Please refresh the page and try again.', 'oso-employer-portal' ) ) );
+        }
 
         if ( ! is_user_logged_in() ) {
+            error_log( 'OSO Job Application: User not logged in' );
             wp_send_json_error( array( 'message' => __( 'You must be logged in to apply.', 'oso-employer-portal' ) ) );
         }
 
@@ -970,8 +978,11 @@ class OSO_Employer_Shortcodes {
         $jobseeker_id = isset( $_POST['jobseeker_id'] ) ? intval( $_POST['jobseeker_id'] ) : 0;
         $cover_letter = isset( $_POST['cover_letter'] ) ? sanitize_textarea_field( wp_unslash( $_POST['cover_letter'] ) ) : '';
 
+        error_log( sprintf( 'OSO Job Application: Job ID: %d, Jobseeker ID: %d', $job_id, $jobseeker_id ) );
+
         // Validate inputs
         if ( ! $job_id || ! $jobseeker_id || empty( $cover_letter ) ) {
+            error_log( 'OSO Job Application: Validation failed - missing required fields' );
             wp_send_json_error( array( 'message' => __( 'Please fill in all required fields.', 'oso-employer-portal' ) ) );
         }
 
@@ -1027,8 +1038,11 @@ class OSO_Employer_Shortcodes {
         $application_id = wp_insert_post( $application_data );
 
         if ( is_wp_error( $application_id ) ) {
+            error_log( 'OSO Job Application: Failed to create application post - ' . $application_id->get_error_message() );
             wp_send_json_error( array( 'message' => __( 'Failed to submit application. Please try again.', 'oso-employer-portal' ) ) );
         }
+
+        error_log( sprintf( 'OSO Job Application: Application created with ID: %d', $application_id ) );
 
         // Save application meta
         update_post_meta( $application_id, '_oso_application_job_id', $job_id );
@@ -1040,6 +1054,7 @@ class OSO_Employer_Shortcodes {
         // Send email notification to employer
         $this->send_application_notification( $application_id );
 
+        error_log( 'OSO Job Application: Application submitted successfully' );
         wp_send_json_success( array( 'message' => __( 'Application submitted successfully!', 'oso-employer-portal' ) ) );
     }
 
