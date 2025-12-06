@@ -105,7 +105,7 @@ class OSO_Job_Manager {
         $active_count = 0;
 
         foreach ( $current_jobs as $job ) {
-            if ( $job->post_status === 'publish' ) {
+            if ( $job->post_status === 'publish' && ! $this->is_job_expired( $job->ID ) ) {
                 $active_count++;
             }
         }
