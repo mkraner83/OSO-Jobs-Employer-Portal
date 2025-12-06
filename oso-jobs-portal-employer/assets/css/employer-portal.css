@@ -987,62 +987,104 @@
 }
 
 .oso-stat-card {
-    background: #f9f9f9;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 20px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 24px 20px;
     text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+}
+
+.oso-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(128, 81, 176, 0.12);
+    border-color: #d0d0d0;
 }
 
 .oso-stat-number {
     display: block;
-    font-size: 2.5em;
+    font-size: 2.8em;
     font-weight: 700;
     color: #8051B0;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    line-height: 1;
 }
 
 .oso-stat-label {
     display: block;
-    font-size: 0.9em;
+    font-size: 0.85em;
     color: #666;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
+    font-weight: 600;
 }
 
 .oso-applications-table-wrapper {
     overflow-x: auto;
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #e8e8e8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .oso-applications-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     background: #fff;
 }
 
 .oso-applications-table thead {
-    background: #f5f5f5;
+    background: linear-gradient(135deg, #f8f9fa 0%, #f0f1f3 100%);
 }
 
 .oso-applications-table th {
-    padding: 12px 15px;
+    padding: 18px 20px;
     text-align: left;
     font-weight: 600;
-    color: #333;
+    color: #555;
     border-bottom: 2px solid #e0e0e0;
-    font-size: 0.9em;
+    font-size: 0.85em;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
+}
+
+.oso-applications-table th:first-child {
+    border-top-left-radius: 12px;
+}
+
+.oso-applications-table th:last-child {
+    border-top-right-radius: 12px;
 }
 
 .oso-applications-table td {
-    padding: 15px;
-    border-bottom: 1px solid #e0e0e0;
+    padding: 18px 20px;
+    border-bottom: 1px solid #f0f0f0;
     vertical-align: middle;
+    color: #333;
+}
+
+.oso-applications-table tbody tr {
+    transition: all 0.3s ease;
 }
 
 .oso-applications-table tbody tr:hover {
-    background: #f9f9f9;
+    background: #f8f9fb;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(128, 81, 176, 0.08);
+}
+
+.oso-applications-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.oso-applications-table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 12px;
+}
+
+.oso-applications-table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 12px;
 }
 
 .oso-applicant-link {
@@ -1051,54 +1093,75 @@
     font-weight: 600;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    transition: all 0.2s ease;
 }
 
 .oso-applicant-link:hover {
     color: #5a3880;
+    transform: translateX(3px);
 }
 
 .oso-applicant-link .dashicons {
     font-size: 16px;
+    transition: transform 0.2s ease;
+}
+
+.oso-applicant-link:hover .dashicons {
+    transform: translateX(2px);
 }
 
 .oso-application-status {
     display: inline-block;
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 0.85em;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.8em;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .oso-status-pending {
-    background: #fff3cd;
+    background: linear-gradient(135deg, #fff9e6 0%, #fff3cd 100%);
     color: #856404;
+    border: 1px solid #ffe8a1;
 }
 
 .oso-status-approved {
-    background: #d4edda;
+    background: linear-gradient(135deg, #e8f5e9 0%, #d4edda 100%);
     color: #155724;
+    border: 1px solid #c3e6cb;
 }
 
 .oso-status-rejected {
-    background: #f8d7da;
+    background: linear-gradient(135deg, #fde8e9 0%, #f8d7da 100%);
     color: #721c24;
+    border: 1px solid #f5c6cb;
 }
 
 .oso-actions-cell {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
 .oso-btn-small {
-    padding: 6px 12px;
+    padding: 8px 14px;
     font-size: 0.85em;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.oso-btn-small:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .oso-btn-small .dashicons {
@@ -1108,12 +1171,12 @@
 }
 
 .oso-btn-success {
-    background: #28a745;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
     color: #fff;
 }
 
 .oso-btn-success:hover {
-    background: #218838;
+    background: linear-gradient(135deg, #218838 0%, #1aa179 100%);
 }
 
 .oso-no-applications {
