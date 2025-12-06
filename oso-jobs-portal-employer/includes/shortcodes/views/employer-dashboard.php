@@ -255,97 +255,96 @@ endif;
                 </div>
             </div>
 
-            <div class="oso-applications-table-wrapper">
-                <table class="oso-applications-table">
-                    <thead>
-                        <tr>
-                            <th><?php esc_html_e( 'Applicant', 'oso-employer-portal' ); ?></th>
-                            <th><?php esc_html_e( 'Job Position', 'oso-employer-portal' ); ?></th>
-                            <th><?php esc_html_e( 'Applied', 'oso-employer-portal' ); ?></th>
-                            <th><?php esc_html_e( 'Status', 'oso-employer-portal' ); ?></th>
-                            <th><?php esc_html_e( 'Actions', 'oso-employer-portal' ); ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ( $applications as $application ) : 
-                            $app_id = $application->ID;
-                            $job_id = get_post_meta( $app_id, '_oso_application_job_id', true );
-                            $jobseeker_id = get_post_meta( $app_id, '_oso_application_jobseeker_id', true );
-                            $status = get_post_meta( $app_id, '_oso_application_status', true );
-                            $app_date = get_post_meta( $app_id, '_oso_application_date', true );
+            <div class="oso-applications-list">
+                <?php foreach ( $applications as $application ) : 
+                    $app_id = $application->ID;
+                    $job_id = get_post_meta( $app_id, '_oso_application_job_id', true );
+                    $jobseeker_id = get_post_meta( $app_id, '_oso_application_jobseeker_id', true );
+                    $status = get_post_meta( $app_id, '_oso_application_status', true );
+                    $app_date = get_post_meta( $app_id, '_oso_application_date', true );
+                    
+                    $job_title = get_the_title( $job_id );
+                    $jobseeker_name = get_the_title( $jobseeker_id );
+                    $cover_letter = $application->post_content;
+                    
+                    // Get jobseeker profile URL
+                    $jobseeker_url = add_query_arg( 'jobseeker_id', $jobseeker_id, home_url( '/job-portal/jobseeker-profile/' ) );
+                    
+                    // Status badge class
+                    $status_class = 'oso-status-' . esc_attr( $status );
+                    $status_text = ucfirst( $status );
+                    ?>
+                    <div class="oso-application-card-item" data-application-id="<?php echo esc_attr( $app_id ); ?>">
+                        <div class="oso-application-card-header">
+                            <div class="oso-application-card-title">
+                                <a href="<?php echo esc_url( $jobseeker_url ); ?>" target="_blank" class="oso-applicant-link">
+                                    <?php echo esc_html( $jobseeker_name ); ?>
+                                    <span class="dashicons dashicons-external"></span>
+                                </a>
+                            </div>
+                            <span class="oso-application-status <?php echo esc_attr( $status_class ); ?>">
+                                <?php echo esc_html( $status_text ); ?>
+                            </span>
+                        </div>
+                        
+                        <div class="oso-application-card-body">
+                            <div class="oso-application-card-meta">
+                                <div class="oso-application-meta-item">
+                                    <span class="oso-meta-label"><?php esc_html_e( 'Job Position:', 'oso-employer-portal' ); ?></span>
+                                    <span class="oso-meta-value"><?php echo esc_html( $job_title ); ?></span>
+                                </div>
+                                <div class="oso-application-meta-item">
+                                    <span class="oso-meta-label"><?php esc_html_e( 'Applied:', 'oso-employer-portal' ); ?></span>
+                                    <span class="oso-meta-value"><?php echo esc_html( date_i18n( 'M j, Y', strtotime( $app_date ) ) ); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="oso-application-card-actions">
+                            <button 
+                                class="oso-btn oso-btn-small oso-view-cover-letter" 
+                                data-application-id="<?php echo esc_attr( $app_id ); ?>"
+                                data-applicant="<?php echo esc_attr( $jobseeker_name ); ?>"
+                                data-job="<?php echo esc_attr( $job_title ); ?>"
+                                data-cover-letter="<?php echo esc_attr( wp_kses_post( $cover_letter ) ); ?>"
+                            >
+                                <span class="dashicons dashicons-visibility"></span>
+                                <?php esc_html_e( 'View', 'oso-employer-portal' ); ?>
+                            </button>
                             
-                            $job_title = get_the_title( $job_id );
-                            $jobseeker_name = get_the_title( $jobseeker_id );
-                            $cover_letter = $application->post_content;
-                            
-                            // Get jobseeker profile URL
-                            $jobseeker_url = add_query_arg( 'jobseeker_id', $jobseeker_id, home_url( '/job-portal/jobseeker-profile/' ) );
-                            
-                            // Status badge class
-                            $status_class = 'oso-status-' . esc_attr( $status );
-                            $status_text = ucfirst( $status );
-                            ?>
-                            <tr data-application-id="<?php echo esc_attr( $app_id ); ?>">
-                                <td>
-                                    <a href="<?php echo esc_url( $jobseeker_url ); ?>" target="_blank" class="oso-applicant-link">
-                                        <?php echo esc_html( $jobseeker_name ); ?>
-                                        <span class="dashicons dashicons-external"></span>
-                                    </a>
-                                </td>
-                                <td><?php echo esc_html( $job_title ); ?></td>
-                                <td><?php echo esc_html( date_i18n( 'M j, Y', strtotime( $app_date ) ) ); ?></td>
-                                <td>
-                                    <span class="oso-application-status <?php echo esc_attr( $status_class ); ?>">
-                                        <?php echo esc_html( $status_text ); ?>
-                                    </span>
-                                </td>
-                                <td class="oso-actions-cell">
-                                    <button 
-                                        class="oso-btn oso-btn-small oso-view-cover-letter" 
-                                        data-application-id="<?php echo esc_attr( $app_id ); ?>"
-                                        data-applicant="<?php echo esc_attr( $jobseeker_name ); ?>"
-                                        data-job="<?php echo esc_attr( $job_title ); ?>"
-                                        data-cover-letter="<?php echo esc_attr( wp_kses_post( $cover_letter ) ); ?>"
-                                    >
-                                        <span class="dashicons dashicons-visibility"></span>
-                                        <?php esc_html_e( 'View', 'oso-employer-portal' ); ?>
-                                    </button>
-                                    
-                                    <?php if ( $status === 'pending' ) : ?>
-                                        <button 
-                                            class="oso-btn oso-btn-small oso-btn-success oso-approve-application" 
-                                            data-application-id="<?php echo esc_attr( $app_id ); ?>"
-                                        >
-                                            <span class="dashicons dashicons-yes"></span>
-                                            <?php esc_html_e( 'Approve', 'oso-employer-portal' ); ?>
-                                        </button>
-                                        <button 
-                                            class="oso-btn oso-btn-small oso-btn-danger oso-reject-application" 
-                                            data-application-id="<?php echo esc_attr( $app_id ); ?>"
-                                        >
-                                            <span class="dashicons dashicons-no"></span>
-                                            <?php esc_html_e( 'Reject', 'oso-employer-portal' ); ?>
-                                        </button>
-                                    <?php elseif ( $status === 'approved' ) : ?>
-                                        <button 
-                                            class="oso-btn oso-btn-small oso-btn-secondary oso-reset-application" 
-                                            data-application-id="<?php echo esc_attr( $app_id ); ?>"
-                                        >
-                                            <?php esc_html_e( 'Reset', 'oso-employer-portal' ); ?>
-                                        </button>
-                                    <?php elseif ( $status === 'rejected' ) : ?>
-                                        <button 
-                                            class="oso-btn oso-btn-small oso-btn-secondary oso-reset-application" 
-                                            data-application-id="<?php echo esc_attr( $app_id ); ?>"
-                                        >
-                                            <?php esc_html_e( 'Reset', 'oso-employer-portal' ); ?>
-                                        </button>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+                            <?php if ( $status === 'pending' ) : ?>
+                                <button 
+                                    class="oso-btn oso-btn-small oso-btn-success oso-approve-application" 
+                                    data-application-id="<?php echo esc_attr( $app_id ); ?>"
+                                >
+                                    <span class="dashicons dashicons-yes"></span>
+                                    <?php esc_html_e( 'Approve', 'oso-employer-portal' ); ?>
+                                </button>
+                                <button 
+                                    class="oso-btn oso-btn-small oso-btn-danger oso-reject-application" 
+                                    data-application-id="<?php echo esc_attr( $app_id ); ?>"
+                                >
+                                    <span class="dashicons dashicons-no"></span>
+                                    <?php esc_html_e( 'Reject', 'oso-employer-portal' ); ?>
+                                </button>
+                            <?php elseif ( $status === 'approved' ) : ?>
+                                <button 
+                                    class="oso-btn oso-btn-small oso-btn-secondary oso-reset-application" 
+                                    data-application-id="<?php echo esc_attr( $app_id ); ?>"
+                                >
+                                    <?php esc_html_e( 'Reset', 'oso-employer-portal' ); ?>
+                                </button>
+                            <?php elseif ( $status === 'rejected' ) : ?>
+                                <button 
+                                    class="oso-btn oso-btn-small oso-btn-secondary oso-reset-application" 
+                                    data-application-id="<?php echo esc_attr( $app_id ); ?>"
+                                >
+                                    <?php esc_html_e( 'Reset', 'oso-employer-portal' ); ?>
+                                </button>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
             </div>
         <?php else : ?>
             <div class="oso-no-applications">

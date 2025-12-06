@@ -1020,71 +1020,72 @@
     font-weight: 600;
 }
 
-.oso-applications-table-wrapper {
-    overflow-x: auto;
-    background: #fff;
+/* Applications List - Card Based Layout */
+.oso-applications-list {
+    display: grid;
+    gap: 16px;
+}
+
+.oso-application-card-item {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     border-radius: 12px;
-    border: 1px solid #e8e8e8;
+    padding: 24px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.oso-applications-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    background: #fff;
-}
-
-.oso-applications-table thead {
-    background: linear-gradient(135deg, #f8f9fa 0%, #f0f1f3 100%);
-}
-
-.oso-applications-table th {
-    padding: 18px 20px;
-    text-align: left;
-    font-weight: 600;
-    color: #555;
-    border-bottom: 2px solid #e0e0e0;
-    font-size: 0.85em;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-}
-
-.oso-applications-table th:first-child {
-    border-top-left-radius: 12px;
-}
-
-.oso-applications-table th:last-child {
-    border-top-right-radius: 12px;
-}
-
-.oso-applications-table td {
-    padding: 18px 20px;
-    border-bottom: 1px solid #f0f0f0;
-    vertical-align: middle;
-    color: #333;
-}
-
-.oso-applications-table tbody tr {
     transition: all 0.3s ease;
 }
 
-.oso-applications-table tbody tr:hover {
-    background: #f8f9fb;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(128, 81, 176, 0.08);
+.oso-application-card-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 20px rgba(128, 81, 176, 0.12);
 }
 
-.oso-applications-table tbody tr:last-child td {
-    border-bottom: none;
+.oso-application-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-.oso-applications-table tbody tr:last-child td:first-child {
-    border-bottom-left-radius: 12px;
+.oso-application-card-title {
+    flex: 1;
 }
 
-.oso-applications-table tbody tr:last-child td:last-child {
-    border-bottom-right-radius: 12px;
+.oso-application-card-body {
+    margin-bottom: 20px;
+}
+
+.oso-application-card-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.oso-application-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.oso-meta-label {
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #888;
+    font-weight: 600;
+}
+
+.oso-meta-value {
+    font-size: 0.95em;
+    color: #333;
+    font-weight: 500;
+}
+
+.oso-application-card-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 .oso-applicant-link {
@@ -1140,11 +1141,26 @@
     border: 1px solid #f5c6cb;
 }
 
-.oso-actions-cell {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    align-items: center;
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    .oso-application-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .oso-application-card-meta {
+        grid-template-columns: 1fr;
+    }
+    
+    .oso-application-card-actions {
+        flex-direction: column;
+    }
+    
+    .oso-application-card-actions .oso-btn-small {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 .oso-btn-small {
