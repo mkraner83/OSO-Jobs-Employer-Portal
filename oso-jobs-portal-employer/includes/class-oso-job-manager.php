@@ -262,7 +262,7 @@ class OSO_Job_Manager {
      * AJAX handler to delete job posting.
      */
     public function ajax_delete_job_posting() {
-        check_ajax_referer( 'oso_job_nonce', 'nonce' );
+        check_ajax_referer( 'oso-job-nonce', 'nonce' );
 
         if ( ! is_user_logged_in() ) {
             wp_send_json_error( array( 'message' => __( 'You must be logged in.', 'oso-employer-portal' ) ) );
