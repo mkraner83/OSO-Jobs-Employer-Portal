@@ -467,7 +467,7 @@
                     
                     $('#oso-modal-title').text('Success');
                     $('#oso-modal-body').html(modalContent);
-                    $('#oso-modal').fadeIn(300);
+                    $('#oso-cover-letter-modal').fadeIn(300);
                     
                     // Auto-reload after 5 seconds
                     setTimeout(function() {

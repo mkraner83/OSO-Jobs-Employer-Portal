@@ -147,7 +147,7 @@ class OSO_Employer_Portal {
             'oso-employer-portal',
             OSO_EMPLOYER_PORTAL_URL . 'assets/js/employer-portal.js',
             array( 'jquery' ),
-            '1.0.11',
+            '1.0.12',
             true
         );
         
