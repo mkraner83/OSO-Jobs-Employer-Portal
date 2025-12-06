@@ -420,8 +420,8 @@ class OSO_Jobs_Portal {
      */
     public function redirect_candidate_login( $redirect_to, $request, $user ) {
         if ( $user instanceof WP_User && in_array( self::ROLE_CANDIDATE, (array) $user->roles, true ) ) {
-            $profile_url = home_url( '/jobseeker-profile/' );
-            return $profile_url;
+            $dashboard_url = home_url( '/job-portal/jobseeker-dashboard/' );
+            return $dashboard_url;
         }
 
         return $redirect_to;
