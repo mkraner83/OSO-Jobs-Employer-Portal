@@ -2,7 +2,7 @@
 /**
  * Plugin Name: OSO Jobs Portal - Employer Section
  * Description: Add-on plugin for employer registration, dashboards, and admin tools. Requires OSO Jobs Portal.
- * Version: 1.0.7
+ * Version: 1.0.8
  * Author: Creative DBS
  */
 
