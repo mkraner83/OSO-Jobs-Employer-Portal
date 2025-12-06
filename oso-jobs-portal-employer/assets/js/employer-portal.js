@@ -590,4 +590,52 @@
         });
     });
 
+    // Delete Application
+    $(document).on('click', '.oso-delete-application', function() {
+        var $btn = $(this);
+        var applicationId = $btn.data('application-id');
+        var $card = $btn.closest('.oso-application-card-item');
+        
+        if (!confirm('Are you sure you want to permanently delete this rejected application?\n\nThis action cannot be undone.')) {
+            return;
+        }
+        
+        $btn.prop('disabled', true).html('<span class="dashicons dashicons-update"></span> Deleting...');
+        
+        $.ajax({
+            url: osoEmployerPortal.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'oso_delete_application',
+                nonce: osoEmployerPortal.jobNonce,
+                application_id: applicationId
+            },
+            success: function(response) {
+                if (response.success) {
+                    $card.fadeOut(300, function() {
+                        $(this).remove();
+                        // Update stats if needed
+                        var $rejectedCount = $('.oso-stat-card').eq(2).find('.oso-stat-number');
+                        var currentCount = parseInt($rejectedCount.text()) || 0;
+                        if (currentCount > 0) {
+                            $rejectedCount.text(currentCount - 1);
+                        }
+                        var $totalCount = $('.oso-stat-card').eq(3).find('.oso-stat-number');
+                        var totalCurrent = parseInt($totalCount.text()) || 0;
+                        if (totalCurrent > 0) {
+                            $totalCount.text(totalCurrent - 1);
+                        }
+                    });
+                } else {
+                    alert(response.data.message || 'Failed to delete application.');
+                    $btn.prop('disabled', false).html('<span class="dashicons dashicons-trash"></span> Delete');
+                }
+            },
+            error: function() {
+                alert('Network error. Please try again.');
+                $btn.prop('disabled', false).html('<span class="dashicons dashicons-trash"></span> Delete');
+            }
+        });
+    });
+
 })(jQuery);

@@ -1191,6 +1191,28 @@
     transition: all 0.3s ease;
 }
 
+/* Rejected Applications - Smaller 3-Column Grid */
+.oso-rejected-card {
+    grid-column: span 1;
+}
+
+/* Create 3-column grid for rejected applications container */
+.oso-applications-list.has-rejected-cards {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 992px) {
+    .oso-applications-list.has-rejected-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .oso-applications-list.has-rejected-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
 .oso-application-card-item:hover {
     transform: translateY(-4px);
     box-shadow: 0 6px 20px rgba(128, 81, 176, 0.12);

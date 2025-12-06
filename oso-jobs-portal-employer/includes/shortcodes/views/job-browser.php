@@ -164,9 +164,41 @@ switch ( $sort ) {
 }
 
 $job_query = new WP_Query( $args );
+
+// Get jobseeker info for header
+$jobseeker_id = OSO_Employer_Shortcodes::instance()->get_user_jobseeker_id( get_current_user_id() );
+$jobseeker_photo = '';
+$jobseeker_name = '';
+if ( $jobseeker_id ) {
+    $jobseeker_meta = OSO_Employer_Shortcodes::instance()->get_jobseeker_meta( $jobseeker_id );
+    $jobseeker_photo = ! empty( $jobseeker_meta['_oso_jobseeker_photo'] ) ? $jobseeker_meta['_oso_jobseeker_photo'] : '';
+    $jobseeker_name = ! empty( $jobseeker_meta['_oso_jobseeker_full_name'] ) ? $jobseeker_meta['_oso_jobseeker_full_name'] : get_the_title( $jobseeker_id );
+}
 ?>
 
 <div class="oso-job-browser">
+    <?php if ( $jobseeker_id ) : ?>
+    <!-- Jobseeker Header -->
+    <div class="oso-employer-header">
+        <div class="oso-employer-header-left">
+            <?php if ( $jobseeker_photo ) : ?>
+                <div class="oso-employer-logo">
+                    <img src="<?php echo esc_url( $jobseeker_photo ); ?>" alt="<?php echo esc_attr( $jobseeker_name ); ?>" />
+                </div>
+            <?php endif; ?>
+            <div class="oso-employer-info">
+                <h1><?php echo esc_html( $jobseeker_name ); ?></h1>
+                <p class="oso-employer-subtitle"><?php esc_html_e( 'Browse All Jobs', 'oso-employer-portal' ); ?></p>
+            </div>
+        </div>
+        <div class="oso-employer-header-right">
+            <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-profile/' ) ); ?>" class="oso-btn oso-btn-dashboard">
+                <span class="dashicons dashicons-dashboard"></span> <?php esc_html_e( 'Dashboard', 'oso-employer-portal' ); ?>
+            </a>
+        </div>
+    </div>
+    <?php endif; ?>
+    
     <div class="oso-browser-header">
         <h2><?php esc_html_e( 'Summer Camp Jobs', 'oso-employer-portal' ); ?></h2>
         <p><?php printf( esc_html__( '%d jobs available', 'oso-employer-portal' ), $job_query->found_posts ); ?></p>

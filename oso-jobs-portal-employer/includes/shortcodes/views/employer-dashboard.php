@@ -277,7 +277,7 @@ endif;
                 </div>
             </div>
 
-            <div class="oso-applications-list">
+            <div class="oso-applications-list <?php echo $rejected_count > 0 ? 'has-rejected-cards' : ''; ?>">
                 <?php foreach ( $applications as $application ) : 
                     $app_id = $application->ID;
                     $job_id = get_post_meta( $app_id, '_oso_application_job_id', true );
@@ -296,7 +296,7 @@ endif;
                     $status_class = 'oso-status-' . esc_attr( $status );
                     $status_text = ucfirst( $status );
                     ?>
-                    <div class="oso-application-card-item" data-application-id="<?php echo esc_attr( $app_id ); ?>">
+                    <div class="oso-application-card-item <?php echo $status === 'rejected' ? 'oso-rejected-card' : ''; ?>" data-application-id="<?php echo esc_attr( $app_id ); ?>">
                         <div class="oso-application-card-header">
                             <div class="oso-application-card-title">
                                 <a href="<?php echo esc_url( $jobseeker_url ); ?>" target="_blank" class="oso-applicant-link">
@@ -362,6 +362,13 @@ endif;
                                     data-application-id="<?php echo esc_attr( $app_id ); ?>"
                                 >
                                     <?php esc_html_e( 'Reset', 'oso-employer-portal' ); ?>
+                                </button>
+                                <button 
+                                    class="oso-btn oso-btn-small oso-btn-danger oso-delete-application" 
+                                    data-application-id="<?php echo esc_attr( $app_id ); ?>"
+                                >
+                                    <span class="dashicons dashicons-trash"></span>
+                                    <?php esc_html_e( 'Delete', 'oso-employer-portal' ); ?>
                                 </button>
                             <?php endif; ?>
                         </div>

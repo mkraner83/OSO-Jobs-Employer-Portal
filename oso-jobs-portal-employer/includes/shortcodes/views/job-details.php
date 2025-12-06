@@ -86,15 +86,49 @@ if ( $is_logged_in ) {
 
 // Success message after application
 $application_success = isset( $_GET['application'] ) && $_GET['application'] === 'success';
+
+// Get jobseeker info for header if user is jobseeker
+$jobseeker_photo = '';
+$jobseeker_name = '';
+if ( $jobseeker_id ) {
+    $jobseeker_meta = OSO_Employer_Shortcodes::instance()->get_jobseeker_meta( $jobseeker_id );
+    $jobseeker_photo = ! empty( $jobseeker_meta['_oso_jobseeker_photo'] ) ? $jobseeker_meta['_oso_jobseeker_photo'] : '';
+    $jobseeker_name = ! empty( $jobseeker_meta['_oso_jobseeker_full_name'] ) ? $jobseeker_meta['_oso_jobseeker_full_name'] : get_the_title( $jobseeker_id );
+}
 ?>
 
 <div class="oso-job-details">
+    <?php if ( $jobseeker_id ) : ?>
+    <!-- Jobseeker Header -->
+    <div class="oso-employer-header">
+        <div class="oso-employer-header-left">
+            <?php if ( $jobseeker_photo ) : ?>
+                <div class="oso-employer-logo">
+                    <img src="<?php echo esc_url( $jobseeker_photo ); ?>" alt="<?php echo esc_attr( $jobseeker_name ); ?>" />
+                </div>
+            <?php endif; ?>
+            <div class="oso-employer-info">
+                <h1><?php echo esc_html( $jobseeker_name ); ?></h1>
+                <p class="oso-employer-subtitle"><?php esc_html_e( 'Job Details', 'oso-employer-portal' ); ?></p>
+            </div>
+        </div>
+        <div class="oso-employer-header-right">
+            <a href="javascript:history.back()" class="oso-btn oso-btn-secondary">
+                <span class="dashicons dashicons-arrow-left-alt2"></span> <?php esc_html_e( 'Back', 'oso-employer-portal' ); ?>
+            </a>
+            <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-profile/' ) ); ?>" class="oso-btn oso-btn-dashboard">
+                <span class="dashicons dashicons-dashboard"></span> <?php esc_html_e( 'Dashboard', 'oso-employer-portal' ); ?>
+            </a>
+        </div>
+    </div>
+    <?php else : ?>
     <div class="oso-job-details-header">
         <a href="<?php echo esc_url( home_url( '/job-portal/all-jobs/' ) ); ?>" class="oso-back-link">
             <span class="dashicons dashicons-arrow-left-alt2"></span>
             <?php esc_html_e( 'Back to Jobs', 'oso-employer-portal' ); ?>
         </a>
     </div>
+    <?php endif; ?>
 
     <?php if ( $application_success ) : ?>
         <div class="oso-success-message">

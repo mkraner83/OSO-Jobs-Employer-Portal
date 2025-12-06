@@ -9,25 +9,37 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-// Get employer info for header
-$employer_post = OSO_Employer_Shortcodes::instance()->get_employer_by_user( get_current_user_id() );
-$employer_meta = $employer_post ? OSO_Employer_Shortcodes::instance()->get_employer_meta( $employer_post->ID ) : array();
-$logo_url = ! empty( $employer_meta['_oso_employer_logo'] ) ? $employer_meta['_oso_employer_logo'] : '';
-$camp_name = ! empty( $employer_meta['_oso_employer_company'] ) ? $employer_meta['_oso_employer_company'] : ( $employer_post ? $employer_post->post_title : '' );
+// Check if user is employer or jobseeker
+$current_user_id = get_current_user_id();
+$is_employer = current_user_can( 'oso_employer' ) || current_user_can( 'manage_options' );
+$is_jobseeker = current_user_can( 'oso_jobseeker' );
+
+// Get header info based on user type
+$header_photo = '';
+$header_name = '';
+$header_subtitle = __( 'Browse Jobseekers', 'oso-employer-portal' );
+
+if ( $is_employer ) {
+    $employer_post = OSO_Employer_Shortcodes::instance()->get_employer_by_user( $current_user_id );
+    $employer_meta = $employer_post ? OSO_Employer_Shortcodes::instance()->get_employer_meta( $employer_post->ID ) : array();
+    $header_photo = ! empty( $employer_meta['_oso_employer_logo'] ) ? $employer_meta['_oso_employer_logo'] : '';
+    $header_name = ! empty( $employer_meta['_oso_employer_company'] ) ? $employer_meta['_oso_employer_company'] : ( $employer_post ? $employer_post->post_title : '' );
+}
 ?>
 
 <div class="oso-jobseeker-browser">
-    <!-- Employer Header -->
+    <!-- User Header -->
+    <?php if ( $is_employer ) : ?>
     <div class="oso-employer-header">
         <div class="oso-employer-header-left">
-            <?php if ( $logo_url ) : ?>
+            <?php if ( $header_photo ) : ?>
                 <div class="oso-employer-logo">
-                    <img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $camp_name ); ?>" />
+                    <img src="<?php echo esc_url( $header_photo ); ?>" alt="<?php echo esc_attr( $header_name ); ?>" />
                 </div>
             <?php endif; ?>
             <div class="oso-employer-info">
-                <h1><?php echo esc_html( $camp_name ); ?></h1>
-                <p class="oso-employer-subtitle"><?php esc_html_e( 'Browse Jobseekers', 'oso-employer-portal' ); ?></p>
+                <h1><?php echo esc_html( $header_name ); ?></h1>
+                <p class="oso-employer-subtitle"><?php echo esc_html( $header_subtitle ); ?></p>
             </div>
         </div>
         <div class="oso-employer-header-right">
@@ -36,6 +48,7 @@ $camp_name = ! empty( $employer_meta['_oso_employer_company'] ) ? $employer_meta
             </a>
         </div>
     </div>
+    <?php endif; ?>
     
     <!-- Search and Filter Form -->
     <div class="oso-filter-section">

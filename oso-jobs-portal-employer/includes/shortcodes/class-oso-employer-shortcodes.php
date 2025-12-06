@@ -54,6 +54,7 @@ class OSO_Employer_Shortcodes {
         add_action( 'wp_ajax_oso_submit_job_application', array( $this, 'ajax_submit_job_application' ) );
         add_action( 'wp_ajax_oso_update_application_status', array( $this, 'ajax_update_application_status' ) );
         add_action( 'wp_ajax_oso_delete_employer_profile', array( $this, 'ajax_delete_employer_profile' ) );
+        add_action( 'wp_ajax_oso_delete_application', array( $this, 'ajax_delete_application' ) );
     }
 
     /**
@@ -1367,5 +1368,52 @@ class OSO_Employer_Shortcodes {
         }
 
         wp_send_json_success( array( 'message' => __( 'Profile deleted successfully.', 'oso-employer-portal' ) ) );
+    }
+
+    /**
+     * AJAX handler to delete a rejected job application.
+     *
+     * @return void
+     */
+    public function ajax_delete_application() {
+        // Verify nonce
+        check_ajax_referer( 'oso-job-nonce', 'nonce' );
+
+        // Get application ID
+        $application_id = isset( $_POST['application_id'] ) ? absint( $_POST['application_id'] ) : 0;
+
+        if ( ! $application_id ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid application ID.', 'oso-employer-portal' ) ) );
+        }
+
+        // Get application
+        $application = get_post( $application_id );
+        if ( ! $application || $application->post_type !== 'oso_job_application' ) {
+            wp_send_json_error( array( 'message' => __( 'Application not found.', 'oso-employer-portal' ) ) );
+        }
+
+        // Check if user is employer or admin
+        $job_id = get_post_meta( $application_id, '_oso_application_job_id', true );
+        $employer_id = get_post_meta( $job_id, '_oso_job_employer_id', true );
+        $user_employer_id = $this->get_user_employer_id( get_current_user_id() );
+
+        if ( ! current_user_can( 'manage_options' ) && $user_employer_id != $employer_id ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to delete this application.', 'oso-employer-portal' ) ) );
+        }
+
+        // Verify application is rejected before deleting
+        $status = get_post_meta( $application_id, '_oso_application_status', true );
+        if ( $status !== 'rejected' ) {
+            wp_send_json_error( array( 'message' => __( 'Only rejected applications can be deleted.', 'oso-employer-portal' ) ) );
+        }
+
+        // Delete the application
+        $result = wp_delete_post( $application_id, true );
+
+        if ( ! $result ) {
+            wp_send_json_error( array( 'message' => __( 'Failed to delete application.', 'oso-employer-portal' ) ) );
+        }
+
+        wp_send_json_success( array( 'message' => __( 'Application deleted successfully.', 'oso-employer-portal' ) ) );
     }
 }
