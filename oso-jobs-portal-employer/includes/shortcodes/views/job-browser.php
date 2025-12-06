@@ -305,7 +305,7 @@ $job_query = new WP_Query( $args );
                                 $available = ( $available !== '' ) ? (int) $available : $total;
                                 $approved = $total - $available;
                                 
-                                echo esc_html( $available ) . ' / ' . esc_html( $total ) . ' ';
+                                echo esc_html( $total ) . '/' . esc_html( $available ) . ' ';
                                 echo esc_html( _n( 'position', 'positions', $total, 'oso-employer-portal' ) );
                                 if ( $approved > 0 ) {
                                     echo ' <span style="color: #28a745;">(' . esc_html( $approved ) . ' ' . esc_html__( 'approved', 'oso-employer-portal' ) . ')</span>';

@@ -154,7 +154,7 @@ $application_success = isset( $_GET['application'] ) && $_GET['application'] ===
                                 $available = ( $available !== '' ) ? (int) $available : $total;
                                 $approved = $total - $available;
                                 
-                                echo esc_html( $available ) . ' / ' . esc_html( $total );
+                                echo esc_html( $total ) . '/' . esc_html( $available );
                                 if ( $approved > 0 ) {
                                     echo '<br><span style="color: #28a745; font-size: 0.9em;">(' . esc_html( $approved ) . ' ' . esc_html__( 'positions approved', 'oso-employer-portal' ) . ')</span>';
                                 }
