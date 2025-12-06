@@ -185,10 +185,15 @@ endif;
                                 <span class="oso-job-positions">
                                     <span class="dashicons dashicons-groups"></span>
                                     <?php 
-                                    printf( 
-                                        esc_html( _n( '%d position', '%d positions', $job_meta['_oso_job_positions'], 'oso-employer-portal' ) ),
-                                        $job_meta['_oso_job_positions']
-                                    );
+                                    $total = (int) $job_meta['_oso_job_positions'];
+                                    $available = get_post_meta( $job->ID, '_oso_job_positions_available', true );
+                                    $available = ( $available !== '' ) ? (int) $available : $total;
+                                    $approved = $total - $available;
+                                    
+                                    echo esc_html( $available ) . ' / ' . esc_html( $total );
+                                    if ( $approved > 0 ) {
+                                        echo ' <span style="color: #28a745;">(' . esc_html( $approved ) . ' ' . esc_html__( 'approved', 'oso-employer-portal' ) . ')</span>';
+                                    }
                                     ?>
                                 </span>
                             <?php endif; ?>

@@ -147,7 +147,19 @@ $application_success = isset( $_GET['application'] ) && $_GET['application'] ===
                         <span class="dashicons dashicons-groups"></span>
                         <div>
                             <strong><?php esc_html_e( 'Positions Available', 'oso-employer-portal' ); ?></strong>
-                            <p><?php echo esc_html( $job_meta['_oso_job_positions'] ); ?></p>
+                            <p>
+                                <?php 
+                                $total = (int) $job_meta['_oso_job_positions'];
+                                $available = get_post_meta( $job->ID, '_oso_job_positions_available', true );
+                                $available = ( $available !== '' ) ? (int) $available : $total;
+                                $approved = $total - $available;
+                                
+                                echo esc_html( $available ) . ' / ' . esc_html( $total );
+                                if ( $approved > 0 ) {
+                                    echo '<br><span style="color: #28a745; font-size: 0.9em;">(' . esc_html( $approved ) . ' ' . esc_html__( 'positions approved', 'oso-employer-portal' ) . ')</span>';
+                                }
+                                ?>
+                            </p>
                         </div>
                     </div>
                 <?php endif; ?>

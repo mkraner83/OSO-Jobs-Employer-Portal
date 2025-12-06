@@ -238,7 +238,14 @@ class OSO_Job_Manager {
         }
         
         if ( isset( $_POST['positions'] ) ) {
-            update_post_meta( $job_id, '_oso_job_positions', absint( $_POST['positions'] ) );
+            $total_positions = absint( $_POST['positions'] );
+            update_post_meta( $job_id, '_oso_job_positions', $total_positions );
+            
+            // Initialize available positions only if this is a new job or if available doesn't exist
+            $available = get_post_meta( $job_id, '_oso_job_positions_available', true );
+            if ( $available === '' ) {
+                update_post_meta( $job_id, '_oso_job_positions_available', $total_positions );
+            }
         }
         
         if ( isset( $_POST['application_instructions'] ) ) {
