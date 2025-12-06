@@ -1155,6 +1155,7 @@ class OSO_Employer_Shortcodes {
         // Send email to jobseeker if status changed to approved
         if ( $status === 'approved' && $old_status !== 'approved' ) {
             $this->send_approval_notification( $application_id );
+            $this->send_admin_approval_notification( $application_id );
         }
 
         wp_send_json_success( array( 'message' => __( 'Application status updated.', 'oso-employer-portal' ) ) );
@@ -1214,6 +1215,74 @@ class OSO_Employer_Shortcodes {
         );
 
         wp_mail( $jobseeker_user->user_email, $subject, $message );
+    }
+
+    /**
+     * Send email notification to admin when employer approves application.
+     *
+     * @param int $application_id Application post ID.
+     */
+    private function send_admin_approval_notification( $application_id ) {
+        $job_id = get_post_meta( $application_id, '_oso_application_job_id', true );
+        $jobseeker_id = get_post_meta( $application_id, '_oso_application_jobseeker_id', true );
+        $employer_id = get_post_meta( $application_id, '_oso_application_employer_id', true );
+
+        // Get admin email
+        $admin_email = get_option( 'admin_email' );
+        
+        if ( ! $admin_email ) {
+            return;
+        }
+
+        // Get all the details
+        $job_title = get_the_title( $job_id );
+        $jobseeker_name = get_the_title( $jobseeker_id );
+        $camp_name = get_post_meta( $employer_id, '_oso_employer_company', true );
+        
+        // Get employer details
+        $employer_user_id = get_post_meta( $employer_id, '_oso_employer_user_id', true );
+        $employer_user = get_userdata( $employer_user_id );
+        $employer_email = get_post_meta( $employer_id, '_oso_employer_email', true );
+        $employer_phone = get_post_meta( $employer_id, '_oso_employer_phone', true );
+        
+        // Get jobseeker details
+        $jobseeker_user_id = get_post_meta( $jobseeker_id, '_oso_jobseeker_user_id', true );
+        $jobseeker_user = get_userdata( $jobseeker_user_id );
+        $jobseeker_email = get_post_meta( $jobseeker_id, '_oso_jobseeker_email', true );
+        $jobseeker_phone = get_post_meta( $jobseeker_id, '_oso_jobseeker_phone', true );
+        
+        // Get job details
+        $job_start_date = get_post_meta( $job_id, '_oso_job_start_date', true );
+        $job_compensation = get_post_meta( $job_id, '_oso_job_compensation', true );
+        $application_date = get_post_meta( $application_id, '_oso_application_date', true );
+        
+        // Get application message
+        $application_post = get_post( $application_id );
+        $message_content = $application_post ? wp_trim_words( $application_post->post_content, 50, '...' ) : 'No message';
+
+        $subject = sprintf( __( '✅ Application Approved: %s hired by %s', 'oso-employer-portal' ), $jobseeker_name, $camp_name );
+        
+        $message = sprintf(
+            __( "Hello Admin,\n\nAn employer has approved a job application on OSO Jobs Portal.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAPPROVAL DETAILS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nJob Position: %s\nStart Date: %s\nCompensation: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEMPLOYER INFORMATION\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nCamp/Company: %s\nContact Name: %s\nEmail: %s\nPhone: %s\nUser Account: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCANDIDATE INFORMATION\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nName: %s\nEmail: %s\nPhone: %s\nUser Account: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAPPLICATION INFO\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nApplied On: %s\nApproved On: %s\nCandidate's Message: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nBoth parties have been notified via email.\n\nView full details in WordPress Admin:\n%s\n\nBest regards,\nOSO Jobs System", 'oso-employer-portal' ),
+            $job_title,
+            $job_start_date ? date_i18n( 'F j, Y', strtotime( $job_start_date ) ) : 'Not specified',
+            $job_compensation ?: 'Not specified',
+            $camp_name,
+            $employer_user ? $employer_user->display_name : 'Unknown',
+            $employer_email ?: 'Not provided',
+            $employer_phone ?: 'Not provided',
+            $employer_user ? $employer_user->user_email : 'N/A',
+            $jobseeker_name,
+            $jobseeker_email ?: 'Not provided',
+            $jobseeker_phone ?: 'Not provided',
+            $jobseeker_user ? $jobseeker_user->user_email : 'N/A',
+            $application_date ? date_i18n( 'F j, Y', strtotime( $application_date ) ) : 'Unknown',
+            current_time( 'F j, Y' ),
+            $message_content,
+            admin_url( 'edit.php?post_type=oso_job_application' )
+        );
+
+        wp_mail( $admin_email, $subject, $message );
     }
 
     /**
