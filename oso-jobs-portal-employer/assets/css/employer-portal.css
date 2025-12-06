@@ -1398,6 +1398,11 @@
     margin: 0;
 }
 
+/* Subscription fields with gray background */
+.oso-subscription-field {
+    background: #f9f9f9 !important;
+}
+
 /* ========================================
    Edit Profile Form
    ======================================== */

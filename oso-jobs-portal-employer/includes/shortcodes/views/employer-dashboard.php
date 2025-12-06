@@ -405,6 +405,11 @@ endif;
                 $display_value = ! empty( $value ) ? $value : 'Not provided';
                 $field_class = ! empty( $field_config['full_width'] ) ? 'oso-profile-field-full' : 'oso-profile-field';
                 $field_type = isset( $field_config['type'] ) ? $field_config['type'] : 'text';
+                
+                // Add special class for subscription fields
+                if ( $meta_key === '_oso_employer_subscription_type' || $meta_key === '_oso_employer_subscription_ends' ) {
+                    $field_class .= ' oso-subscription-field';
+                }
                 ?>
                 <div class="<?php echo esc_attr( $field_class ); ?>">
                     <strong><?php echo esc_html( $field_config['label'] ); ?>:</strong>
