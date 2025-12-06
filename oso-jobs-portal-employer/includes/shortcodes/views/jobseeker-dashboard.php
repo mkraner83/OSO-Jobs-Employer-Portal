@@ -35,18 +35,11 @@ endif;
 ?>
 <div class="oso-jobseeker-dashboard">
     
-    <!-- Quick Action Buttons -->
-    <div class="oso-quick-actions-grid">
-        <a href="<?php echo esc_url( home_url( '/job-portal/all-jobs/' ) ); ?>" class="oso-quick-action-card oso-purple-card">
+    <!-- Full-Width Browse Jobs Button -->
+    <div class="oso-quick-link-banner">
+        <a href="<?php echo esc_url( home_url( '/job-portal/all-jobs/' ) ); ?>" class="oso-quick-link">
             <span class="dashicons dashicons-portfolio"></span>
-            <h3><?php esc_html_e( 'Browse Jobs', 'oso-employer-portal' ); ?></h3>
-            <p><?php esc_html_e( 'View all available job postings', 'oso-employer-portal' ); ?></p>
-        </a>
-        
-        <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-edit-profile/' ) ); ?>" class="oso-quick-action-card oso-teal-card">
-            <span class="dashicons dashicons-edit"></span>
-            <h3><?php esc_html_e( 'Edit Profile', 'oso-employer-portal' ); ?></h3>
-            <p><?php esc_html_e( 'Update your information and resume', 'oso-employer-portal' ); ?></p>
+            <span><?php esc_html_e( 'Browse All Jobs', 'oso-employer-portal' ); ?></span>
         </a>
     </div>
 
@@ -158,9 +151,9 @@ endif;
         <?php endif; ?>
     </div>
 
-    <!-- Companies/Camps Section -->
+    <!-- All Camps Section -->
     <div class="oso-companies-section">
-        <h3><?php esc_html_e( 'Companies & Camps', 'oso-employer-portal' ); ?></h3>
+        <h3><?php esc_html_e( 'All Camps', 'oso-employer-portal' ); ?></h3>
         
         <?php
         // Get all approved employers
@@ -270,6 +263,67 @@ endif;
                 <p><?php esc_html_e( 'No companies available at this time.', 'oso-employer-portal' ); ?></p>
             </div>
         <?php endif; ?>
+    </div>
+
+    <!-- Jobseeker Profile Section -->
+    <div class="oso-profile-section">
+        <div class="oso-section-header">
+            <h3><?php esc_html_e( 'My Profile', 'oso-employer-portal' ); ?></h3>
+            <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-edit-profile/' ) ); ?>" class="oso-btn oso-btn-primary">
+                <span class="dashicons dashicons-edit"></span>
+                <?php esc_html_e( 'Edit Profile', 'oso-employer-portal' ); ?>
+            </a>
+        </div>
+        
+        <div class="oso-profile-info-grid">
+            <?php
+            // Define jobseeker fields to display
+            $jobseeker_fields = array(
+                '_oso_jobseeker_full_name'          => array( 'label' => 'Full Name', 'required' => true ),
+                '_oso_jobseeker_email'              => array( 'label' => 'Email', 'required' => true, 'type' => 'email' ),
+                '_oso_jobseeker_phone'              => array( 'label' => 'Phone', 'required' => false ),
+                '_oso_jobseeker_location'           => array( 'label' => 'Location', 'required' => false ),
+                '_oso_jobseeker_over_18'            => array( 'label' => 'Over 18', 'required' => false ),
+                '_oso_jobseeker_availability_start' => array( 'label' => 'Available From', 'required' => false, 'type' => 'date' ),
+                '_oso_jobseeker_availability_end'   => array( 'label' => 'Available Until', 'required' => false, 'type' => 'date' ),
+                '_oso_jobseeker_why_interested'     => array( 'label' => 'Why Interested in Summer Camp', 'required' => false, 'full_width' => true, 'type' => 'textarea' ),
+                '_oso_jobseeker_job_interests'      => array( 'label' => 'Job Interests', 'required' => false, 'full_width' => true, 'type' => 'list' ),
+                '_oso_jobseeker_sports_skills'      => array( 'label' => 'Sports Skills', 'required' => false, 'full_width' => true, 'type' => 'list' ),
+                '_oso_jobseeker_arts_skills'        => array( 'label' => 'Arts Skills', 'required' => false, 'full_width' => true, 'type' => 'list' ),
+                '_oso_jobseeker_adventure_skills'   => array( 'label' => 'Adventure Skills', 'required' => false, 'full_width' => true, 'type' => 'list' ),
+                '_oso_jobseeker_waterfront_skills'  => array( 'label' => 'Waterfront Skills', 'required' => false, 'full_width' => true, 'type' => 'list' ),
+                '_oso_jobseeker_support_skills'     => array( 'label' => 'Support Services Skills', 'required' => false, 'full_width' => true, 'type' => 'list' ),
+                '_oso_jobseeker_certifications'     => array( 'label' => 'Certifications', 'required' => false, 'full_width' => true, 'type' => 'list' ),
+            );
+
+            foreach ( $jobseeker_fields as $meta_key => $field_config ) :
+                $value = ! empty( $meta[ $meta_key ] ) ? $meta[ $meta_key ] : '';
+                
+                // Skip empty optional fields
+                if ( empty( $value ) && ! $field_config['required'] ) {
+                    continue;
+                }
+                
+                $display_value = ! empty( $value ) ? $value : 'Not provided';
+                $field_class = ! empty( $field_config['full_width'] ) ? 'oso-profile-field-full' : 'oso-profile-field';
+                $field_type = isset( $field_config['type'] ) ? $field_config['type'] : 'text';
+                ?>
+                <div class="<?php echo esc_attr( $field_class ); ?>">
+                    <strong><?php echo esc_html( $field_config['label'] ); ?>:</strong>
+                    <?php if ( $field_type === 'email' && ! empty( $value ) ) : ?>
+                        <a href="mailto:<?php echo esc_attr( $value ); ?>"><?php echo esc_html( $value ); ?></a>
+                    <?php elseif ( $field_type === 'textarea' ) : ?>
+                        <p><?php echo wp_kses_post( nl2br( $value ) ); ?></p>
+                    <?php elseif ( $field_type === 'list' ) : ?>
+                        <span><?php echo esc_html( str_replace( "\n", ', ', $value ) ); ?></span>
+                    <?php elseif ( $field_type === 'date' && ! empty( $value ) ) : ?>
+                        <span><?php echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $value ) ) ); ?></span>
+                    <?php else : ?>
+                        <span><?php echo esc_html( $display_value ); ?></span>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
 
     <div class="oso-dashboard-actions">

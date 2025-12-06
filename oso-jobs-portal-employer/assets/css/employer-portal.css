@@ -1658,82 +1658,8 @@
     padding: 20px;
 }
 
-/* Quick Actions Grid */
-.oso-quick-actions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+.oso-jobseeker-dashboard .oso-quick-link-banner {
     margin-bottom: 40px;
-}
-
-.oso-quick-action-card {
-    background: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    text-align: center;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.oso-quick-action-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-
-.oso-quick-action-card.oso-purple-card {
-    border-color: #8051B0;
-}
-
-.oso-quick-action-card.oso-purple-card:hover {
-    background: #8051B0;
-}
-
-.oso-quick-action-card.oso-purple-card:hover h3,
-.oso-quick-action-card.oso-purple-card:hover p,
-.oso-quick-action-card.oso-purple-card:hover .dashicons {
-    color: #fff;
-}
-
-.oso-quick-action-card.oso-teal-card {
-    border-color: #548A8F;
-}
-
-.oso-quick-action-card.oso-teal-card:hover {
-    background: #548A8F;
-}
-
-.oso-quick-action-card.oso-teal-card:hover h3,
-.oso-quick-action-card.oso-teal-card:hover p,
-.oso-quick-action-card.oso-teal-card:hover .dashicons {
-    color: #fff;
-}
-
-.oso-quick-action-card .dashicons {
-    font-size: 48px;
-    width: 48px;
-    height: 48px;
-    margin-bottom: 15px;
-    color: #8051B0;
-}
-
-.oso-quick-action-card.oso-teal-card .dashicons {
-    color: #548A8F;
-}
-
-.oso-quick-action-card h3 {
-    font-size: 1.4em;
-    margin: 0 0 10px 0;
-    color: #333;
-    transition: color 0.3s ease;
-}
-
-.oso-quick-action-card p {
-    margin: 0;
-    color: #666;
-    font-size: 0.95em;
-    transition: color 0.3s ease;
 }
 
 /* Applications Section */
@@ -1892,7 +1818,7 @@
     font-size: 1.1em;
 }
 
-/* Companies Section */
+/* All Camps Section */
 .oso-companies-section {
     margin-bottom: 40px;
 }
@@ -1903,6 +1829,26 @@
     color: #333;
     border-bottom: 3px solid #548A8F;
     padding-bottom: 10px;
+}
+
+/* Profile Section */
+.oso-jobseeker-dashboard .oso-profile-section {
+    margin-bottom: 40px;
+}
+
+.oso-jobseeker-dashboard .oso-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #548A8F;
+}
+
+.oso-jobseeker-dashboard .oso-section-header h3 {
+    font-size: 1.6em;
+    margin: 0;
+    color: #333;
 }
 
 .oso-companies-grid {
@@ -2016,7 +1962,6 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-    .oso-quick-actions-grid,
     .oso-applications-grid,
     .oso-companies-grid {
         grid-template-columns: 1fr;
@@ -2029,6 +1974,17 @@
     
     .oso-application-actions .oso-btn,
     .oso-company-actions .oso-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .oso-jobseeker-dashboard .oso-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .oso-jobseeker-dashboard .oso-section-header .oso-btn {
         width: 100%;
         justify-content: center;
     }
