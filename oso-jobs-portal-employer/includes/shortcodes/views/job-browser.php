@@ -208,7 +208,7 @@ if ( $jobseeker_id ) {
             </div>
         </div>
         <div class="oso-employer-header-right">
-            <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-profile/' ) ); ?>" class="oso-btn oso-btn-dashboard">
+            <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-dashboard/' ) ); ?>" class="oso-btn oso-btn-dashboard">
                 <span class="dashicons dashicons-dashboard"></span> <?php esc_html_e( 'Dashboard', 'oso-employer-portal' ); ?>
             </a>
         </div>
