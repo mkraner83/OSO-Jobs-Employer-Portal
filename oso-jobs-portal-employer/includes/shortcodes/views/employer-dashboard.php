@@ -143,7 +143,7 @@ endif;
         </div>
         
         <?php if ( ! empty( $jobs ) ) : ?>
-            <div class="oso-jobs-grid">
+            <div class="oso-jobs-grid oso-jobs-grid-three">
                 <?php foreach ( $jobs as $job ) : 
                     $job_meta = $job_manager->get_job_meta( $job->ID );
                     $is_expired = $job_manager->is_job_expired( $job->ID );
