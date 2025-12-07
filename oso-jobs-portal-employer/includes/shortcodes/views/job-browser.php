@@ -215,61 +215,59 @@ if ( $jobseeker_id ) {
     </div>
     <?php endif; ?>
     
-    <div class="oso-browser-header">
-        <h2><?php esc_html_e( 'Summer Camp Jobs', 'oso-employer-portal' ); ?></h2>
+    <div class="oso-job-count-banner">
         <p><?php printf( esc_html__( '%d jobs available', 'oso-employer-portal' ), $job_query->found_posts ); ?></p>
     </div>
 
     <!-- Filters -->
     <form method="get" class="oso-job-filters" id="job-filter-form">
-        <!-- Search Bar -->
-        <div class="oso-filter-row">
-            <div class="oso-search-wrapper">
-                <input 
-                    type="text" 
-                    name="search" 
-                    id="job-search" 
-                    class="oso-search-input"
-                    placeholder="<?php esc_attr_e( 'Search jobs by keyword...', 'oso-employer-portal' ); ?>"
-                    value="<?php echo esc_attr( $search ); ?>"
-                >
-            </div>
+        <!-- Search Bar - Full Width -->
+        <div class="oso-filter-search-row">
+            <input 
+                type="text" 
+                name="search" 
+                id="job-search" 
+                class="oso-search-input-full"
+                placeholder="<?php esc_attr_e( 'Search jobs by keyword...', 'oso-employer-portal' ); ?>"
+                value="<?php echo esc_attr( $search ); ?>"
+            >
+        </div>
+        
+        <!-- Filter Controls - Spread Across Full Width -->
+        <div class="oso-filter-controls-row">
+            <!-- Location Filter -->
+            <select name="location" id="location-filter" class="oso-filter-select">
+                <option value=""><?php esc_html_e( 'All Locations', 'oso-employer-portal' ); ?></option>
+                <?php foreach ( $states as $state ) : ?>
+                    <option value="<?php echo esc_attr( $state ); ?>" <?php selected( $location, $state ); ?>>
+                        <?php echo esc_html( $state ); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <!-- Job Type Filter -->
+            <select name="job_type" id="job-type-filter" class="oso-filter-select">
+                <option value=""><?php esc_html_e( 'All Job Types', 'oso-employer-portal' ); ?></option>
+                <?php foreach ( $job_types as $type ) : ?>
+                    <option value="<?php echo esc_attr( $type ); ?>" <?php selected( $job_type_filter, $type ); ?>>
+                        <?php echo esc_html( $type ); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <!-- Sort -->
+            <select name="sort" id="sort-filter" class="oso-filter-select">
+                <option value="newest" <?php selected( $sort, 'newest' ); ?>><?php esc_html_e( 'Newest First', 'oso-employer-portal' ); ?></option>
+                <option value="oldest" <?php selected( $sort, 'oldest' ); ?>><?php esc_html_e( 'Oldest First', 'oso-employer-portal' ); ?></option>
+                <option value="title_asc" <?php selected( $sort, 'title_asc' ); ?>><?php esc_html_e( 'Title (A-Z)', 'oso-employer-portal' ); ?></option>
+                <option value="title_desc" <?php selected( $sort, 'title_desc' ); ?>><?php esc_html_e( 'Title (Z-A)', 'oso-employer-portal' ); ?></option>
+            </select>
+
+            <button type="submit" class="oso-btn oso-btn-primary"><?php esc_html_e( 'Apply Filters', 'oso-employer-portal' ); ?></button>
             
-            <div class="oso-filter-controls">
-                <!-- Location Filter -->
-                <select name="location" id="location-filter" class="oso-filter-select">
-                    <option value=""><?php esc_html_e( 'All Locations', 'oso-employer-portal' ); ?></option>
-                    <?php foreach ( $states as $state ) : ?>
-                        <option value="<?php echo esc_attr( $state ); ?>" <?php selected( $location, $state ); ?>>
-                            <?php echo esc_html( $state ); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-
-                <!-- Job Type Filter -->
-                <select name="job_type" id="job-type-filter" class="oso-filter-select">
-                    <option value=""><?php esc_html_e( 'All Job Types', 'oso-employer-portal' ); ?></option>
-                    <?php foreach ( $job_types as $type ) : ?>
-                        <option value="<?php echo esc_attr( $type ); ?>" <?php selected( $job_type_filter, $type ); ?>>
-                            <?php echo esc_html( $type ); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-
-                <!-- Sort -->
-                <select name="sort" id="sort-filter" class="oso-filter-select">
-                    <option value="newest" <?php selected( $sort, 'newest' ); ?>><?php esc_html_e( 'Newest First', 'oso-employer-portal' ); ?></option>
-                    <option value="oldest" <?php selected( $sort, 'oldest' ); ?>><?php esc_html_e( 'Oldest First', 'oso-employer-portal' ); ?></option>
-                    <option value="title_asc" <?php selected( $sort, 'title_asc' ); ?>><?php esc_html_e( 'Title (A-Z)', 'oso-employer-portal' ); ?></option>
-                    <option value="title_desc" <?php selected( $sort, 'title_desc' ); ?>><?php esc_html_e( 'Title (Z-A)', 'oso-employer-portal' ); ?></option>
-                </select>
-
-                <button type="submit" class="oso-btn oso-btn-primary"><?php esc_html_e( 'Apply Filters', 'oso-employer-portal' ); ?></button>
-                
-                <?php if ( ! empty( $search ) || ! empty( $location ) || ! empty( $job_type_filter ) ) : ?>
-                    <a href="<?php echo esc_url( get_permalink() ); ?>" class="oso-btn oso-btn-secondary"><?php esc_html_e( 'Clear', 'oso-employer-portal' ); ?></a>
-                <?php endif; ?>
-            </div>
+            <?php if ( ! empty( $search ) || ! empty( $location ) || ! empty( $job_type_filter ) ) : ?>
+                <a href="<?php echo esc_url( get_permalink() ); ?>" class="oso-btn oso-btn-secondary"><?php esc_html_e( 'Clear', 'oso-employer-portal' ); ?></a>
+            <?php endif; ?>
         </div>
     </form>
 
@@ -349,15 +347,12 @@ if ( $jobseeker_id ) {
                                 <span class="dashicons dashicons-groups"></span>
                                 <?php 
                                 $total = (int) $job_meta['_oso_job_positions'];
-                                $available = get_post_meta( $job_post->ID, '_oso_job_positions_available', true );
+                                $available = get_post_meta( $job_id, '_oso_job_positions_available', true );
                                 $available = ( $available !== '' ) ? (int) $available : $total;
-                                $approved = $total - $available;
                                 
                                 echo esc_html( $total ) . '/' . esc_html( $available ) . ' ';
                                 echo esc_html( _n( 'position', 'positions', $total, 'oso-employer-portal' ) );
-                                if ( $approved > 0 ) {
-                                    echo ' <span style="color: #28a745;">(' . esc_html( $approved ) . ' ' . esc_html__( 'approved', 'oso-employer-portal' ) . ')</span>';
-                                }
+                                echo ' <span style="color: #28a745;">(' . esc_html( $available ) . ' ' . esc_html__( 'available', 'oso-employer-portal' ) . ')</span>';
                                 ?>
                             </span>
                         <?php endif; ?>

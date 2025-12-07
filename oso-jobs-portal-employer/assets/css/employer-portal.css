@@ -461,6 +461,84 @@
     font-size: 1.1em;
 }
 
+/* Job Count Banner */
+.oso-job-count-banner {
+    background: linear-gradient(135deg, #4A7477 0%, #3A5C5F 100%);
+    padding: 16px 24px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+
+.oso-job-count-banner p {
+    margin: 0;
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 600;
+    text-align: left;
+}
+
+/* Filter Layout */
+.oso-filter-search-row {
+    margin-bottom: 16px;
+}
+
+.oso-search-input-full {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    background: #fff;
+    transition: all 0.2s;
+}
+
+.oso-search-input-full:focus {
+    outline: none;
+    border-color: #4A7477;
+    box-shadow: 0 0 0 3px rgba(74, 116, 119, 0.1);
+}
+
+.oso-filter-controls-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.oso-filter-controls-row .oso-filter-select {
+    flex: 1;
+    min-width: 180px;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    background: #fff;
+    transition: all 0.2s;
+}
+
+.oso-filter-controls-row .oso-filter-select:focus {
+    outline: none;
+    border-color: #4A7477;
+    box-shadow: 0 0 0 3px rgba(74, 116, 119, 0.1);
+}
+
+.oso-filter-controls-row .oso-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .oso-filter-controls-row {
+        flex-direction: column;
+    }
+    
+    .oso-filter-controls-row .oso-filter-select,
+    .oso-filter-controls-row .oso-btn {
+        width: 100%;
+    }
+}
+
 .oso-jobseeker-count {
     margin-bottom: 20px;
     color: #666;
