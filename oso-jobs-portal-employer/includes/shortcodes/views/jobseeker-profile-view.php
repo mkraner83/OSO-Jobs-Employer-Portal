@@ -22,7 +22,10 @@ $employer_post = null;
 $employer_meta = array();
 $logo_url = '';
 $camp_name = '';
-if ( current_user_can( 'oso_employer' ) || current_user_can( 'manage_options' ) ) {
+$is_employer = current_user_can( 'oso_employer' ) || current_user_can( 'manage_options' );
+$is_jobseeker = current_user_can( 'oso_jobseeker' );
+
+if ( $is_employer ) {
     $employer_post = OSO_Employer_Shortcodes::instance()->get_employer_by_user( get_current_user_id() );
     $employer_meta = $employer_post ? OSO_Employer_Shortcodes::instance()->get_employer_meta( $employer_post->ID ) : array();
     $logo_url = ! empty( $employer_meta['_oso_employer_logo'] ) ? $employer_meta['_oso_employer_logo'] : '';
@@ -31,7 +34,7 @@ if ( current_user_can( 'oso_employer' ) || current_user_can( 'manage_options' ) 
 ?>
 
 <div class="oso-jobseeker-profile-view">
-    <?php if ( $employer_post ) : ?>
+    <?php if ( $is_employer && $employer_post ) : ?>
     <!-- Employer Header -->
     <div class="oso-employer-header">
         <div class="oso-employer-header-left">
@@ -50,6 +53,26 @@ if ( current_user_can( 'oso_employer' ) || current_user_can( 'manage_options' ) 
                 <span class="dashicons dashicons-arrow-left-alt2"></span> <?php esc_html_e( 'Back', 'oso-employer-portal' ); ?>
             </a>
             <a href="<?php echo esc_url( home_url( '/job-portal/employer-profile/' ) ); ?>" class="oso-btn oso-btn-dashboard">
+                <span class="dashicons dashicons-dashboard"></span> <?php esc_html_e( 'Dashboard', 'oso-employer-portal' ); ?>
+            </a>
+        </div>
+    </div>
+    <?php elseif ( $is_jobseeker ) : ?>
+    <!-- Jobseeker Header -->
+    <div class="oso-employer-header">
+        <div class="oso-employer-header-left">
+            <?php if ( $photo ) : ?>
+                <div class="oso-employer-logo">
+                    <img src="<?php echo esc_url( $photo ); ?>" alt="<?php echo esc_attr( $name ); ?>" />
+                </div>
+            <?php endif; ?>
+            <div class="oso-employer-info">
+                <h1><?php echo esc_html( $name ); ?></h1>
+                <p class="oso-employer-subtitle"><?php esc_html_e( 'My Profile', 'oso-employer-portal' ); ?></p>
+            </div>
+        </div>
+        <div class="oso-employer-header-right">
+            <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-dashboard/' ) ); ?>" class="oso-btn oso-btn-dashboard">
                 <span class="dashicons dashicons-dashboard"></span> <?php esc_html_e( 'Dashboard', 'oso-employer-portal' ); ?>
             </a>
         </div>

@@ -1393,27 +1393,15 @@ class OSO_Employer_Shortcodes {
         }
 
         // Check if user is employer or admin
-        $job_id = absint( get_post_meta( $application_id, '_oso_application_job_id', true ) );
-        
-        if ( ! $job_id ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid job ID.', 'oso-employer-portal' ) ) );
-        }
-        
-        $employer_id = absint( get_post_meta( $job_id, '_oso_job_employer_id', true ) );
-        
-        if ( ! $employer_id ) {
-            wp_send_json_error( array( 'message' => __( 'Invalid employer ID.', 'oso-employer-portal' ) ) );
-        }
+        $job_id = get_post_meta( $application_id, '_oso_application_job_id', true );
+        $employer_id = get_post_meta( $job_id, '_oso_job_employer_id', true );
         
         // Get current user's employer post
         $user_employer_post = $this->get_employer_by_user( get_current_user_id() );
-        $user_employer_id = $user_employer_post ? absint( $user_employer_post->ID ) : 0;
+        $user_employer_id = $user_employer_post ? $user_employer_post->ID : 0;
 
-        // Check permission: must be admin OR the employer who owns the job
-        if ( ! current_user_can( 'manage_options' ) ) {
-            if ( $user_employer_id === 0 || $user_employer_id !== $employer_id ) {
-                wp_send_json_error( array( 'message' => __( 'You do not have permission to delete this application.', 'oso-employer-portal' ) ) );
-            }
+        if ( ! current_user_can( 'manage_options' ) && $user_employer_id != $employer_id ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to delete this application.', 'oso-employer-portal' ) ) );
         }
 
         // Verify application is rejected before deleting
