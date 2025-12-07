@@ -118,7 +118,7 @@ if ( $jobseeker_id ) {
             <a href="javascript:history.back()" class="oso-btn oso-btn-secondary">
                 <span class="dashicons dashicons-arrow-left-alt2"></span> <?php esc_html_e( 'Back', 'oso-employer-portal' ); ?>
             </a>
-            <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-profile/' ) ); ?>" class="oso-btn oso-btn-dashboard">
+            <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-dashboard/' ) ); ?>" class="oso-btn oso-btn-dashboard">
                 <span class="dashicons dashicons-dashboard"></span> <?php esc_html_e( 'Dashboard', 'oso-employer-portal' ); ?>
             </a>
         </div>
