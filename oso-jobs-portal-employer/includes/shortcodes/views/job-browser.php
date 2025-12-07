@@ -216,25 +216,24 @@ if ( $jobseeker_id ) {
     <?php endif; ?>
     
     <div class="oso-browser-header">
-        <h2><?php esc_html_e( 'Summer Camp Jobs', 'oso-employer-portal' ); ?></h2>
-        <p><?php printf( esc_html__( '%d jobs available', 'oso-employer-portal' ), $job_query->found_posts ); ?></p>
+        <p class="oso-jobs-count"><?php printf( esc_html__( '%d jobs available', 'oso-employer-portal' ), $job_query->found_posts ); ?></p>
     </div>
 
     <!-- Filters -->
     <form method="get" class="oso-job-filters" id="job-filter-form">
         <!-- Search Bar -->
+        <div class="oso-search-row">
+            <input 
+                type="text" 
+                name="search" 
+                id="job-search" 
+                class="oso-search-input-full"
+                placeholder="<?php esc_attr_e( 'Search jobs by keyword...', 'oso-employer-portal' ); ?>"
+                value="<?php echo esc_attr( $search ); ?>"
+            >
+        </div>
+        
         <div class="oso-filter-row">
-            <div class="oso-search-wrapper">
-                <input 
-                    type="text" 
-                    name="search" 
-                    id="job-search" 
-                    class="oso-search-input"
-                    placeholder="<?php esc_attr_e( 'Search jobs by keyword...', 'oso-employer-portal' ); ?>"
-                    value="<?php echo esc_attr( $search ); ?>"
-                >
-            </div>
-            
             <div class="oso-filter-controls">
                 <!-- Location Filter -->
                 <select name="location" id="location-filter" class="oso-filter-select">

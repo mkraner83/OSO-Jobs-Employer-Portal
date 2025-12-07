@@ -304,6 +304,25 @@
     margin-bottom: 15px;
 }
 
+.oso-search-row {
+    margin-bottom: 15px;
+}
+
+.oso-search-input-full {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+    background: #fff;
+}
+
+.oso-search-input-full:focus {
+    outline: none;
+    border-color: #4A7477;
+    box-shadow: 0 0 0 3px rgba(74, 116, 119, 0.1);
+}
+
 .oso-filter-row-search {
     grid-template-columns: 1fr;
 }
@@ -447,13 +466,20 @@
 }
 
 .oso-browser-header {
-    margin-bottom: 30px;
-    text-align: center;
+    margin-bottom: 20px;
 }
 
 .oso-browser-header h2 {
     margin-bottom: 10px;
     font-size: 2em;
+}
+
+.oso-jobs-count {
+    font-size: 1.1em;
+    color: #333;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    text-align: left;
 }
 
 .oso-browser-description {
