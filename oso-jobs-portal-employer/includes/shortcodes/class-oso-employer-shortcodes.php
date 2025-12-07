@@ -712,7 +712,7 @@ class OSO_Employer_Shortcodes {
         
         wp_send_json_success( array( 
             'message'     => __( 'Profile updated successfully!', 'oso-employer-portal' ),
-            'redirect_url'=> home_url( '/job-portal/jobseeker-profile/' ),
+            'redirect_url'=> home_url( '/job-portal/jobseeker-dashboard/' ),
         ) );
     }
 
