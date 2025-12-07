@@ -15,7 +15,7 @@ $checkbox_groups = class_exists( 'OSO_Jobs_Utilities' ) ? OSO_Jobs_Utilities::ge
 
 $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_full_name'] : $jobseeker->post_title;
 $photo = ! empty( $meta['_oso_jobseeker_photo'] ) ? $meta['_oso_jobseeker_photo'] : '';
-$profile_url = home_url( '/job-portal/jobseeker-profile/' );
+$profile_url = home_url( '/job-portal/jobseeker-dashboard/' );
 
 // Debug: Uncomment to see what's in meta
 // echo '<pre>'; print_r($meta); echo '</pre>';
@@ -187,7 +187,7 @@ $profile_url = home_url( '/job-portal/jobseeker-profile/' );
                 <span class="dashicons dashicons-saved"></span>
                 <?php esc_html_e( 'Save Changes', 'oso-employer-portal' ); ?>
             </button>
-            <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-profile/' ) ); ?>" class="oso-btn oso-btn-secondary">
+            <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-dashboard/' ) ); ?>" class="oso-btn oso-btn-secondary">
                 <?php esc_html_e( 'Cancel', 'oso-employer-portal' ); ?>
             </a>
         </div>
