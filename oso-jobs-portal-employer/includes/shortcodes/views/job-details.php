@@ -91,9 +91,11 @@ $application_success = isset( $_GET['application'] ) && $_GET['application'] ===
 $jobseeker_photo = '';
 $jobseeker_name = '';
 if ( $jobseeker_id ) {
-    $jobseeker_meta = OSO_Employer_Shortcodes::instance()->get_jobseeker_meta( $jobseeker_id );
-    $jobseeker_photo = ! empty( $jobseeker_meta['_oso_jobseeker_photo'] ) ? $jobseeker_meta['_oso_jobseeker_photo'] : '';
-    $jobseeker_name = ! empty( $jobseeker_meta['_oso_jobseeker_full_name'] ) ? $jobseeker_meta['_oso_jobseeker_full_name'] : get_the_title( $jobseeker_id );
+    $jobseeker_photo = get_post_meta( $jobseeker_id, '_oso_jobseeker_photo', true );
+    $jobseeker_name = get_post_meta( $jobseeker_id, '_oso_jobseeker_full_name', true );
+    if ( empty( $jobseeker_name ) ) {
+        $jobseeker_name = get_the_title( $jobseeker_id );
+    }
 }
 ?>
 

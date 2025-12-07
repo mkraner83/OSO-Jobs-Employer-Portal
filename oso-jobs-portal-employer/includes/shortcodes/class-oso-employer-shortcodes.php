@@ -1395,7 +1395,10 @@ class OSO_Employer_Shortcodes {
         // Check if user is employer or admin
         $job_id = get_post_meta( $application_id, '_oso_application_job_id', true );
         $employer_id = get_post_meta( $job_id, '_oso_job_employer_id', true );
-        $user_employer_id = $this->get_user_employer_id( get_current_user_id() );
+        
+        // Get current user's employer post
+        $user_employer_post = $this->get_employer_by_user( get_current_user_id() );
+        $user_employer_id = $user_employer_post ? $user_employer_post->ID : 0;
 
         if ( ! current_user_can( 'manage_options' ) && $user_employer_id != $employer_id ) {
             wp_send_json_error( array( 'message' => __( 'You do not have permission to delete this application.', 'oso-employer-portal' ) ) );

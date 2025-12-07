@@ -166,13 +166,29 @@ switch ( $sort ) {
 $job_query = new WP_Query( $args );
 
 // Get jobseeker info for header
-$jobseeker_id = OSO_Employer_Shortcodes::instance()->get_user_jobseeker_id( get_current_user_id() );
+$jobseeker_id = 0;
+$current_user_id = get_current_user_id();
+if ( $current_user_id ) {
+    $jobseeker_posts = get_posts( array(
+        'post_type'      => 'oso_jobseeker',
+        'post_status'    => 'publish',
+        'posts_per_page' => 1,
+        'meta_key'       => '_oso_jobseeker_user_id',
+        'meta_value'     => $current_user_id,
+    ) );
+    if ( ! empty( $jobseeker_posts ) ) {
+        $jobseeker_id = $jobseeker_posts[0]->ID;
+    }
+}
+
 $jobseeker_photo = '';
 $jobseeker_name = '';
 if ( $jobseeker_id ) {
-    $jobseeker_meta = OSO_Employer_Shortcodes::instance()->get_jobseeker_meta( $jobseeker_id );
-    $jobseeker_photo = ! empty( $jobseeker_meta['_oso_jobseeker_photo'] ) ? $jobseeker_meta['_oso_jobseeker_photo'] : '';
-    $jobseeker_name = ! empty( $jobseeker_meta['_oso_jobseeker_full_name'] ) ? $jobseeker_meta['_oso_jobseeker_full_name'] : get_the_title( $jobseeker_id );
+    $jobseeker_photo = get_post_meta( $jobseeker_id, '_oso_jobseeker_photo', true );
+    $jobseeker_name = get_post_meta( $jobseeker_id, '_oso_jobseeker_full_name', true );
+    if ( empty( $jobseeker_name ) ) {
+        $jobseeker_name = get_the_title( $jobseeker_id );
+    }
 }
 ?>
 
