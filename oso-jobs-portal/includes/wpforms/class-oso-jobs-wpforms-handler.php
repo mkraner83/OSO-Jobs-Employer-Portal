@@ -496,97 +496,121 @@ class OSO_Jobs_WPForms_Handler {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to OSO Jobs</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
-    <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f4f4f4;">
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f7fa;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f5f7fa;">
         <tr>
-            <td style="padding: 20px 10px;">
-                <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-collapse: collapse;">
-                    <!-- Header with Logo -->
+            <td style="padding: 40px 20px;">
+                <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-collapse: collapse; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <!-- Header -->
                     <tr>
-                        <td style="background: linear-gradient(135deg, #4A7477 0%, #3A5C5F 100%); padding: 40px 30px; text-align: center;">
-                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">Welcome to OSO Jobs!</h1>
+                        <td style="padding: 50px 40px 40px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px 12px 0 0;">
+                            <h1 style="margin: 0 0 10px 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Welcome – Let's Shift the Momentum of Domestic Hiring</h1>
                         </td>
                     </tr>
                     
                     <!-- Main Content -->
                     <tr>
-                        <td style="padding: 40px 30px;">
-                            <h2 style="margin: 0 0 20px 0; color: #333333; font-size: 24px;">Hi <?php echo esc_html( $first_name ); ?>,</h2>
+                        <td style="padding: 40px 40px 20px;">
+                            <p style="margin: 0 0 25px 0; color: #2d3748; font-size: 18px; line-height: 1.7; font-weight: 500;">Hi <?php echo esc_html( $first_name ); ?>,</p>
                             
-                            <p style="margin: 0 0 20px 0; color: #666666; font-size: 16px; line-height: 1.6;">
-                                Thank you for registering with OSO Jobs! Whether you're looking to hire seasonal staff, full-time employees, or connect with talented professionals in the outdoor and adventure industry, OSO Jobs is here to help you find the perfect match for your team.
-                            </p>
-                            
-                            <h3 style="margin: 30px 0 20px 0; color: #4A7477; font-size: 20px;">What's Next?</h3>
-                            
-                            <p style="margin: 0 0 10px 0; color: #666666; font-size: 16px; line-height: 1.6;">
-                                <strong style="color: #333333;">1. Complete Your Profile</strong>
-                            </p>
-                            <p style="margin: 0 0 20px 0; color: #666666; font-size: 16px; line-height: 1.6;">
-                                Add details about your organization, upload your logo, and tell candidates what makes your workplace unique.
+                            <p style="margin: 0 0 20px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
+                                We're Josh and Caleb, the co-founders of OSO. We both started working at camp back in 2012 when we were 19, and we've been in the hiring and seasonal employment world ever since.
                             </p>
                             
-                            <p style="margin: 0 0 10px 0; color: #666666; font-size: 16px; line-height: 1.6;">
-                                <strong style="color: #333333;">2. Post Your First Job</strong>
-                            </p>
-                            <p style="margin: 0 0 20px 0; color: #666666; font-size: 16px; line-height: 1.6;">
-                                Listing jobs on OSO Jobs is quick and easy. Provide a clear description, set your requirements, and reach a network of passionate candidates ready to join your team.
+                            <p style="margin: 0 0 20px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
+                                We know how tough domestic hiring has become for camps that deserve way more attention than they get. We built OSO because we believe the momentum can shift.
                             </p>
                             
-                            <p style="margin: 0 0 10px 0; color: #666666; font-size: 16px; line-height: 1.6;">
-                                <strong style="color: #333333;">3. Connect with Candidates</strong>
+                            <p style="margin: 0 0 20px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
+                                There are millions of young adults out there who have no idea camp jobs exist and we want to change that and get more people saying, "Why didn't I know this was a thing?"
                             </p>
-                            <p style="margin: 0 0 30px 0; color: #666666; font-size: 16px; line-height: 1.6;">
-                                Browse profiles, review applications, and connect directly with job seekers who align with your needs.
+                            
+                            <p style="margin: 0 0 35px 0; color: #4a5568; font-size: 16px; line-height: 1.7; font-style: italic;">
+                                Think of OSO as a platform designed to bring you more first dates. The good kind.
                             </p>
+                            
+                            <h2 style="margin: 0 0 25px 0; color: #2d3748; font-size: 26px; font-weight: 700; text-align: center;">What's Next?</h2>
+                            
+                            <p style="margin: 0 0 30px 0; color: #2d3748; font-size: 18px; line-height: 1.7; text-align: center; font-weight: 600;">
+                                Create A Profile. Post Jobs. Connect With Staff.
+                            </p>
+                            
+                            <!-- Feature Sections -->
+                            <div style="margin-bottom: 25px;">
+                                <h3 style="margin: 0 0 12px 0; color: #667eea; font-size: 18px; font-weight: 700;">Create Your Profile</h3>
+                                <p style="margin: 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
+                                    Camps with strong, authentic profiles consistently attract more interest. Staff photos, videos, and glimpses into your culture perform extremely well. People want to see where they might belong.
+                                </p>
+                            </div>
+                            
+                            <div style="margin-bottom: 25px;">
+                                <h3 style="margin: 0 0 12px 0; color: #667eea; font-size: 18px; font-weight: 700;">Post Your Jobs</h3>
+                                <p style="margin: 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
+                                    The more roles you list, the more activity the platform generates. More jobs lead to more traffic, more visibility, and more momentum. We saw this clearly during last summer's pilot.
+                                </p>
+                            </div>
+                            
+                            <div style="margin-bottom: 35px;">
+                                <h3 style="margin: 0 0 12px 0; color: #667eea; font-size: 18px; font-weight: 700;">Connect With Candidates</h3>
+                                <p style="margin: 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
+                                    Young adults value quick, genuine interaction. They want to browse profiles, start conversations, and build rapport. If your schedule makes this difficult, consider designating someone on your team to help keep communication flowing.
+                                </p>
+                            </div>
                             
                             <!-- Account Details Box -->
-                            <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f0f7f8; border: 1px solid #d0e4e6; border-radius: 8px; margin-bottom: 30px;">
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 35px;">
                                 <tr>
-                                    <td style="padding: 25px;">
-                                        <h3 style="margin: 0 0 15px 0; color: #4A7477; font-size: 18px;">Your Account Details</h3>
-                                        <p style="margin: 0 0 10px 0; color: #666666; font-size: 14px;">
-                                            <strong>Username:</strong> <?php echo esc_html( $username ); ?>
+                                    <td style="padding: 30px;">
+                                        <h3 style="margin: 0 0 20px 0; color: #667eea; font-size: 18px; font-weight: 700;">Your Account Details</h3>
+                                        <p style="margin: 0 0 15px 0; color: #2d3748; font-size: 15px; line-height: 1.6;">
+                                            <strong style="color: #4a5568;">Username:</strong> <?php echo esc_html( $username ); ?>
                                         </p>
-                                        <p style="margin: 0 0 15px 0; color: #666666; font-size: 14px;">
-                                            <strong>To set your password, visit the following address:</strong><br>
-                                            <a href="<?php echo esc_url( $password_reset_link ); ?>" style="color: #4A7477; text-decoration: none; word-break: break-all;"><?php echo esc_html( $password_reset_link ); ?></a>
+                                        <p style="margin: 0; color: #2d3748; font-size: 15px; line-height: 1.6;">
+                                            <strong style="color: #4a5568;">To set your password, visit the following address:</strong><br>
+                                            <a href="<?php echo esc_url( $password_reset_link ); ?>" style="color: #667eea; text-decoration: none; word-break: break-all; font-weight: 500;"><?php echo esc_html( $password_reset_link ); ?></a>
                                         </p>
                                     </td>
                                 </tr>
                             </table>
                             
                             <!-- CTA Button -->
-                            <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 35px;">
                                 <tr>
                                     <td style="text-align: center;">
-                                        <a href="<?php echo esc_url( $profile_link ); ?>" style="display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #4A7477 0%, #3A5C5F 100%); color: #ffffff; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">Get Started</a>
+                                        <a href="<?php echo esc_url( $profile_link ); ?>" style="display: inline-block; padding: 16px 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);">Get Started</a>
                                     </td>
                                 </tr>
                             </table>
                             
-                            <p style="margin: 0 0 20px 0; color: #666666; font-size: 16px; line-height: 1.6;">
-                                We're excited to be part of your hiring journey. If you have any questions or need assistance, feel free to reach out to our support team.
+                            <p style="margin: 0 0 25px 0; color: #764ba2; font-size: 18px; line-height: 1.7; font-weight: 600; font-style: italic; text-align: center;">
+                                We're here to champion camp.
                             </p>
                             
-                            <p style="margin: 0 0 10px 0; color: #666666; font-size: 16px; line-height: 1.6;">
-                                Welcome aboard!
+                            <p style="margin: 0 0 20px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
+                                Thanks for joining us. We're excited to support your 2026 hiring and build something meaningful together.
                             </p>
                             
-                            <p style="margin: 0; color: #666666; font-size: 16px; line-height: 1.6;">
-                                Best regards,<br>
-                                <strong>The OSO Jobs Team</strong>
+                            <p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
+                                If you ever need anything, we're always here.
+                            </p>
+                            
+                            <p style="margin: 0 0 5px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
+                                Think Summer!
+                            </p>
+                            
+                            <p style="margin: 0; color: #2d3748; font-size: 16px; line-height: 1.7; font-weight: 600;">
+                                Josh & Caleb
                             </p>
                         </td>
                     </tr>
                     
                     <!-- Footer -->
                     <tr>
-                        <td style="background-color: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e0e0e0;">
-                            <p style="margin: 0 0 10px 0; color: #999999; font-size: 14px;">
+                        <td style="background-color: #f7fafc; padding: 30px 40px; text-align: center; border-top: 1px solid #e2e8f0; border-radius: 0 0 12px 12px;">
+                            <p style="margin: 0 0 8px 0; color: #a0aec0; font-size: 13px;">
                                 © <?php echo esc_html( date( 'Y' ) ); ?> OSO Jobs. All rights reserved.
                             </p>
-                            <p style="margin: 0; color: #999999; font-size: 12px;">
+                            <p style="margin: 0; color: #cbd5e0; font-size: 12px;">
                                 This is an automated message, please do not reply to this email.
                             </p>
                         </td>
