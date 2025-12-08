@@ -424,17 +424,167 @@ class OSO_Jobs_WPForms_Handler {
             return;
         }
 
-        $subject = __( 'Your OSO Jobs account', 'oso-jobs-portal' );
-        $message = sprintf(
-            "%s\n\n%s: %s\n\n%s: %s",
-            __( 'Welcome! Your candidate profile has been created.', 'oso-jobs-portal' ),
-            __( 'Username', 'oso-jobs-portal' ),
-            $user->user_login,
-            __( 'Profile link', 'oso-jobs-portal' ),
-            wp_login_url( home_url( '/jobseeker-profile/' ) )
-        );
-
-        wp_mail( $user->user_email, $subject, $message );
+        // Check if user is employer or jobseeker
+        $is_employer = in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, (array) $user->roles, true );
+        $first_name = ! empty( $user->first_name ) ? $user->first_name : $user->display_name;
+        
+        if ( $is_employer ) {
+            $subject = __( 'Welcome to OSO Jobs – Your Employer Account is Ready!', 'oso-jobs-portal' );
+            $profile_link = wp_login_url( home_url( '/job-portal/employer-profile/' ) );
+            $password_reset_link = wp_lostpassword_url();
+            
+            // Create styled HTML email
+            $message = $this->get_employer_welcome_email_html( $first_name, $user->user_login, $profile_link, $password_reset_link );
+            
+            // Set content type to HTML
+            add_filter( 'wp_mail_content_type', function() { return 'text/html'; } );
+            wp_mail( $user->user_email, $subject, $message );
+            remove_filter( 'wp_mail_content_type', function() { return 'text/html'; } );
+        } else {
+            // Jobseeker - keep simple text email
+            $subject = __( 'Your OSO Jobs account', 'oso-jobs-portal' );
+            $message = sprintf(
+                "%s\n\n%s: %s\n\n%s: %s\n\n%s:\n%s",
+                __( 'Welcome! Your candidate profile has been created.', 'oso-jobs-portal' ),
+                __( 'Username', 'oso-jobs-portal' ),
+                $user->user_login,
+                __( 'Profile link', 'oso-jobs-portal' ),
+                wp_login_url( home_url( '/job-portal/jobseeker-profile/' ) ),
+                __( 'To set your password, visit the following address', 'oso-jobs-portal' ),
+                wp_lostpassword_url()
+            );
+            
+            wp_mail( $user->user_email, $subject, $message );
+        }
+    }
+    
+    /**
+     * Get styled HTML email for employer welcome.
+     *
+     * @param string $first_name User's first name.
+     * @param string $username Username.
+     * @param string $profile_link Profile URL.
+     * @param string $password_reset_link Password reset URL.
+     * @return string HTML email content.
+     */
+    protected function get_employer_welcome_email_html( $first_name, $username, $profile_link, $password_reset_link ) {
+        ob_start();
+        ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to OSO Jobs</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f4f4f4;">
+        <tr>
+            <td style="padding: 20px 10px;">
+                <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-collapse: collapse;">
+                    <!-- Header with Logo -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #4A7477 0%, #3A5C5F 100%); padding: 40px 30px; text-align: center;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">Welcome to OSO Jobs!</h1>
+                        </td>
+                    </tr>
+                    
+                    <!-- Main Content -->
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <h2 style="margin: 0 0 20px 0; color: #333333; font-size: 24px;">Hi <?php echo esc_html( $first_name ); ?>,</h2>
+                            
+                            <p style="margin: 0 0 20px 0; color: #666666; font-size: 16px; line-height: 1.6;">
+                                Thank you for registering with OSO Jobs! Your employer account is now active, and you're ready to start posting job opportunities and connecting with talented candidates.
+                            </p>
+                            
+                            <p style="margin: 0 0 30px 0; color: #666666; font-size: 16px; line-height: 1.6;">
+                                Here's what you can do next:
+                            </p>
+                            
+                            <!-- Features List -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                                <tr>
+                                    <td style="padding: 15px; background-color: #f8f9fa; border-left: 4px solid #4A7477; margin-bottom: 10px;">
+                                        <strong style="color: #333333; font-size: 16px;">✓ Post Job Listings</strong>
+                                        <p style="margin: 5px 0 0 0; color: #666666; font-size: 14px;">Create and publish job opportunities to attract the right candidates.</p>
+                                    </td>
+                                </tr>
+                                <tr><td style="height: 10px;"></td></tr>
+                                <tr>
+                                    <td style="padding: 15px; background-color: #f8f9fa; border-left: 4px solid #4A7477;">
+                                        <strong style="color: #333333; font-size: 16px;">✓ Browse Candidates</strong>
+                                        <p style="margin: 5px 0 0 0; color: #666666; font-size: 14px;">Search through qualified job seekers and find your perfect match.</p>
+                                    </td>
+                                </tr>
+                                <tr><td style="height: 10px;"></td></tr>
+                                <tr>
+                                    <td style="padding: 15px; background-color: #f8f9fa; border-left: 4px solid #4A7477;">
+                                        <strong style="color: #333333; font-size: 16px;">✓ Manage Applications</strong>
+                                        <p style="margin: 5px 0 0 0; color: #666666; font-size: 14px;">Review, approve, or reject applications efficiently from your dashboard.</p>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Account Details Box -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f0f7f8; border: 1px solid #d0e4e6; border-radius: 8px; margin-bottom: 30px;">
+                                <tr>
+                                    <td style="padding: 25px;">
+                                        <h3 style="margin: 0 0 15px 0; color: #4A7477; font-size: 18px;">Your Account Details</h3>
+                                        <p style="margin: 0 0 10px 0; color: #666666; font-size: 14px;">
+                                            <strong>Username:</strong> <?php echo esc_html( $username ); ?>
+                                        </p>
+                                        <p style="margin: 0 0 10px 0; color: #666666; font-size: 14px;">
+                                            <strong>Profile Link:</strong><br>
+                                            <a href="<?php echo esc_url( $profile_link ); ?>" style="color: #4A7477; text-decoration: none; word-break: break-all;"><?php echo esc_html( $profile_link ); ?></a>
+                                        </p>
+                                        <p style="margin: 0; color: #666666; font-size: 14px;">
+                                            <strong>Set Your Password:</strong><br>
+                                            <a href="<?php echo esc_url( $password_reset_link ); ?>" style="color: #4A7477; text-decoration: none; word-break: break-all;"><?php echo esc_html( $password_reset_link ); ?></a>
+                                        </p>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- CTA Button -->
+                            <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 30px;">
+                                <tr>
+                                    <td style="text-align: center;">
+                                        <a href="<?php echo esc_url( $profile_link ); ?>" style="display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #4A7477 0%, #3A5C5F 100%); color: #ffffff; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold;">Access Your Dashboard</a>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <p style="margin: 0 0 20px 0; color: #666666; font-size: 16px; line-height: 1.6;">
+                                If you have any questions or need assistance, feel free to reach out to our support team.
+                            </p>
+                            
+                            <p style="margin: 0; color: #666666; font-size: 16px; line-height: 1.6;">
+                                Best regards,<br>
+                                <strong>The OSO Jobs Team</strong>
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e0e0e0;">
+                            <p style="margin: 0 0 10px 0; color: #999999; font-size: 14px;">
+                                © <?php echo esc_html( date( 'Y' ) ); ?> OSO Jobs. All rights reserved.
+                            </p>
+                            <p style="margin: 0; color: #999999; font-size: 12px;">
+                                This is an automated message, please do not reply to this email.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+        <?php
+        return ob_get_clean();
     }
 
     /**
