@@ -39,7 +39,7 @@ endif;
         <div class="oso-employer-header-left">
             <?php 
             $logo_url = ! empty( $meta['_oso_employer_logo'] ) ? $meta['_oso_employer_logo'] : '';
-            $camp_name = ! empty( $meta['_oso_employer_company'] ) ? $meta['_oso_employer_company'] : $employer->post_title;
+            $camp_name = ! empty( $meta['_oso_employer_company'] ) ? $meta['_oso_employer_company'] : $employer_post->post_title;
             if ( $logo_url ) : ?>
                 <div class="oso-employer-logo">
                     <img src="<?php echo esc_url( $logo_url ); ?>" alt="<?php echo esc_attr( $camp_name ); ?>" />
@@ -236,7 +236,7 @@ endif;
             'post_status'    => 'publish',
             'posts_per_page' => -1,
             'meta_key'       => '_oso_application_employer_id',
-            'meta_value'     => $employer_id,
+            'meta_value'     => $employer_post->ID,
             'orderby'        => 'date',
             'order'          => 'DESC',
         ) );
