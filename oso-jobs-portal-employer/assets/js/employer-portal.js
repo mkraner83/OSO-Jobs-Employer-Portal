@@ -285,13 +285,31 @@
             
             // Upload photos if selected
             if (photoFiles && photoFiles.length > 0) {
+                // Validate file types
+                var allowedTypes = ['image/jpeg', 'image/jpg', 'image/webp'];
                 for (var i = 0; i < photoFiles.length; i++) {
-                    if (photoFiles[i].size > 16 * 1024 * 1024) {
+                    if (!allowedTypes.includes(photoFiles[i].type.toLowerCase())) {
                         $message.removeClass('loading success').addClass('error')
-                            .text('Each photo must be less than 16MB.');
+                            .text('Only JPG, JPEG, and WEBP images are allowed.');
                         $submitBtn.prop('disabled', false);
                         return;
                     }
+                }
+                
+                // Calculate total size of all photos
+                var totalSize = 0;
+                for (var i = 0; i < photoFiles.length; i++) {
+                    totalSize += photoFiles[i].size;
+                }
+                
+                if (totalSize > 20 * 1024 * 1024) {
+                    $message.removeClass('loading success').addClass('error')
+                        .text('Total size of all photos must be less than 20MB.');
+                    $submitBtn.prop('disabled', false);
+                    return;
+                }
+                
+                for (var i = 0; i < photoFiles.length; i++) {
                     uploadPromises.push(uploadFile(photoFiles[i], 'photo'));
                 }
             }

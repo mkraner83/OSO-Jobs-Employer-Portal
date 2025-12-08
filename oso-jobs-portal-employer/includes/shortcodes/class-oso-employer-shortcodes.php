@@ -752,7 +752,7 @@ class OSO_Employer_Shortcodes {
         // Set allowed file types
         $allowed_types = array();
         if ( $file_type === 'photo' || $file_type === 'logo' ) {
-            $allowed_types = array( 'jpg', 'jpeg', 'png', 'gif', 'webp' );
+            $allowed_types = array( 'jpg', 'jpeg', 'webp' );
         } elseif ( $file_type === 'resume' ) {
             $allowed_types = array( 'pdf', 'doc', 'docx' );
         }
