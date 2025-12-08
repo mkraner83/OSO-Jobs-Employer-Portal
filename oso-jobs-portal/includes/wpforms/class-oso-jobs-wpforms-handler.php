@@ -39,6 +39,10 @@ class OSO_Jobs_WPForms_Handler {
         add_action( 'wpforms_process', array( $this, 'validate_unique_email' ), 10, 3 );
         add_action( 'wpforms_process_complete', array( $this, 'handle_submission' ), 10, 4 );
         add_filter( 'wpforms_frontend_confirmation_message', array( $this, 'filter_confirmation_shortcodes' ), 10, 4 );
+        
+        // Disable default WordPress new user notification emails when we're handling registration
+        add_filter( 'wp_new_user_notification_email', array( $this, 'disable_default_user_notification' ), 10, 3 );
+        add_filter( 'wp_new_user_notification_email_admin', array( $this, 'disable_default_admin_notification' ), 10, 3 );
     }
     
     /**
@@ -101,6 +105,41 @@ class OSO_Jobs_WPForms_Handler {
                 }
             }
         }
+    }
+    
+    /**
+     * Disable default WordPress new user notification email.
+     * We send our own custom welcome emails instead.
+     *
+     * @param array   $wp_new_user_notification_email Email data.
+     * @param WP_User $user User object.
+     * @param string  $blogname Blog name.
+     * @return array|false False to prevent email, array otherwise.
+     */
+    public function disable_default_user_notification( $wp_new_user_notification_email, $user, $blogname ) {
+        // Check if user has our custom roles - if so, we're handling the email
+        if ( in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, (array) $user->roles, true ) || 
+             in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, (array) $user->roles, true ) ) {
+            return false; // Prevent default email
+        }
+        return $wp_new_user_notification_email;
+    }
+    
+    /**
+     * Disable default WordPress new user notification email to admin.
+     *
+     * @param array   $wp_new_user_notification_email_admin Email data.
+     * @param WP_User $user User object.
+     * @param string  $blogname Blog name.
+     * @return array|false False to prevent email, array otherwise.
+     */
+    public function disable_default_admin_notification( $wp_new_user_notification_email_admin, $user, $blogname ) {
+        // Check if user has our custom roles - if so, suppress admin notification
+        if ( in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, (array) $user->roles, true ) || 
+             in_array( OSO_Jobs_Portal::ROLE_CANDIDATE, (array) $user->roles, true ) ) {
+            return false; // Prevent admin notification
+        }
+        return $wp_new_user_notification_email_admin;
     }
 
     /**
