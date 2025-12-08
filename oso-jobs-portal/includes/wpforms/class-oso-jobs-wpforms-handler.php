@@ -36,8 +36,71 @@ class OSO_Jobs_WPForms_Handler {
      * Hook WPForms events.
      */
     protected function __construct() {
+        add_action( 'wpforms_process', array( $this, 'validate_unique_email' ), 10, 3 );
         add_action( 'wpforms_process_complete', array( $this, 'handle_submission' ), 10, 4 );
         add_filter( 'wpforms_frontend_confirmation_message', array( $this, 'filter_confirmation_shortcodes' ), 10, 4 );
+    }
+    
+    /**
+     * Validate that email is unique across all users.
+     *
+     * @param array $fields    Form fields.
+     * @param array $entry     Entry data.
+     * @param array $form_data Form data.
+     */
+    public function validate_unique_email( $fields, $entry, $form_data ) {
+        // Detect if this is a registration form
+        $type = $this->detect_submission_type( $form_data );
+        
+        // Only validate registration forms
+        if ( 'employer' !== $type && 'jobseeker' !== $type ) {
+            return;
+        }
+        
+        // Find the email field
+        $email = '';
+        $email_field_id = '';
+        
+        foreach ( $fields as $field_id => $field ) {
+            if ( ! empty( $field['type'] ) && $field['type'] === 'email' ) {
+                $email = sanitize_email( $field['value'] );
+                $email_field_id = $field_id;
+                break;
+            }
+        }
+        
+        if ( empty( $email ) || ! is_email( $email ) ) {
+            return;
+        }
+        
+        // Check if email already exists in WordPress users
+        if ( email_exists( $email ) ) {
+            $user = get_user_by( 'email', $email );
+            
+            if ( $user ) {
+                // Check user's role and provide specific error message
+                if ( in_array( 'oso_employer', (array) $user->roles, true ) ) {
+                    if ( 'employer' === $type ) {
+                        wpforms()->process->errors[ $form_data['id'] ][ $email_field_id ] = 
+                            __( 'This email is already registered as an Employer. Please log in instead.', 'oso-jobs-portal' );
+                    } else {
+                        wpforms()->process->errors[ $form_data['id'] ][ $email_field_id ] = 
+                            __( 'This email is already registered as an Employer. Please use a different email or contact support.', 'oso-jobs-portal' );
+                    }
+                } elseif ( in_array( 'oso_jobseeker', (array) $user->roles, true ) ) {
+                    if ( 'jobseeker' === $type ) {
+                        wpforms()->process->errors[ $form_data['id'] ][ $email_field_id ] = 
+                            __( 'This email is already registered as a Job Seeker. Please log in instead.', 'oso-jobs-portal' );
+                    } else {
+                        wpforms()->process->errors[ $form_data['id'] ][ $email_field_id ] = 
+                            __( 'This email is already registered as a Job Seeker. Please use a different email or contact support.', 'oso-jobs-portal' );
+                    }
+                } else {
+                    wpforms()->process->errors[ $form_data['id'] ][ $email_field_id ] = 
+                        __( 'This email address is already registered. Please use a different email or log in.', 'oso-jobs-portal' );
+                }
+            }
+        }
     }
 
     /**
