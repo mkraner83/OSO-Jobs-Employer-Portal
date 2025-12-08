@@ -169,7 +169,13 @@ $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_ful
 
     <!-- All Camps Section -->
     <div class="oso-companies-section">
-        <h3><?php esc_html_e( 'All Camps', 'oso-employer-portal' ); ?></h3>
+        <div class="oso-section-header">
+            <h3><?php esc_html_e( 'All Camps', 'oso-employer-portal' ); ?></h3>
+            <a href="<?php echo esc_url( home_url( '/job-portal/all-jobs/' ) ); ?>" class="oso-btn oso-btn-primary">
+                <span class="dashicons dashicons-search"></span>
+                <?php esc_html_e( 'Browse All Camps', 'oso-employer-portal' ); ?>
+            </a>
+        </div>
         
         <?php
         // Get all approved employers

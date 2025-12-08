@@ -74,6 +74,7 @@ $states = array(
 $search = isset( $_GET['search'] ) ? sanitize_text_field( wp_unslash( $_GET['search'] ) ) : '';
 $location = isset( $_GET['location'] ) ? sanitize_text_field( wp_unslash( $_GET['location'] ) ) : '';
 $job_type_filter = isset( $_GET['job_type'] ) ? sanitize_text_field( wp_unslash( $_GET['job_type'] ) ) : '';
+$employer_filter = isset( $_GET['employer'] ) ? intval( $_GET['employer'] ) : 0;
 $sort = isset( $_GET['sort'] ) ? sanitize_text_field( wp_unslash( $_GET['sort'] ) ) : 'newest';
 
 // Build query args
@@ -142,6 +143,49 @@ if ( ! empty( $job_type_filter ) ) {
         'value'   => $job_type_filter,
         'compare' => 'LIKE',
     );
+}
+
+// Employer filter - show only jobs from specific employer
+if ( ! empty( $employer_filter ) ) {
+    // Verify employer is approved before showing their jobs
+    $is_approved = get_post_meta( $employer_filter, '_oso_employer_approved', true );
+    if ( $is_approved === '1' ) {
+        $args['meta_query'][] = array(
+            'key'     => '_oso_job_employer_id',
+            'value'   => $employer_filter,
+            'compare' => '=',
+        );
+    } else {
+        // Employer not approved, force no results
+        $args['post__in'] = array( 0 );
+    }
+} else {
+    // No specific employer - only show jobs from approved employers
+    $approved_employer_args = array(
+        'post_type'      => 'oso_employer',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+        'meta_query'     => array(
+            array(
+                'key'     => '_oso_employer_approved',
+                'value'   => '1',
+                'compare' => '=',
+            ),
+        ),
+    );
+    $approved_employer_ids = get_posts( $approved_employer_args );
+    
+    if ( ! empty( $approved_employer_ids ) ) {
+        $args['meta_query'][] = array(
+            'key'     => '_oso_job_employer_id',
+            'value'   => $approved_employer_ids,
+            'compare' => 'IN',
+        );
+    } else {
+        // No approved employers, force no results
+        $args['post__in'] = array( 0 );
+    }
 }
 
 // Sorting
