@@ -188,7 +188,7 @@
                 formData.append('file', file);
                 formData.append('file_type', fileType);
                 formData.append('action', 'oso_upload_profile_file');
-                formData.append('nonce', wp.ajax.settings.nonce);
+                formData.append('nonce', osoEmployerPortal.nonce);
                 
                 $.ajax({
                     url: osoEmployerPortal.ajaxUrl,

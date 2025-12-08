@@ -145,9 +145,9 @@ class OSO_Employer_Portal {
         
         wp_enqueue_script(
             'oso-employer-portal',
-            OSO_EMPLOYER_PORTAL_URL . 'assets/js/employer-portal.js',
+            plugin_dir_url( OSO_EMPLOYER_PORTAL_FILE ) . 'assets/js/employer-portal.js',
             array( 'jquery' ),
-            '1.0.16',
+            '1.0.17',
             true
         );
         
