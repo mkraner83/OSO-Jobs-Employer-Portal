@@ -176,7 +176,7 @@ $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_ful
     <div class="oso-companies-section">
         <div class="oso-section-header">
             <h3><?php esc_html_e( 'All Camps', 'oso-employer-portal' ); ?></h3>
-            <a href="<?php echo esc_url( home_url( '/job-portal/all-jobs/' ) ); ?>" class="oso-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);">
+            <a href="<?php echo esc_url( home_url( '/job-portal/all-jobs/' ) ); ?>" class="oso-btn oso-btn-purple-gradient">
                 <span class="dashicons dashicons-search"></span>
                 <?php esc_html_e( 'Browse All Jobs', 'oso-employer-portal' ); ?>
             </a>
