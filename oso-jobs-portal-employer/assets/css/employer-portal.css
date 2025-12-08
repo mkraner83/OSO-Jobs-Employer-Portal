@@ -2104,13 +2104,14 @@
 }
 
 .oso-status-badge {
-    display: inline-block;
-    padding: 5px 12px;
+    display: block;
+    padding: 8px 12px;
     border-radius: 4px;
     font-size: 0.85em;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    text-align: center;
 }
 
 .oso-status-badge.status-pending {
@@ -2163,8 +2164,6 @@
     font-size: 1.6em;
     margin-bottom: 20px;
     color: #333;
-    border-bottom: 3px solid #548A8F;
-    padding-bottom: 10px;
 }
 
 /* Profile Section */

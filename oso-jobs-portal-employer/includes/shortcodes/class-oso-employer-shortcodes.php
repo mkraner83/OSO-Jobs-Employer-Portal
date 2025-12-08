@@ -55,6 +55,7 @@ class OSO_Employer_Shortcodes {
         add_action( 'wp_ajax_oso_update_application_status', array( $this, 'ajax_update_application_status' ) );
         add_action( 'wp_ajax_oso_delete_employer_profile', array( $this, 'ajax_delete_employer_profile' ) );
         add_action( 'wp_ajax_oso_delete_application', array( $this, 'ajax_delete_application' ) );
+        add_action( 'wp_ajax_oso_cancel_application', array( $this, 'ajax_cancel_application' ) );
         
         // Media Library customization
         add_filter( 'manage_media_columns', array( $this, 'add_media_uploader_column' ) );
@@ -1472,6 +1473,101 @@ class OSO_Employer_Shortcodes {
         }
 
         wp_send_json_success( array( 'message' => __( 'Application deleted successfully.', 'oso-employer-portal' ) ) );
+    }
+    
+    /**
+     * Cancel application (jobseeker can cancel pending applications).
+     */
+    public function ajax_cancel_application() {
+        // Verify nonce
+        check_ajax_referer( 'oso-job-nonce', 'nonce' );
+
+        // Get application ID
+        $application_id = isset( $_POST['application_id'] ) ? absint( $_POST['application_id'] ) : 0;
+
+        if ( ! $application_id ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid application ID.', 'oso-employer-portal' ) ) );
+        }
+
+        // Get application
+        $application = get_post( $application_id );
+        if ( ! $application || $application->post_type !== 'oso_job_application' ) {
+            wp_send_json_error( array( 'message' => __( 'Application not found.', 'oso-employer-portal' ) ) );
+        }
+
+        // Check if user is the jobseeker who applied
+        $jobseeker_id = get_post_meta( $application_id, '_oso_application_jobseeker_id', true );
+        $current_user_id = get_current_user_id();
+        
+        // Get current user's jobseeker post
+        $jobseeker_posts = get_posts( array(
+            'post_type'      => 'oso_jobseeker',
+            'post_status'    => 'publish',
+            'posts_per_page' => 1,
+            'meta_key'       => '_oso_jobseeker_user_id',
+            'meta_value'     => $current_user_id,
+        ) );
+        
+        $user_jobseeker_id = ! empty( $jobseeker_posts ) ? $jobseeker_posts[0]->ID : 0;
+
+        if ( $user_jobseeker_id != $jobseeker_id ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to cancel this application.', 'oso-employer-portal' ) ) );
+        }
+
+        // Verify application is pending
+        $status = get_post_meta( $application_id, '_oso_application_status', true );
+        if ( $status !== 'pending' ) {
+            wp_send_json_error( array( 'message' => __( 'Only pending applications can be cancelled.', 'oso-employer-portal' ) ) );
+        }
+
+        // Get application details for emails
+        $job_id = get_post_meta( $application_id, '_oso_application_job_id', true );
+        $employer_id = get_post_meta( $application_id, '_oso_application_employer_id', true );
+        
+        $job = get_post( $job_id );
+        $employer = get_post( $employer_id );
+        $jobseeker = get_post( $jobseeker_id );
+        
+        $jobseeker_name = get_post_meta( $jobseeker_id, '_oso_jobseeker_full_name', true );
+        $jobseeker_email = get_post_meta( $jobseeker_id, '_oso_jobseeker_email', true );
+        $employer_email = get_post_meta( $employer_id, '_oso_employer_email', true );
+        $employer_company = get_post_meta( $employer_id, '_oso_employer_company', true );
+        
+        if ( empty( $employer_company ) ) {
+            $employer_company = $employer->post_title;
+        }
+
+        // Delete the application
+        $result = wp_delete_post( $application_id, true );
+
+        if ( ! $result ) {
+            wp_send_json_error( array( 'message' => __( 'Failed to cancel application.', 'oso-employer-portal' ) ) );
+        }
+        
+        // Send email notification to jobseeker
+        if ( $jobseeker_email && $job ) {
+            $subject = sprintf( __( 'Application Cancelled - %s', 'oso-employer-portal' ), $job->post_title );
+            $message = sprintf(
+                __( "Hi %s,\n\nYour application for the position '%s' at %s has been successfully cancelled.\n\nIf you change your mind, you can apply again by visiting the job listing.\n\nBest regards,\nOSO Jobs Team", 'oso-employer-portal' ),
+                $jobseeker_name,
+                $job->post_title,
+                $employer_company
+            );
+            wp_mail( $jobseeker_email, $subject, $message );
+        }
+        
+        // Send email notification to employer
+        if ( $employer_email && $job ) {
+            $subject = sprintf( __( 'Application Cancelled - %s', 'oso-employer-portal' ), $job->post_title );
+            $message = sprintf(
+                __( "Hello,\n\n%s has cancelled their application for the position '%s'.\n\nYou can view other applicants for this position in your employer dashboard.\n\nBest regards,\nOSO Jobs Team", 'oso-employer-portal' ),
+                $jobseeker_name,
+                $job->post_title
+            );
+            wp_mail( $employer_email, $subject, $message );
+        }
+
+        wp_send_json_success( array( 'message' => __( 'Application cancelled successfully.', 'oso-employer-portal' ) ) );
     }
     
     /**

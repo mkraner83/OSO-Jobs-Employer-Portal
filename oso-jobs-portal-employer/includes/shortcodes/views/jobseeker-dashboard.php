@@ -152,6 +152,11 @@ $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_ful
                             <a href="<?php echo esc_url( add_query_arg( 'job_id', $job_id, home_url( '/job-portal/job-details/' ) ) ); ?>" class="oso-btn oso-btn-secondary oso-btn-small">
                                 <?php esc_html_e( 'View Job', 'oso-employer-portal' ); ?>
                             </a>
+                            <?php if ( $status === 'pending' ) : ?>
+                                <button type="button" class="oso-btn oso-btn-danger oso-btn-small oso-cancel-application" data-application-id="<?php echo esc_attr( $application->ID ); ?>">
+                                    <?php esc_html_e( 'Cancel Application', 'oso-employer-portal' ); ?>
+                                </button>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -171,9 +176,9 @@ $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_ful
     <div class="oso-companies-section">
         <div class="oso-section-header">
             <h3><?php esc_html_e( 'All Camps', 'oso-employer-portal' ); ?></h3>
-            <a href="<?php echo esc_url( home_url( '/job-portal/all-jobs/' ) ); ?>" class="oso-btn oso-btn-primary">
+            <a href="<?php echo esc_url( home_url( '/job-portal/all-jobs/' ) ); ?>" class="oso-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);">
                 <span class="dashicons dashicons-search"></span>
-                <?php esc_html_e( 'Browse All Camps', 'oso-employer-portal' ); ?>
+                <?php esc_html_e( 'Browse All Jobs', 'oso-employer-portal' ); ?>
             </a>
         </div>
         

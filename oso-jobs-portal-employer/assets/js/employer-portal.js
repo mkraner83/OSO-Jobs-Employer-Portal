@@ -1,6 +1,6 @@
 /**
  * OSO Employer Portal JavaScript
- * Version: 1.0.7
+ * Version: 1.0.18
  */
 
 (function($) {
@@ -661,6 +661,55 @@
             error: function() {
                 alert('Network error. Please try again.');
                 $btn.prop('disabled', false).html('<span class="dashicons dashicons-trash"></span> Delete');
+            }
+        });
+    });
+
+    // Cancel Application (Jobseeker)
+    $(document).on('click', '.oso-cancel-application', function() {
+        var $btn = $(this);
+        var applicationId = $btn.data('application-id');
+        var $card = $btn.closest('.oso-application-card');
+        
+        if (!confirm('Are you sure you want to cancel this application?\n\nYou can reapply later if you change your mind.')) {
+            return;
+        }
+        
+        $btn.prop('disabled', true).html('<span class="dashicons dashicons-update"></span> Cancelling...');
+        
+        $.ajax({
+            url: osoEmployerPortal.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'oso_cancel_application',
+                nonce: osoEmployerPortal.jobNonce,
+                application_id: applicationId
+            },
+            success: function(response) {
+                if (response.success) {
+                    $card.fadeOut(300, function() {
+                        $(this).remove();
+                        
+                        // Check if there are no more applications
+                        if ($('.oso-application-card').length === 0) {
+                            $('.oso-applications-grid').replaceWith(
+                                '<div class="oso-no-applications">' +
+                                '<span class="dashicons dashicons-portfolio"></span>' +
+                                '<p>You haven\'t applied to any jobs yet.</p>' +
+                                '<a href="' + osoEmployerPortal.homeUrl + '/job-portal/all-jobs/" class="oso-btn oso-btn-primary">Browse Jobs</a>' +
+                                '</div>'
+                            );
+                        }
+                    });
+                    alert(response.data.message || 'Application cancelled successfully.');
+                } else {
+                    alert(response.data.message || 'Failed to cancel application.');
+                    $btn.prop('disabled', false).html('Cancel Application');
+                }
+            },
+            error: function() {
+                alert('Network error. Please try again.');
+                $btn.prop('disabled', false).html('Cancel Application');
             }
         });
     });
