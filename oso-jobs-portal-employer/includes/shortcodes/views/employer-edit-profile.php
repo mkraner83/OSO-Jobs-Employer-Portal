@@ -115,7 +115,7 @@ $logo_url = ! empty( $meta['_oso_employer_logo'] ) ? $meta['_oso_employer_logo']
                 <label for="photos"><?php esc_html_e( 'Camp Photos', 'oso-employer-portal' ); ?></label>
                 <?php
                 $photos = ! empty( $meta['_oso_employer_photos'] ) ? $meta['_oso_employer_photos'] : '';
-                $photos_array = ! empty( $photos ) ? explode( '\n', $photos ) : array();
+                $photos_array = ! empty( $photos ) ? explode( "\n", $photos ) : array();
                 if ( ! empty( $photos_array ) ) :
                 ?>
                     <div class="oso-current-photos" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-bottom: 10px;">

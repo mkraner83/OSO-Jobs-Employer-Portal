@@ -820,9 +820,16 @@ class OSO_Employer_Shortcodes {
      * Custom upload directory for camp uploads.
      */
     public function custom_upload_dir_camp_uploads( $dirs ) {
-        $dirs['path']   = $dirs['basedir'] . '/Camp Uploads';
-        $dirs['url']    = $dirs['baseurl'] . '/Camp Uploads';
-        $dirs['subdir'] = '/Camp Uploads';
+        $subdir = '/Camp-Uploads';
+        $dirs['path']   = $dirs['basedir'] . $subdir;
+        $dirs['url']    = $dirs['baseurl'] . $subdir;
+        $dirs['subdir'] = $subdir;
+        
+        // Create directory if it doesn't exist
+        if ( ! file_exists( $dirs['path'] ) ) {
+            wp_mkdir_p( $dirs['path'] );
+        }
+        
         return $dirs;
     }
 
