@@ -915,17 +915,19 @@
 }
 
 .oso-btn-primary {
-    background-color: rgb(82, 125, 128);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #fff;
     font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.1px;
     padding: 10px;
+    box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);
 }
 
 .oso-btn-primary:hover {
-    background-color: rgb(72, 115, 118);
+    background: linear-gradient(135deg, #7a8ff0 0%, #8a5cb2 100%);
     color: #fff;
+    box-shadow: 0 6px 10px rgba(102, 126, 234, 0.35);
 }
 
 .oso-btn-secondary {
@@ -1382,14 +1384,7 @@
 }
 
 .oso-application-status {
-    display: inline-block;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.8em;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    /* Wrapper div - no styling needed, only the span badge inside has styles */
 }
 
 .oso-status-pending {
@@ -2127,7 +2122,7 @@
 }
 
 .oso-status-badge.status-pending {
-    background: #ffc107;
+    background: #fff3cd;
     color: #856404;
 }
 
