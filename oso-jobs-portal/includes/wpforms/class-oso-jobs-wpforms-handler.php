@@ -503,7 +503,7 @@ class OSO_Jobs_WPForms_Handler {
                 <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-collapse: collapse; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
                     <!-- Header -->
                     <tr>
-                        <td style="padding: 50px 40px 40px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px 12px 0 0;">
+                        <td style="padding: 50px 40px 40px; text-align: center; background: #548A8F; border-radius: 12px 12px 0 0;">
                             <h1 style="margin: 0 0 10px 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">Welcome – Let's Shift the Momentum of Domestic Hiring</h1>
                         </td>
                     </tr>
@@ -537,21 +537,21 @@ class OSO_Jobs_WPForms_Handler {
                             
                             <!-- Feature Sections -->
                             <div style="margin-bottom: 25px;">
-                                <h3 style="margin: 0 0 12px 0; color: #667eea; font-size: 18px; font-weight: 700;">Create Your Profile</h3>
+                                <h3 style="margin: 0 0 12px 0; color: #548A8F; font-size: 18px; font-weight: 700;">Create Your Profile</h3>
                                 <p style="margin: 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
                                     Camps with strong, authentic profiles consistently attract more interest. Staff photos, videos, and glimpses into your culture perform extremely well. People want to see where they might belong.
                                 </p>
                             </div>
                             
                             <div style="margin-bottom: 25px;">
-                                <h3 style="margin: 0 0 12px 0; color: #667eea; font-size: 18px; font-weight: 700;">Post Your Jobs</h3>
+                                <h3 style="margin: 0 0 12px 0; color: #548A8F; font-size: 18px; font-weight: 700;">Post Your Jobs</h3>
                                 <p style="margin: 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
                                     The more roles you list, the more activity the platform generates. More jobs lead to more traffic, more visibility, and more momentum. We saw this clearly during last summer's pilot.
                                 </p>
                             </div>
                             
                             <div style="margin-bottom: 35px;">
-                                <h3 style="margin: 0 0 12px 0; color: #667eea; font-size: 18px; font-weight: 700;">Connect With Candidates</h3>
+                                <h3 style="margin: 0 0 12px 0; color: #548A8F; font-size: 18px; font-weight: 700;">Connect With Candidates</h3>
                                 <p style="margin: 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
                                     Young adults value quick, genuine interaction. They want to browse profiles, start conversations, and build rapport. If your schedule makes this difficult, consider designating someone on your team to help keep communication flowing.
                                 </p>
@@ -561,13 +561,13 @@ class OSO_Jobs_WPForms_Handler {
                             <table role="presentation" style="width: 100%; border-collapse: collapse; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 35px;">
                                 <tr>
                                     <td style="padding: 30px;">
-                                        <h3 style="margin: 0 0 20px 0; color: #667eea; font-size: 18px; font-weight: 700;">Your Account Details</h3>
+                                        <h3 style="margin: 0 0 20px 0; color: #548A8F; font-size: 18px; font-weight: 700;">Your Account Details</h3>
                                         <p style="margin: 0 0 15px 0; color: #2d3748; font-size: 15px; line-height: 1.6;">
                                             <strong style="color: #4a5568;">Username:</strong> <?php echo esc_html( $username ); ?>
                                         </p>
                                         <p style="margin: 0; color: #2d3748; font-size: 15px; line-height: 1.6;">
                                             <strong style="color: #4a5568;">To set your password, visit the following address:</strong><br>
-                                            <a href="<?php echo esc_url( $password_reset_link ); ?>" style="color: #667eea; text-decoration: none; word-break: break-all; font-weight: 500;"><?php echo esc_html( $password_reset_link ); ?></a>
+                                            <a href="<?php echo esc_url( $password_reset_link ); ?>" style="color: #548A8F; text-decoration: none; word-break: break-all; font-weight: 500;"><?php echo esc_html( $password_reset_link ); ?></a>
                                         </p>
                                     </td>
                                 </tr>
@@ -577,12 +577,12 @@ class OSO_Jobs_WPForms_Handler {
                             <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 35px;">
                                 <tr>
                                     <td style="text-align: center;">
-                                        <a href="<?php echo esc_url( $profile_link ); ?>" style="display: inline-block; padding: 16px 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);">Get Started</a>
+                                        <a href="<?php echo esc_url( $profile_link ); ?>" style="display: inline-block; padding: 16px 48px; background: #548A8F; color: #ffffff; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(84, 138, 143, 0.25);">Get Started</a>
                                     </td>
                                 </tr>
                             </table>
                             
-                            <p style="margin: 0 0 25px 0; color: #764ba2; font-size: 18px; line-height: 1.7; font-weight: 600; font-style: italic; text-align: center;">
+                            <p style="margin: 0 0 25px 0; color: #548A8F; font-size: 18px; line-height: 1.7; font-weight: 600; font-style: italic; text-align: center;">
                                 We're here to champion camp.
                             </p>
                             

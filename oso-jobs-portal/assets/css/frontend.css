@@ -95,3 +95,33 @@
     margin-right: 12px;
     margin-bottom: 6px;
 }
+
+/* WPForms Confirmation Message Styling */
+.wpforms-confirmation-container {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.wpforms-confirmation-container h3 {
+    color: #548A8F;
+    font-size: 32px;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.wpforms-confirmation-container p {
+    color: #4a5568;
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 15px;
+}
+
+.wpforms-confirmation-container a {
+    color: #548A8F;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.wpforms-confirmation-container a:hover {
+    text-decoration: underline;
+}
