@@ -274,9 +274,18 @@
             
             // Upload logo if selected
             if (logoFile) {
-                if (logoFile.size > 16 * 1024 * 1024) {
+                // Validate logo file type
+                var allowedLogoTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'];
+                if (!allowedLogoTypes.includes(logoFile.type.toLowerCase())) {
                     $message.removeClass('loading success').addClass('error')
-                        .text('Logo file size must be less than 16MB.');
+                        .text('Logo must be JPG, JPEG, PNG, WEBP, or PDF format.');
+                    $submitBtn.prop('disabled', false);
+                    return;
+                }
+                
+                if (logoFile.size > 6 * 1024 * 1024) {
+                    $message.removeClass('loading success').addClass('error')
+                        .text('Logo file size must be less than 6MB.');
                     $submitBtn.prop('disabled', false);
                     return;
                 }

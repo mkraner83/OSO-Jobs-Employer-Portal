@@ -105,9 +105,9 @@ $logo_url = ! empty( $meta['_oso_employer_logo'] ) ? $meta['_oso_employer_logo']
                         <img src="<?php echo esc_url( $meta['_oso_employer_logo'] ); ?>" alt="Current logo" style="max-width: 200px; margin-bottom: 10px; border-radius: 4px;" />
                     </div>
                 <?php endif; ?>
-                <input type="file" id="logo" name="logo" accept=".jpg,.jpeg,.webp" />
+                <input type="file" id="logo" name="logo" accept=".jpg,.jpeg,.png,.webp,.pdf" />
                 <input type="hidden" id="logo_url" name="logo_url" value="<?php echo esc_attr( ! empty( $meta['_oso_employer_logo'] ) ? $meta['_oso_employer_logo'] : '' ); ?>" />
-                <p class="oso-field-description"><?php esc_html_e( 'Upload your camp logo (JPG, JPEG, WEBP only - max 16MB)', 'oso-employer-portal' ); ?></p>
+                <p class="oso-field-description"><?php esc_html_e( 'Upload your camp logo (JPG, JPEG, PNG, WEBP, PDF - max 6MB)', 'oso-employer-portal' ); ?></p>
             </div>
 
             <!-- Photos Upload -->
@@ -131,7 +131,7 @@ $logo_url = ! empty( $meta['_oso_employer_logo'] ) ? $meta['_oso_employer_logo']
                 <?php endif; ?>
                 <input type="file" id="photos" name="photos[]" accept=".jpg,.jpeg,.webp" multiple />
                 <input type="hidden" id="photos_urls" name="photos_urls" value="<?php echo esc_attr( $photos ); ?>" />
-                <p class="oso-field-description"><?php esc_html_e( 'Upload up to 6 photos (JPG, JPEG, WEBP only - 20MB total max)', 'oso-employer-portal' ); ?></p>
+                <p class="oso-field-description"><?php esc_html_e( 'Upload up to 6 photos (JPG, JPEG, WEBP - 20MB total max)', 'oso-employer-portal' ); ?></p>
             </div>
         </div>
 
