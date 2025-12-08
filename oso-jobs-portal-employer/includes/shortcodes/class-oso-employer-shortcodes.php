@@ -55,6 +55,10 @@ class OSO_Employer_Shortcodes {
         add_action( 'wp_ajax_oso_update_application_status', array( $this, 'ajax_update_application_status' ) );
         add_action( 'wp_ajax_oso_delete_employer_profile', array( $this, 'ajax_delete_employer_profile' ) );
         add_action( 'wp_ajax_oso_delete_application', array( $this, 'ajax_delete_application' ) );
+        
+        // Media Library customization
+        add_filter( 'manage_media_columns', array( $this, 'add_media_uploader_column' ) );
+        add_action( 'manage_media_custom_column', array( $this, 'display_media_uploader_column' ), 10, 2 );
     }
 
     /**
@@ -755,6 +759,10 @@ class OSO_Employer_Shortcodes {
         
         require_once ABSPATH . 'wp-admin/includes/file.php';
         require_once ABSPATH . 'wp-admin/includes/image.php';
+        require_once ABSPATH . 'wp-admin/includes/media.php';
+        
+        // Modify upload directory to use Camp Uploads subfolder
+        add_filter( 'upload_dir', array( $this, 'custom_upload_dir_camp_uploads' ) );
         
         $upload_overrides = array(
             'test_form' => false,
@@ -771,14 +779,51 @@ class OSO_Employer_Shortcodes {
         
         $file = wp_handle_upload( $_FILES['file'], $upload_overrides );
         
+        // Remove upload directory filter
+        remove_filter( 'upload_dir', array( $this, 'custom_upload_dir_camp_uploads' ) );
+        
         if ( isset( $file['error'] ) ) {
             wp_send_json_error( array( 'message' => $file['error'] ) );
         }
         
+        // Insert into Media Library with user information
+        $attachment = array(
+            'guid'           => $file['url'],
+            'post_mime_type' => $file['type'],
+            'post_title'     => sanitize_file_name( pathinfo( $_FILES['file']['name'], PATHINFO_FILENAME ) ),
+            'post_content'   => '',
+            'post_status'    => 'inherit',
+            'post_author'    => $user->ID,
+        );
+        
+        $attach_id = wp_insert_attachment( $attachment, $file['file'] );
+        
+        if ( ! is_wp_error( $attach_id ) ) {
+            // Generate attachment metadata
+            $attach_data = wp_generate_attachment_metadata( $attach_id, $file['file'] );
+            wp_update_attachment_metadata( $attach_id, $attach_data );
+            
+            // Add custom meta to identify uploader
+            update_post_meta( $attach_id, '_oso_uploaded_by', $user->user_login );
+            update_post_meta( $attach_id, '_oso_uploaded_by_id', $user->ID );
+            update_post_meta( $attach_id, '_oso_upload_type', $file_type );
+        }
+        
         wp_send_json_success( array( 
-            'url'     => $file['url'],
-            'message' => __( 'File uploaded successfully!', 'oso-employer-portal' ),
+            'url'           => $file['url'],
+            'attachment_id' => $attach_id,
+            'message'       => __( 'File uploaded successfully!', 'oso-employer-portal' ),
         ) );
+    }
+    
+    /**
+     * Custom upload directory for camp uploads.
+     */
+    public function custom_upload_dir_camp_uploads( $dirs ) {
+        $dirs['path']   = $dirs['basedir'] . '/Camp Uploads';
+        $dirs['url']    = $dirs['baseurl'] . '/Camp Uploads';
+        $dirs['subdir'] = '/Camp Uploads';
+        return $dirs;
     }
 
     /**
@@ -1418,5 +1463,40 @@ class OSO_Employer_Shortcodes {
         }
 
         wp_send_json_success( array( 'message' => __( 'Application deleted successfully.', 'oso-employer-portal' ) ) );
+    }
+    
+    /**
+     * Add uploader column to Media Library.
+     */
+    public function add_media_uploader_column( $columns ) {
+        $columns['oso_uploader'] = __( 'Uploaded By', 'oso-employer-portal' );
+        return $columns;
+    }
+    
+    /**
+     * Display uploader information in Media Library column.
+     */
+    public function display_media_uploader_column( $column_name, $attachment_id ) {
+        if ( $column_name === 'oso_uploader' ) {
+            $uploader_username = get_post_meta( $attachment_id, '_oso_uploaded_by', true );
+            $uploader_id = get_post_meta( $attachment_id, '_oso_uploaded_by_id', true );
+            $upload_type = get_post_meta( $attachment_id, '_oso_upload_type', true );
+            
+            if ( $uploader_username ) {
+                echo esc_html( $uploader_username );
+                if ( $upload_type ) {
+                    echo '<br><small>' . esc_html( ucfirst( $upload_type ) ) . '</small>';
+                }
+            } else {
+                // Fallback to post author if custom meta not set
+                $post = get_post( $attachment_id );
+                if ( $post && $post->post_author ) {
+                    $author = get_userdata( $post->post_author );
+                    if ( $author ) {
+                        echo esc_html( $author->user_login );
+                    }
+                }
+            }
+        }
     }
 }
