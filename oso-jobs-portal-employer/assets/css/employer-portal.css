@@ -1,7 +1,7 @@
 /**
  * OSO Employer Portal Styles
  * Jobseeker Browser & Profile Views
- * Version: 1.0.31
+ * Version: 1.0.32
  */
 
 /* ========================================
@@ -539,9 +539,58 @@
     }
 }
 
-.oso-jobseeker-count {
+/* Header bar with count and view toggle */
+.oso-jobseeker-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.oso-jobseeker-count {
+    margin: 0;
     color: #666;
+}
+
+.oso-view-toggle {
+    display: flex;
+    gap: 5px;
+    background: #f8f9fa;
+    padding: 4px;
+    border-radius: 6px;
+}
+
+.oso-view-btn {
+    background: transparent;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.oso-view-btn .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #666;
+}
+
+.oso-view-btn:hover {
+    background: rgba(74, 116, 119, 0.1);
+}
+
+.oso-view-btn.active {
+    background: #4A7477;
+}
+
+.oso-view-btn.active .dashicons {
+    color: #fff;
 }
 
 /* Card Grid Layout */
@@ -550,6 +599,49 @@
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 25px;
     margin-bottom: 40px;
+    transition: all 0.3s ease;
+}
+
+/* List View */
+.oso-jobseeker-grid[data-view="list"] {
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.oso-jobseeker-grid[data-view="list"] .oso-jobseeker-card {
+    flex-direction: row;
+    align-items: center;
+}
+
+.oso-jobseeker-grid[data-view="list"] .oso-jobseeker-photo-wrapper {
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+    margin: 20px;
+}
+
+.oso-jobseeker-grid[data-view="list"] .oso-jobseeker-photo {
+    height: 100px;
+}
+
+.oso-jobseeker-grid[data-view="list"] .oso-jobseeker-photo-placeholder {
+    height: 100px;
+}
+
+.oso-jobseeker-grid[data-view="list"] .oso-jobseeker-info {
+    flex: 1;
+    padding: 20px;
+}
+
+.oso-jobseeker-grid[data-view="list"] .oso-jobseeker-meta {
+    flex-wrap: wrap;
+}
+
+.oso-jobseeker-grid[data-view="list"] .oso-jobseeker-actions {
+    padding: 20px;
+    border-top: none;
+    border-left: 1px solid #e0e0e0;
+    flex-shrink: 0;
 }
 
 .oso-jobseeker-card {
@@ -1647,6 +1739,21 @@
     .oso-jobseeker-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
         gap: 20px;
+    }
+    
+    /* Force list view styling on mobile for better UX */
+    .oso-jobseeker-grid[data-view="list"] .oso-jobseeker-card {
+        flex-direction: column;
+    }
+    
+    .oso-jobseeker-grid[data-view="list"] .oso-jobseeker-photo-wrapper {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .oso-jobseeker-grid[data-view="list"] .oso-jobseeker-actions {
+        border-left: none;
+        border-top: 1px solid #e0e0e0;
     }
     
     .oso-profile-sidebar {

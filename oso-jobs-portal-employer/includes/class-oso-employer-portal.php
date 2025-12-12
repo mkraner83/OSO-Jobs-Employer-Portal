@@ -179,7 +179,7 @@ class OSO_Employer_Portal {
             'oso-employer-portal',
             OSO_EMPLOYER_PORTAL_URL . 'assets/css/employer-portal.css',
             array( 'dashicons' ),
-            '1.0.31'
+            '1.0.32'
         );
         
         // Deregister conflicting lightbox scripts that might cause duplicates
@@ -190,7 +190,7 @@ class OSO_Employer_Portal {
             'oso-employer-portal',
             OSO_EMPLOYER_PORTAL_URL . 'assets/js/employer-portal.js',
             array( 'jquery' ),
-            '1.0.26',
+            '1.0.27',
             true
         );
         

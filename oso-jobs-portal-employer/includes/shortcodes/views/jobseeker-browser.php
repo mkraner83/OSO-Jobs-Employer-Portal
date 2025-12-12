@@ -150,11 +150,21 @@ if ( $is_employer ) {
     </div>
 
     <?php if ( $jobseekers->have_posts() ) : ?>
-        <div class="oso-jobseeker-count">
-            <p><?php printf( esc_html__( 'Showing %d jobseekers', 'oso-employer-portal' ), $jobseekers->found_posts ); ?></p>
+        <div class="oso-jobseeker-header-bar">
+            <div class="oso-jobseeker-count">
+                <p><?php printf( esc_html__( 'Showing %d jobseekers', 'oso-employer-portal' ), $jobseekers->found_posts ); ?></p>
+            </div>
+            <div class="oso-view-toggle">
+                <button type="button" class="oso-view-btn oso-view-grid active" data-view="grid" title="<?php esc_attr_e( 'Grid View', 'oso-employer-portal' ); ?>">
+                    <span class="dashicons dashicons-grid-view"></span>
+                </button>
+                <button type="button" class="oso-view-btn oso-view-list" data-view="list" title="<?php esc_attr_e( 'List View', 'oso-employer-portal' ); ?>">
+                    <span class="dashicons dashicons-list-view"></span>
+                </button>
+            </div>
         </div>
 
-        <div class="oso-jobseeker-grid">
+        <div class="oso-jobseeker-grid" data-view="grid">
             <?php
             while ( $jobseekers->have_posts() ) :
                 $jobseekers->the_post();

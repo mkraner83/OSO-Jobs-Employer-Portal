@@ -1,12 +1,40 @@
 /**
  * OSO Employer Portal JavaScript
- * Version: 1.0.26
+ * Version: 1.0.27
  */
 
 (function($) {
     'use strict';
 
     $(document).ready(function() {
+        
+        // ========================================
+        // View Toggle (Grid/List)
+        // ========================================
+        
+        // Load saved view preference
+        var savedView = localStorage.getItem('oso_jobseeker_view') || 'grid';
+        if (savedView === 'list') {
+            $('.oso-jobseeker-grid').attr('data-view', 'list');
+            $('.oso-view-btn').removeClass('active');
+            $('.oso-view-list').addClass('active');
+        }
+        
+        // Handle view toggle
+        $(document).on('click', '.oso-view-btn', function() {
+            var $btn = $(this);
+            var view = $btn.data('view');
+            
+            // Update active state
+            $('.oso-view-btn').removeClass('active');
+            $btn.addClass('active');
+            
+            // Update grid view
+            $('.oso-jobseeker-grid').attr('data-view', view);
+            
+            // Save preference
+            localStorage.setItem('oso_jobseeker_view', view);
+        });
         
         // Advanced Filters Toggle
         $('#toggle-advanced').on('click', function() {
