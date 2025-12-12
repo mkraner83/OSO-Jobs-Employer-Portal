@@ -101,6 +101,8 @@ class OSO_Jobs_Portal {
         add_filter( 'manage_edit-' . self::POST_TYPE_JOBSEEKER . '_columns', array( $this, 'jobseeker_admin_columns' ) );
         add_action( 'manage_' . self::POST_TYPE_JOBSEEKER . '_posts_custom_column', array( $this, 'render_jobseeker_admin_column' ), 10, 2 );
         add_filter( 'login_redirect', array( $this, 'redirect_candidate_login' ), 10, 3 );
+        add_action( 'wp_ajax_oso_toggle_jobseeker_approval', array( $this, 'ajax_toggle_jobseeker_approval' ) );
+        add_action( 'wp_ajax_oso_refresh_approval_nonce', array( $this, 'ajax_refresh_approval_nonce' ) );
 
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
@@ -257,12 +259,26 @@ class OSO_Jobs_Portal {
      * Enqueue admin assets.
      */
     public function enqueue_admin_assets( $hook ) {
-        if ( false === strpos( $hook, 'oso-jobs' ) ) {
+        $load_on_jobseeker_list = ( 'edit.php' === $hook && isset( $_GET['post_type'] ) && self::POST_TYPE_JOBSEEKER === $_GET['post_type'] );
+        
+        if ( false === strpos( $hook, 'oso-jobs' ) && ! $load_on_jobseeker_list ) {
             return;
         }
 
         wp_enqueue_style( 'oso-jobs-admin', OSO_JOBS_PORTAL_URL . 'assets/css/admin.css', array(), OSO_JOBS_PORTAL_VERSION );
         wp_enqueue_script( 'oso-jobs-admin', OSO_JOBS_PORTAL_URL . 'assets/js/admin.js', array( 'jquery' ), OSO_JOBS_PORTAL_VERSION, true );
+        
+        if ( $load_on_jobseeker_list ) {
+            wp_localize_script(
+                'oso-jobs-admin',
+                'OSOJobsAdmin',
+                array(
+                    'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+                    'approveText' => __( 'Yes', 'oso-jobs-portal' ),
+                    'pendingText' => __( 'Pending', 'oso-jobs-portal' ),
+                )
+            );
+        }
     }
 
     /**
@@ -332,10 +348,21 @@ class OSO_Jobs_Portal {
         switch ( $column ) {
             case 'approved':
                 $approved = get_post_meta( $post_id, '_oso_jobseeker_approved', true );
+                $nonce = wp_create_nonce( 'oso_toggle_approval_' . $post_id );
                 if ( $approved === '1' ) {
-                    echo '<span style="color: #28a745; font-weight: 600;">✓ ' . esc_html__( 'Yes', 'oso-jobs-portal' ) . '</span>';
+                    printf(
+                        '<a href="#" class="oso-toggle-approval" data-post-id="%d" data-nonce="%s" data-current="1" style="color: #28a745; font-weight: 600; text-decoration: none; cursor: pointer;">✓ %s</a>',
+                        $post_id,
+                        esc_attr( $nonce ),
+                        esc_html__( 'Yes', 'oso-jobs-portal' )
+                    );
                 } else {
-                    echo '<span style="color: #dc3545; font-weight: 600;">✗ ' . esc_html__( 'Pending', 'oso-jobs-portal' ) . '</span>';
+                    printf(
+                        '<a href="#" class="oso-toggle-approval" data-post-id="%d" data-nonce="%s" data-current="0" style="color: #dc3545; font-weight: 600; text-decoration: none; cursor: pointer;">✗ %s</a>',
+                        $post_id,
+                        esc_attr( $nonce ),
+                        esc_html__( 'Pending', 'oso-jobs-portal' )
+                    );
                 }
                 break;
             case 'email':
@@ -874,5 +901,57 @@ class OSO_Jobs_Portal {
             $class = ( 'error' === $notice['type'] ) ? 'notice notice-error' : 'notice notice-success';
             printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $notice['message'] ) );
         }
+    }
+
+    /**
+     * AJAX handler for inline approval toggle.
+     */
+    public function ajax_toggle_jobseeker_approval() {
+        // Verify nonce
+        $post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+        $nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+        
+        if ( ! wp_verify_nonce( $nonce, 'oso_toggle_approval_' . $post_id ) ) {
+            wp_send_json_error( array( 'message' => __( 'Security check failed', 'oso-jobs-portal' ) ) );
+        }
+
+        // Check permissions
+        if ( ! current_user_can( 'edit_post', $post_id ) ) {
+            wp_send_json_error( array( 'message' => __( 'Permission denied', 'oso-jobs-portal' ) ) );
+        }
+
+        // Get current status and toggle
+        $current = get_post_meta( $post_id, '_oso_jobseeker_approved', true );
+        $new_status = ( $current === '1' ) ? '0' : '1';
+        
+        update_post_meta( $post_id, '_oso_jobseeker_approved', $new_status );
+        
+        // Send approval email if changing from unapproved to approved
+        if ( $current !== '1' && $new_status === '1' ) {
+            $this->send_jobseeker_approval_email( $post_id );
+        }
+
+        wp_send_json_success(
+            array(
+                'approved' => $new_status,
+                'message' => ( $new_status === '1' ) 
+                    ? __( 'Jobseeker approved successfully', 'oso-jobs-portal' )
+                    : __( 'Approval revoked', 'oso-jobs-portal' ),
+            )
+        );
+    }
+
+    /**
+     * AJAX handler to refresh nonce after toggle.
+     */
+    public function ajax_refresh_approval_nonce() {
+        $post_id = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+        
+        if ( ! $post_id || ! current_user_can( 'edit_post', $post_id ) ) {
+            wp_send_json_error();
+        }
+        
+        $new_nonce = wp_create_nonce( 'oso_toggle_approval_' . $post_id );
+        wp_send_json_success( array( 'nonce' => $new_nonce ) );
     }
 }
