@@ -271,8 +271,9 @@ if ( $is_employer ) {
                     </div>
                     
                     <div class="oso-card-actions">
-                        <a href="<?php echo esc_url( $profile_url ); ?>" class="oso-btn oso-btn-primary">
-                            <?php esc_html_e( 'View Full Profile', 'oso-employer-portal' ); ?>
+                        <a href="<?php echo esc_url( $profile_url ); ?>" class="oso-btn oso-btn-primary" title="<?php esc_attr_e( 'View Full Profile', 'oso-employer-portal' ); ?>">
+                            <span class="dashicons dashicons-visibility"></span>
+                            <span><?php esc_html_e( 'View Full Profile', 'oso-employer-portal' ); ?></span>
                         </a>
                     </div>
                 </div>
