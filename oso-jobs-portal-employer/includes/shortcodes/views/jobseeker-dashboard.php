@@ -204,9 +204,9 @@ $is_approved = get_post_meta( $jobseeker_post->ID, '_oso_jobseeker_approved', tr
         $interests = $interest_query->posts;
         
         // Debug output (comment out after testing)
-        // echo '<!-- Jobseeker ID: ' . $jobseeker_post->ID . ' -->';
-        // echo '<!-- Found ' . count($interests) . ' interests -->';
-        // echo '<!-- Query: ' . $interest_query->request . ' -->';
+        echo '<!-- Jobseeker ID: ' . $jobseeker_post->ID . ' -->';
+        echo '<!-- Found ' . count($interests) . ' interests -->';
+        echo '<!-- Query: ' . $interest_query->request . ' -->';
 
         if ( ! empty( $interests ) ) :
             ?>
