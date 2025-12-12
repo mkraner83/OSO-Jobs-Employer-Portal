@@ -203,10 +203,27 @@ $is_approved = get_post_meta( $jobseeker_post->ID, '_oso_jobseeker_approved', tr
         
         $interests = $interest_query->posts;
         
-        // Debug output (comment out after testing)
-        echo '<!-- Jobseeker ID: ' . $jobseeker_post->ID . ' -->';
-        echo '<!-- Found ' . count($interests) . ' interests -->';
-        echo '<!-- Query: ' . $interest_query->request . ' -->';
+        // Debug output - check all interests in database
+        $all_interests = get_posts( array(
+            'post_type' => 'oso_employer_interest',
+            'posts_per_page' => -1,
+            'post_status' => 'any'
+        ) );
+        
+        echo '<!-- DEBUG START -->';
+        echo '<!-- Jobseeker Post ID: ' . esc_html( $jobseeker_post->ID ) . ' -->';
+        echo '<!-- Found ' . count($interests) . ' interests for this jobseeker -->';
+        echo '<!-- Total interests in DB: ' . count($all_interests) . ' -->';
+        
+        if ( ! empty( $all_interests ) ) {
+            echo '<!-- All Interest IDs and their jobseeker_id meta: -->';
+            foreach ( $all_interests as $int ) {
+                $js_id = get_post_meta( $int->ID, '_oso_jobseeker_id', true );
+                echo '<!-- Interest ID ' . $int->ID . ' -> Jobseeker ID: ' . $js_id . ' (Type: ' . gettype($js_id) . ') -->';
+            }
+        }
+        echo '<!-- SQL Query: ' . esc_html( $interest_query->request ) . ' -->';
+        echo '<!-- DEBUG END -->';
 
         if ( ! empty( $interests ) ) :
             ?>
