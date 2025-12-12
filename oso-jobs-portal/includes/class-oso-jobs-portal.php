@@ -259,7 +259,9 @@ class OSO_Jobs_Portal {
      * Enqueue admin assets.
      */
     public function enqueue_admin_assets( $hook ) {
-        $load_on_jobseeker_list = ( 'edit.php' === $hook && isset( $_GET['post_type'] ) && self::POST_TYPE_JOBSEEKER === $_GET['post_type'] );
+        // Check if we're on the jobseeker list page
+        $post_type = isset( $_GET['post_type'] ) ? sanitize_text_field( wp_unslash( $_GET['post_type'] ) ) : '';
+        $load_on_jobseeker_list = ( 'edit.php' === $hook && self::POST_TYPE_JOBSEEKER === $post_type );
         
         if ( false === strpos( $hook, 'oso-jobs' ) && ! $load_on_jobseeker_list ) {
             return;
@@ -351,14 +353,14 @@ class OSO_Jobs_Portal {
                 $nonce = wp_create_nonce( 'oso_toggle_approval_' . $post_id );
                 if ( $approved === '1' ) {
                     printf(
-                        '<a href="#" class="oso-toggle-approval" data-post-id="%d" data-nonce="%s" data-current="1" style="color: #28a745; font-weight: 600; text-decoration: none; cursor: pointer;">✓ %s</a>',
+                        '<a href="#" class="oso-toggle-approval" data-post-id="%d" data-nonce="%s" data-current="1">✓ %s</a>',
                         $post_id,
                         esc_attr( $nonce ),
                         esc_html__( 'Yes', 'oso-jobs-portal' )
                     );
                 } else {
                     printf(
-                        '<a href="#" class="oso-toggle-approval" data-post-id="%d" data-nonce="%s" data-current="0" style="color: #dc3545; font-weight: 600; text-decoration: none; cursor: pointer;">✗ %s</a>',
+                        '<a href="#" class="oso-toggle-approval" data-post-id="%d" data-nonce="%s" data-current="0">✗ %s</a>',
                         $post_id,
                         esc_attr( $nonce ),
                         esc_html__( 'Pending', 'oso-jobs-portal' )

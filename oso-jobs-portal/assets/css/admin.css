@@ -149,3 +149,33 @@
     display: block;
     border-radius: 6px;
 }
+
+/* Approval toggle links */
+.oso-toggle-approval {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+    text-decoration: none !important;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.oso-toggle-approval:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.oso-toggle-approval:active {
+    transform: translateY(0);
+}
+
+.oso-toggle-approval[data-current="1"] {
+    color: #28a745 !important;
+}
+
+.oso-toggle-approval[data-current="0"] {
+    color: #dc3545 !important;
+}
