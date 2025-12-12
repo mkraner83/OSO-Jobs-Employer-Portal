@@ -1,6 +1,6 @@
 /**
  * OSO Employer Portal JavaScript
- * Version: 1.0.24
+ * Version: 1.0.25
  */
 
 (function($) {
@@ -862,11 +862,15 @@
                 if (response.success) {
                     // Fade out and remove the interest card (works for both .oso-interest-card and .oso-interest-sent-card)
                     var $card = $btn.closest('.oso-interest-card, .oso-interest-sent-card');
+                    
+                    // Check count BEFORE removing (since fadeOut callback runs after)
+                    var remainingCount = $('.oso-interest-card, .oso-interest-sent-card').length - 1;
+                    
                     $card.fadeOut(300, function() {
                         $(this).remove();
                         
                         // Check if there are any interests left
-                        if ($('.oso-interest-card, .oso-interest-sent-card').length === 0) {
+                        if (remainingCount === 0) {
                             location.reload(); // Reload to show "no interests" message
                         }
                     });

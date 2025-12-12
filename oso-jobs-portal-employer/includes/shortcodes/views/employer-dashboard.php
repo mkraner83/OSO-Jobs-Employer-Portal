@@ -322,7 +322,7 @@ endif;
             <div class="oso-no-interests-sent">
                 <span class="dashicons dashicons-heart"></span>
                 <p><?php esc_html_e( 'You haven\'t expressed interest in any candidates yet.', 'oso-employer-portal' ); ?></p>
-                <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-browser/' ) ); ?>" class="oso-btn oso-btn-primary">
+                <a href="<?php echo esc_url( home_url( '/job-portal/browse-jobseekers/' ) ); ?>" class="oso-btn oso-btn-primary">
                     <?php esc_html_e( 'Browse Candidates', 'oso-employer-portal' ); ?>
                 </a>
             </div>

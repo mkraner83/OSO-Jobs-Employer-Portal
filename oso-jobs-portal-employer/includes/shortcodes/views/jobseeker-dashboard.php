@@ -151,11 +151,10 @@ $is_approved = get_post_meta( $jobseeker_post->ID, '_oso_jobseeker_approved', tr
                             </span>
                         </div>
                         
-                        <span class="oso-status-badge <?php echo esc_attr( $status_class ); ?>">
-                            <?php echo esc_html( $status_label ); ?>
-                        </span>
-                        
                         <div class="oso-application-actions">
+                            <span class="oso-status-badge <?php echo esc_attr( $status_class ); ?>">
+                                <?php echo esc_html( $status_label ); ?>
+                            </span>
                             <a href="<?php echo esc_url( add_query_arg( 'job_id', $job_id, home_url( '/job-portal/job-details/' ) ) ); ?>" class="oso-btn oso-btn-secondary oso-btn-small">
                                 <?php esc_html_e( 'View Job', 'oso-employer-portal' ); ?>
                             </a>
