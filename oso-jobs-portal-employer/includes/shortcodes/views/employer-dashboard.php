@@ -304,7 +304,7 @@ endif;
                                     <span class="dashicons dashicons-external"></span>
                                 </a>
                             </div>
-                            <span class="oso-application-status <?php echo esc_attr( $status_class ); ?>">
+                            <span class="oso-status-badge <?php echo esc_attr( $status_class ); ?>">
                                 <?php echo esc_html( $status_text ); ?>
                             </span>
                         </div>

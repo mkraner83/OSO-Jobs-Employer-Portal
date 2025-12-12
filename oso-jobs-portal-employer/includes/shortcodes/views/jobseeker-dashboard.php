@@ -142,11 +142,9 @@ $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_ful
                             </span>
                         </div>
                         
-                        <div class="oso-application-status">
-                            <span class="oso-status-badge <?php echo esc_attr( $status_class ); ?>">
-                                <?php echo esc_html( $status_label ); ?>
-                            </span>
-                        </div>
+                        <span class="oso-status-badge <?php echo esc_attr( $status_class ); ?>">
+                            <?php echo esc_html( $status_label ); ?>
+                        </span>
                         
                         <div class="oso-application-actions">
                             <a href="<?php echo esc_url( add_query_arg( 'job_id', $job_id, home_url( '/job-portal/job-details/' ) ) ); ?>" class="oso-btn oso-btn-secondary oso-btn-small">
