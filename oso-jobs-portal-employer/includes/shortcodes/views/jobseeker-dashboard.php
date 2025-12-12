@@ -179,6 +179,127 @@ $is_approved = get_post_meta( $jobseeker_post->ID, '_oso_jobseeker_approved', tr
         <?php endif; ?>
     </div>
 
+    <!-- Employer Interests Section -->
+    <div class="oso-jobseeker-interests">
+        <h3><?php esc_html_e( 'Employer Interest', 'oso-employer-portal' ); ?></h3>
+        
+        <?php
+        // Get interests received for this jobseeker
+        $interests = get_posts( array(
+            'post_type'      => 'oso_employer_interest',
+            'posts_per_page' => -1,
+            'post_status'    => 'publish',
+            'meta_query'     => array(
+                array(
+                    'key'   => '_oso_jobseeker_id',
+                    'value' => $jobseeker_post->ID,
+                ),
+            ),
+            'orderby'        => 'date',
+            'order'          => 'DESC',
+        ) );
+
+        if ( ! empty( $interests ) ) :
+            ?>
+            <div class="oso-interests-grid">
+                <?php foreach ( $interests as $interest ) :
+                    $employer_id = get_post_meta( $interest->ID, '_oso_employer_id', true );
+                    $message = $interest->post_content;
+                    $interest_date = get_post_meta( $interest->ID, '_oso_interest_date', true );
+                    
+                    $employer = get_post( $employer_id );
+                    
+                    if ( ! $employer ) {
+                        continue;
+                    }
+                    
+                    $employer_meta = get_post_meta( $employer_id );
+                    $employer_logo = ! empty( $employer_meta['_oso_employer_logo'][0] ) ? $employer_meta['_oso_employer_logo'][0] : '';
+                    $employer_email = ! empty( $employer_meta['_oso_employer_email'][0] ) ? $employer_meta['_oso_employer_email'][0] : '';
+                    $employer_phone = ! empty( $employer_meta['_oso_employer_phone'][0] ) ? $employer_meta['_oso_employer_phone'][0] : '';
+                    $employer_state = ! empty( $employer_meta['_oso_employer_state'][0] ) ? $employer_meta['_oso_employer_state'][0] : '';
+                    $employer_city = ! empty( $employer_meta['_oso_employer_city'][0] ) ? $employer_meta['_oso_employer_city'][0] : '';
+                    
+                    $location = array_filter( array( $employer_city, $employer_state ) );
+                    $location_str = implode( ', ', $location );
+                    ?>
+                    <div class="oso-interest-card">
+                        <div class="oso-interest-header">
+                            <?php if ( $employer_logo ) : ?>
+                                <img src="<?php echo esc_url( $employer_logo ); ?>" alt="<?php echo esc_attr( $employer->post_title ); ?>" class="oso-employer-logo-small">
+                            <?php else : ?>
+                                <div class="oso-employer-logo-placeholder-small">
+                                    <span class="dashicons dashicons-building"></span>
+                                </div>
+                            <?php endif; ?>
+                            <div class="oso-interest-title">
+                                <h4><?php echo esc_html( $employer->post_title ); ?></h4>
+                                <?php if ( $location_str ) : ?>
+                                    <p class="oso-interest-location">
+                                        <span class="dashicons dashicons-location"></span>
+                                        <?php echo esc_html( $location_str ); ?>
+                                    </p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        
+                        <div class="oso-interest-date">
+                            <span class="dashicons dashicons-calendar"></span>
+                            <?php
+                            if ( $interest_date ) {
+                                echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $interest_date ) ) );
+                            } else {
+                                echo esc_html( get_the_date( '', $interest->ID ) );
+                            }
+                            ?>
+                        </div>
+                        
+                        <?php if ( $message ) : ?>
+                            <div class="oso-interest-message">
+                                <strong><?php esc_html_e( 'Message:', 'oso-employer-portal' ); ?></strong>
+                                <p><?php echo esc_html( $message ); ?></p>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <div class="oso-interest-contact">
+                            <?php if ( $employer_email ) : ?>
+                                <a href="mailto:<?php echo esc_attr( $employer_email ); ?>" class="oso-contact-item">
+                                    <span class="dashicons dashicons-email"></span>
+                                    <?php echo esc_html( $employer_email ); ?>
+                                </a>
+                            <?php endif; ?>
+                            <?php if ( $employer_phone ) : ?>
+                                <a href="tel:<?php echo esc_attr( $employer_phone ); ?>" class="oso-contact-item">
+                                    <span class="dashicons dashicons-phone"></span>
+                                    <?php echo esc_html( $employer_phone ); ?>
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                        
+                        <div class="oso-interest-actions">
+                            <a href="<?php echo esc_url( add_query_arg( 'employer_id', $employer_id, home_url( '/job-portal/employer-profile/' ) ) ); ?>" class="oso-btn oso-btn-secondary oso-btn-small">
+                                <span class="dashicons dashicons-visibility"></span>
+                                <?php esc_html_e( 'View Profile', 'oso-employer-portal' ); ?>
+                            </a>
+                            <?php if ( $employer_email ) : ?>
+                                <a href="mailto:<?php echo esc_attr( $employer_email ); ?>" class="oso-btn oso-btn-purple-gradient oso-btn-small">
+                                    <span class="dashicons dashicons-email-alt"></span>
+                                    <?php esc_html_e( 'Reply', 'oso-employer-portal' ); ?>
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else : ?>
+            <div class="oso-no-interests">
+                <span class="dashicons dashicons-heart"></span>
+                <p><?php esc_html_e( 'No employers have expressed interest yet.', 'oso-employer-portal' ); ?></p>
+                <p><?php esc_html_e( 'Keep your profile updated and check back later!', 'oso-employer-portal' ); ?></p>
+            </div>
+        <?php endif; ?>
+    </div>
+
     <!-- All Camps Section -->
     <div class="oso-companies-section">
         <div class="oso-section-header">

@@ -2306,20 +2306,186 @@
     font-size: 1.1em;
 }
 
+/* Employer Interests Section on Jobseeker Dashboard */
+.oso-jobseeker-interests {
+    margin-bottom: 40px;
+}
+
+.oso-jobseeker-interests h3 {
+    font-size: 1.6em;
+    margin-bottom: 20px;
+    color: #333;
+    border-bottom: 3px solid #667eea;
+    padding-bottom: 10px;
+}
+
+.oso-interests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.oso-interest-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+}
+
+.oso-interest-card:hover {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+    transform: translateY(-2px);
+}
+
+.oso-interest-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.oso-interest-title h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.oso-interest-location {
+    margin: 0;
+    font-size: 0.9em;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.oso-interest-location .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.oso-interest-date {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.oso-interest-date .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.oso-interest-message {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    border-left: 3px solid #667eea;
+}
+
+.oso-interest-message strong {
+    display: block;
+    color: #667eea;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
+.oso-interest-message p {
+    margin: 0;
+    color: #555;
+    line-height: 1.6;
+    font-size: 0.95em;
+}
+
+.oso-interest-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.oso-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: color 0.2s ease;
+}
+
+.oso-contact-item:hover {
+    color: #5568d3;
+    text-decoration: underline;
+}
+
+.oso-contact-item .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.oso-interest-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.oso-no-interests {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.oso-no-interests .dashicons {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #667eea;
+    margin-bottom: 20px;
+}
+
+.oso-no-interests p {
+    margin: 0 0 10px 0;
+    color: #666;
+    font-size: 1.05em;
+}
+
+.oso-no-interests p:first-of-type {
+    font-weight: 600;
+    color: #333;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .oso-applications-grid,
-    .oso-companies-grid {
+    .oso-companies-grid,
+    .oso-interests-grid {
         grid-template-columns: 1fr;
     }
     
     .oso-application-actions,
-    .oso-company-actions {
+    .oso-company-actions,
+    .oso-interest-actions {
         flex-direction: column;
     }
     
     .oso-application-actions .oso-btn,
-    .oso-company-actions .oso-btn {
+    .oso-company-actions .oso-btn,
+    .oso-interest-actions .oso-btn {
         width: 100%;
         justify-content: center;
     }
@@ -2439,10 +2605,17 @@
     justify-content: center;
     border-radius: 50%;
     transition: background 0.3s ease;
+    flex-shrink: 0;
 }
 
 .oso-modal-close:hover {
     background: rgba(255, 255, 255, 0.2);
+}
+
+/* Close button within success message */
+.oso-interest-success .oso-modal-close {
+    color: #fff;
+    margin-top: 10px;
 }
 
 .oso-modal-body {
