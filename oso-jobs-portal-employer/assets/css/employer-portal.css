@@ -1,7 +1,7 @@
 /**
  * OSO Employer Portal Styles
  * Jobseeker Browser & Profile Views
- * Version: 1.0.30
+ * Version: 1.0.31
  */
 
 /* ========================================
@@ -836,6 +836,14 @@
 
 .oso-profile-resume {
     margin-top: 20px;
+}
+
+.oso-profile-resume .oso-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 /* Profile Content */
@@ -2767,25 +2775,26 @@
 }
 
 .oso-modal-close {
-    background: transparent;
+    background: rgba(108, 117, 125, 0.8);
     border: none;
     color: #fff;
-    font-size: 32px;
+    font-size: 28px;
     line-height: 1;
     cursor: pointer;
     padding: 0;
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
     flex-shrink: 0;
 }
 
 .oso-modal-close:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(108, 117, 125, 1);
+    transform: scale(1.1);
 }
 
 /* Close button within success message */
@@ -2909,6 +2918,11 @@
 .oso-success-icon .dashicons {
     color: #fff;
     font-size: 48px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .oso-interest-success h4 {
