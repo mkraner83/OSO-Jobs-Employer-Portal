@@ -961,6 +961,7 @@
 
 .oso-btn-purple-gradient:hover {
     background: linear-gradient(135deg, #7a8ff0 0%, #8a5cb2 100%);
+    color: #ffffff;
     box-shadow: 0 6px 10px rgba(102, 126, 234, 0.35);
 }
 
