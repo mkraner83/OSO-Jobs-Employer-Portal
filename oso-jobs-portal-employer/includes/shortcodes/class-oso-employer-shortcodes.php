@@ -755,7 +755,8 @@ class OSO_Employer_Shortcodes {
         if ( $file_type === 'photo' ) {
             $allowed_types = array( 'jpg', 'jpeg', 'webp' );
         } elseif ( $file_type === 'logo' ) {
-            $allowed_types = array( 'jpg', 'jpeg', 'png', 'webp', 'pdf' );
+            // Prefer PNG for transparent backgrounds, allow JPG as fallback
+            $allowed_types = array( 'png', 'jpg', 'jpeg' );
         } elseif ( $file_type === 'resume' ) {
             $allowed_types = array( 'pdf', 'doc', 'docx' );
         }
@@ -766,6 +767,12 @@ class OSO_Employer_Shortcodes {
         
         // Modify upload directory to use Camp Uploads subfolder
         add_filter( 'upload_dir', array( $this, 'custom_upload_dir_camp_uploads' ) );
+        
+        // For logos, disable image size generation and WebP conversion
+        if ( $file_type === 'logo' ) {
+            add_filter( 'intermediate_image_sizes_advanced', '__return_empty_array', 999 );
+            add_filter( 'wp_image_editors', array( $this, 'disable_webp_conversion' ), 999 );
+        }
         
         $upload_overrides = array(
             'test_form' => false,
@@ -802,9 +809,18 @@ class OSO_Employer_Shortcodes {
         $attach_id = wp_insert_attachment( $attachment, $file['file'] );
         
         if ( ! is_wp_error( $attach_id ) ) {
-            // Generate attachment metadata
-            $attach_data = wp_generate_attachment_metadata( $attach_id, $file['file'] );
-            wp_update_attachment_metadata( $attach_id, $attach_data );
+            // For logos, skip thumbnail generation to keep only original file
+            if ( $file_type === 'logo' ) {
+                // Only store basic metadata without generating thumbnails
+                $attach_data = array(
+                    'file' => basename( $file['file'] ),
+                );
+                wp_update_attachment_metadata( $attach_id, $attach_data );
+            } else {
+                // Generate attachment metadata for photos and other files
+                $attach_data = wp_generate_attachment_metadata( $attach_id, $file['file'] );
+                wp_update_attachment_metadata( $attach_id, $attach_data );
+            }
             
             // Add custom meta to identify uploader
             update_post_meta( $attach_id, '_oso_uploaded_by', $user->user_login );
@@ -812,11 +828,28 @@ class OSO_Employer_Shortcodes {
             update_post_meta( $attach_id, '_oso_upload_type', $file_type );
         }
         
+        // Remove filters for logo processing
+        if ( $file_type === 'logo' ) {
+            remove_filter( 'intermediate_image_sizes_advanced', '__return_empty_array', 999 );
+            remove_filter( 'wp_image_editors', array( $this, 'disable_webp_conversion' ), 999 );
+        }
+        
         wp_send_json_success( array( 
             'url'           => $file['url'],
             'attachment_id' => $attach_id,
             'message'       => __( 'File uploaded successfully!', 'oso-employer-portal' ),
         ) );
+    }
+    
+    /**
+     * Disable WebP conversion for logo uploads.
+     *
+     * @param array $editors Image editor class names.
+     * @return array Modified image editor class names.
+     */
+    public function disable_webp_conversion( $editors ) {
+        // Return only GD editor without WebP support if available
+        return array( 'WP_Image_Editor_GD' );
     }
     
     /**

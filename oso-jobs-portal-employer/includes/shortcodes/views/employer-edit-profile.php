@@ -105,9 +105,9 @@ $logo_url = ! empty( $meta['_oso_employer_logo'] ) ? $meta['_oso_employer_logo']
                         <img src="<?php echo esc_url( $meta['_oso_employer_logo'] ); ?>" alt="Current logo" style="max-width: 200px; margin-bottom: 10px; border-radius: 4px;" />
                     </div>
                 <?php endif; ?>
-                <input type="file" id="logo" name="logo" accept=".jpg,.jpeg,.png,.webp,.pdf" />
+                <input type="file" id="logo" name="logo" accept=".png,.jpg,.jpeg" />
                 <input type="hidden" id="logo_url" name="logo_url" value="<?php echo esc_attr( ! empty( $meta['_oso_employer_logo'] ) ? $meta['_oso_employer_logo'] : '' ); ?>" />
-                <p class="oso-field-description"><?php esc_html_e( 'Upload your camp logo (JPG, JPEG, PNG, WEBP, PDF - max 6MB)', 'oso-employer-portal' ); ?></p>
+                <p class="oso-field-description"><?php esc_html_e( 'Upload your camp logo (PNG recommended for transparent backgrounds, JPG/JPEG also supported - max 6MB)', 'oso-employer-portal' ); ?></p>
             </div>
 
             <!-- Photos Upload -->

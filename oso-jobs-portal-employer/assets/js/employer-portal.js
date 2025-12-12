@@ -274,11 +274,11 @@
             
             // Upload logo if selected
             if (logoFile) {
-                // Validate logo file type
-                var allowedLogoTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'];
+                // Validate logo file type (PNG preferred for transparent backgrounds)
+                var allowedLogoTypes = ['image/png', 'image/jpeg', 'image/jpg'];
                 if (!allowedLogoTypes.includes(logoFile.type.toLowerCase())) {
                     $message.removeClass('loading success').addClass('error')
-                        .text('Logo must be JPG, JPEG, PNG, WEBP, or PDF format.');
+                        .text('Logo must be PNG (recommended for transparent backgrounds), JPG, or JPEG format.');
                     $submitBtn.prop('disabled', false);
                     return;
                 }
