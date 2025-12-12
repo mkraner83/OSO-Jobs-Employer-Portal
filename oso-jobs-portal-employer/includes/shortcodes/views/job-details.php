@@ -292,6 +292,21 @@ if ( $jobseeker_id ) {
                     <h3><?php esc_html_e( 'Apply for this Job', 'oso-employer-portal' ); ?></h3>
                     
                     <?php if ( $is_logged_in && $jobseeker_id ) : ?>
+                        <?php
+                        // Check if jobseeker is approved
+                        $is_approved = get_post_meta( $jobseeker_id, '_oso_jobseeker_approved', true );
+                        if ( $is_approved !== '1' ) : ?>
+                            <!-- Not approved - show pending message -->
+                            <div class="oso-login-prompt" style="background: #fff3cd; border: 1px solid #ffc107; padding: 20px; border-radius: 8px;">
+                                <p style="margin: 0 0 10px; color: #856404; font-weight: 600;">
+                                    <span class="dashicons dashicons-lock" style="vertical-align: middle;"></span>
+                                    <?php esc_html_e( 'Account Pending Approval', 'oso-employer-portal' ); ?>
+                                </p>
+                                <p style="margin: 0; color: #856404;">
+                                    <?php esc_html_e( 'Your account is currently pending approval. You will be able to apply for jobs once an administrator approves your account. You will receive an email notification once approved.', 'oso-employer-portal' ); ?>
+                                </p>
+                            </div>
+                        <?php else : ?>
                         <!-- Logged in jobseeker - show application form -->
                         <form id="job-application-form" class="oso-job-application-form" method="post">
                             <input type="hidden" name="job_id" value="<?php echo esc_attr( $job_id ); ?>">
@@ -324,6 +339,7 @@ if ( $jobseeker_id ) {
                                 <?php esc_html_e( 'Your profile information will be shared with the employer.', 'oso-employer-portal' ); ?>
                             </p>
                         </form>
+                        <?php endif; ?>
                     <?php elseif ( $is_logged_in ) : ?>
                         <!-- Logged in but no jobseeker profile -->
                         <div class="oso-login-prompt">

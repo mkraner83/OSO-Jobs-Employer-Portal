@@ -313,6 +313,7 @@ class OSO_Jobs_Portal {
 
         $columns['photo']          = __( 'Photo', 'oso-jobs-portal' );
         $columns['email']          = __( 'Email', 'oso-jobs-portal' );
+        $columns['approved']       = __( 'Approved', 'oso-jobs-portal' );
         $columns['resume']         = __( 'Resume', 'oso-jobs-portal' );
         $columns['job_interests']  = __( 'Job Interests', 'oso-jobs-portal' );
         $columns['availability_1'] = __( 'Earliest Start', 'oso-jobs-portal' );
@@ -329,6 +330,14 @@ class OSO_Jobs_Portal {
      */
     public function render_jobseeker_admin_column( $column, $post_id ) {
         switch ( $column ) {
+            case 'approved':
+                $approved = get_post_meta( $post_id, '_oso_jobseeker_approved', true );
+                if ( $approved === '1' ) {
+                    echo '<span style="color: #28a745; font-weight: 600;">✓ ' . esc_html__( 'Yes', 'oso-jobs-portal' ) . '</span>';
+                } else {
+                    echo '<span style="color: #dc3545; font-weight: 600;">✗ ' . esc_html__( 'Pending', 'oso-jobs-portal' ) . '</span>';
+                }
+                break;
             case 'email':
                 $email = get_post_meta( $post_id, '_oso_jobseeker_email', true );
                 if ( $email ) {
@@ -502,6 +511,22 @@ class OSO_Jobs_Portal {
                 </tbody>
             </table>
 
+            <h3><?php esc_html_e( 'Account Status', 'oso-jobs-portal' ); ?></h3>
+            <table class="form-table">
+                <tbody>
+                    <tr>
+                        <th scope="row"><label for="jobseeker_approved"><?php esc_html_e( 'Approved', 'oso-jobs-portal' ); ?></label></th>
+                        <td>
+                            <label>
+                                <input type="checkbox" id="jobseeker_approved" name="jobseeker_approved" value="1" <?php checked( get_post_meta( $post->ID, '_oso_jobseeker_approved', true ), '1' ); ?> />
+                                <?php esc_html_e( 'Approve this jobseeker (allows job applications and visibility to employers)', 'oso-jobs-portal' ); ?>
+                            </label>
+                            <p class="description"><?php esc_html_e( 'Unapproved jobseekers cannot apply for jobs and are hidden from employer searches.', 'oso-jobs-portal' ); ?></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
             <h3><?php esc_html_e( 'Linked User Account', 'oso-jobs-portal' ); ?></h3>
             <table class="form-table">
                 <tbody>
@@ -599,6 +624,16 @@ class OSO_Jobs_Portal {
             );
         }
 
+        // Handle approval status
+        $was_approved = get_post_meta( $post_id, '_oso_jobseeker_approved', true );
+        $is_approved = isset( $_POST['jobseeker_approved'] ) ? '1' : '0';
+        update_post_meta( $post_id, '_oso_jobseeker_approved', $is_approved );
+        
+        // Send approval email if status changed from unapproved to approved
+        if ( $was_approved !== '1' && $is_approved === '1' ) {
+            $this->send_jobseeker_approval_email( $post_id );
+        }
+
         $meta  = OSO_Jobs_Utilities::get_jobseeker_meta( $post_id );
         $title = $meta['_oso_jobseeker_full_name'] ? $meta['_oso_jobseeker_full_name'] : $post->post_title;
         if ( $meta['_oso_jobseeker_full_name'] && $meta['_oso_jobseeker_location'] ) {
@@ -685,6 +720,101 @@ class OSO_Jobs_Portal {
         }
     }
 
+    /**
+     * Send approval email to jobseeker.
+     *
+     * @param int $post_id Jobseeker post ID.
+     */
+    protected function send_jobseeker_approval_email( $post_id ) {
+        $meta = OSO_Jobs_Utilities::get_jobseeker_meta( $post_id );
+        $email = $meta['_oso_jobseeker_email'];
+        $name = $meta['_oso_jobseeker_full_name'];
+        
+        if ( ! $email ) {
+            return;
+        }
+        
+        $subject = 'Your OSO Jobs Profile Has Been Approved!';
+        
+        $message = '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+            <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="padding: 40px 20px;">
+                        <table role="presentation" style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                            <!-- Header -->
+                            <tr>
+                                <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+                                    <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">Account Approved!</h1>
+                                </td>
+                            </tr>
+                            
+                            <!-- Content -->
+                            <tr>
+                                <td style="padding: 40px 30px;">
+                                    <p style="margin: 0 0 20px; color: #333333; font-size: 16px; line-height: 1.6;">
+                                        Hi ' . esc_html( $name ) . ',
+                                    </p>
+                                    
+                                    <p style="margin: 0 0 20px; color: #333333; font-size: 16px; line-height: 1.6;">
+                                        Great news! Your OSO Jobs profile has been <strong>approved</strong> and is now active.
+                                    </p>
+                                    
+                                    <p style="margin: 0 0 30px; color: #333333; font-size: 16px; line-height: 1.6;">
+                                        You can now:
+                                    </p>
+                                    
+                                    <ul style="margin: 0 0 30px; padding-left: 20px; color: #333333; font-size: 16px; line-height: 1.8;">
+                                        <li>Apply for summer camp jobs</li>
+                                        <li>Be visible to employers searching for candidates</li>
+                                        <li>Connect with camps across the country</li>
+                                    </ul>
+                                    
+                                    <table role="presentation" style="margin: 30px 0;">
+                                        <tr>
+                                            <td style="text-align: center;">
+                                                <a href="' . esc_url( home_url( '/job-portal/jobseeker-dashboard/' ) ) . '" style="display: inline-block; padding: 15px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 600;">Go to Dashboard</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
+                                    <p style="margin: 30px 0 0; color: #666666; font-size: 14px; line-height: 1.6;">
+                                        Good luck with your job search!<br>
+                                        <strong>The OSO Jobs Team</strong>
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                            <!-- Footer -->
+                            <tr>
+                                <td style="background-color: #f8f8f8; padding: 20px 30px; text-align: center;">
+                                    <p style="margin: 0; color: #999999; font-size: 12px;">
+                                        This is an automated message from OSO Jobs Portal<br>
+                                        <a href="' . esc_url( home_url() ) . '" style="color: #667eea; text-decoration: none;">' . esc_html( get_bloginfo( 'name' ) ) . '</a>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>';
+        
+        $headers = array(
+            'Content-Type: text/html; charset=UTF-8',
+            'From: ' . get_bloginfo( 'name' ) . ' <' . get_option( 'admin_email' ) . '>',
+        );
+        
+        wp_mail( $email, $subject, $message, $headers );
+    }
+    
     /**
      * Store jobseeker notices via transient per user.
      *

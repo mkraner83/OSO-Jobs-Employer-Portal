@@ -296,6 +296,15 @@ class OSO_Employer_Shortcodes {
         // Build meta query for filters
         $meta_query = array( 'relation' => 'AND' );
 
+        // Only show approved jobseekers to employers (admins can see all)
+        if ( ! current_user_can( 'manage_options' ) ) {
+            $meta_query[] = array(
+                'key'     => '_oso_jobseeker_approved',
+                'value'   => '1',
+                'compare' => '=',
+            );
+        }
+
         // Location filter
         if ( ! empty( $_GET['location'] ) ) {
             $meta_query[] = array(
@@ -1090,6 +1099,12 @@ class OSO_Employer_Shortcodes {
         $jobseeker_user_id = get_post_meta( $jobseeker_id, '_oso_jobseeker_user_id', true );
         if ( intval( $jobseeker_user_id ) !== get_current_user_id() ) {
             wp_send_json_error( array( 'message' => __( 'Invalid jobseeker profile.', 'oso-employer-portal' ) ) );
+        }
+
+        // Check if jobseeker is approved
+        $is_approved = get_post_meta( $jobseeker_id, '_oso_jobseeker_approved', true );
+        if ( $is_approved !== '1' ) {
+            wp_send_json_error( array( 'message' => __( 'Your account is pending approval. You will be able to apply for jobs once approved.', 'oso-employer-portal' ) ) );
         }
 
         // Check for duplicate application

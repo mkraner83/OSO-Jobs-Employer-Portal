@@ -366,6 +366,14 @@ class OSO_Jobs_WPForms_Handler {
         foreach ( $meta as $key => $value ) {
             update_post_meta( $post_id, $key, $value );
         }
+        
+        // Set default approval status to unchecked (pending)
+        if ( ! $existing ) {
+            update_post_meta( $post_id, '_oso_jobseeker_approved', '0' );
+            
+            // Send admin notification about new jobseeker registration
+            $this->send_admin_jobseeker_notification( $post_id, $full_name, $email );
+        }
 
         $this->sync_user_account(
             array(
@@ -377,6 +385,92 @@ class OSO_Jobs_WPForms_Handler {
         );
     }
 
+    /**
+     * Send admin notification about new jobseeker registration.
+     *
+     * @param int    $post_id   Jobseeker post ID.
+     * @param string $full_name Jobseeker name.
+     * @param string $email     Jobseeker email.
+     */
+    protected function send_admin_jobseeker_notification( $post_id, $full_name, $email ) {
+        $admin_email = get_option( 'admin_email' );
+        if ( ! $admin_email ) {
+            return;
+        }
+        
+        $subject = 'New Jobseeker Registration Pending Approval';
+        $edit_url = admin_url( 'post.php?post=' . $post_id . '&action=edit' );
+        
+        $message = '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+            <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="padding: 40px 20px;">
+                        <table role="presentation" style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                            <tr>
+                                <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center;">
+                                    <h1 style="margin: 0; color: #ffffff; font-size: 24px;">New Jobseeker Registration</h1>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td style="padding: 30px;">
+                                    <p style="margin: 0 0 20px; color: #333333; font-size: 16px;">
+                                        A new jobseeker has registered and is awaiting approval:
+                                    </p>
+                                    
+                                    <table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
+                                        <tr>
+                                            <td style="padding: 8px 0; color: #666; font-weight: 600;">Name:</td>
+                                            <td style="padding: 8px 0; color: #333;">' . esc_html( $full_name ) . '</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 8px 0; color: #666; font-weight: 600;">Email:</td>
+                                            <td style="padding: 8px 0; color: #333;">' . esc_html( $email ) . '</td>
+                                        </tr>
+                                    </table>
+                                    
+                                    <table role="presentation" style="margin: 30px 0;">
+                                        <tr>
+                                            <td style="text-align: center;">
+                                                <a href="' . esc_url( $edit_url ) . '" style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 16px; font-weight: 600;">Review & Approve</a>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
+                                    <p style="margin: 20px 0 0; color: #666666; font-size: 14px;">
+                                        To approve this jobseeker, click the button above and check the "Approved" checkbox in the Account Status section, then save the post.
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td style="background-color: #f8f8f8; padding: 20px 30px; text-align: center;">
+                                    <p style="margin: 0; color: #999999; font-size: 12px;">
+                                        OSO Jobs Portal Admin Notification
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>';
+        
+        $headers = array(
+            'Content-Type: text/html; charset=UTF-8',
+        );
+        
+        wp_mail( $admin_email, $subject, $message, $headers );
+    }
+    
     /**
      * Ensure a WordPress user exists for the jobseeker and link it.
      *

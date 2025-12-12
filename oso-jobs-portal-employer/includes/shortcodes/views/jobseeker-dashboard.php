@@ -34,6 +34,7 @@ endif;
 // User is logged in
 $photo = ! empty( $meta['_oso_jobseeker_photo'] ) ? $meta['_oso_jobseeker_photo'] : '';
 $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_full_name'] : $jobseeker->post_title;
+$is_approved = get_post_meta( $jobseeker_post->ID, '_oso_jobseeker_approved', true );
 ?>
 <div class="oso-jobseeker-dashboard">
     <!-- Jobseeker Header -->
@@ -50,6 +51,14 @@ $name = ! empty( $meta['_oso_jobseeker_full_name'] ) ? $meta['_oso_jobseeker_ful
             </div>
         </div>
     </div>
+    
+    <!-- Pending Approval Warning -->
+    <?php if ( $is_approved !== '1' ) : ?>
+        <div style="padding: 20px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; margin: 0 0 30px 0;">
+            <p style="margin: 0; color: #856404;"><strong><?php esc_html_e( 'Account Pending Approval', 'oso-employer-portal' ); ?></strong></p>
+            <p style="margin: 10px 0 0 0; color: #856404;"><?php esc_html_e( 'Your account is currently pending approval. You can browse jobs and view your profile, but you will not be able to apply for jobs until an administrator approves your account. You will receive an email notification once approved.', 'oso-employer-portal' ); ?></p>
+        </div>
+    <?php endif; ?>
     
     <!-- Full-Width Browse Jobs Button -->
     <div class="oso-quick-link-banner">
