@@ -1,7 +1,7 @@
 /**
  * OSO Employer Portal Styles
  * Jobseeker Browser & Profile Views
- * Version: 1.0.35
+ * Version: 1.0.36
  */
 
 /* ========================================
@@ -802,21 +802,21 @@
 
 .oso-skill-badge {
     display: inline-block;
-    padding: 2px 6px;
-    background: #d0d0d0;
-    color: #555;
-    border-radius: 8px;
-    font-size: 0.6em;
+    padding: 4px 8px;
+    background: rgb(108, 117, 125);
+    color: rgb(255, 255, 255);
+    border-radius: 6px;
+    font-size: 0.65em;
     font-weight: 500;
 }
 
 .oso-skill-more {
     display: inline-block;
-    padding: 2px 6px;
-    background: #e8e8e8;
-    color: #666;
-    border-radius: 8px;
-    font-size: 0.6em;
+    padding: 4px 8px;
+    background: rgb(108, 117, 125);
+    color: rgb(255, 255, 255);
+    border-radius: 6px;
+    font-size: 0.65em;
     font-weight: 500;
 }
 
