@@ -1176,17 +1176,18 @@
 .oso-job-types {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 12px;
+    gap: 8px;
+    margin: 12px 0 15px 0;
 }
 
 .oso-job-type-badge {
     display: inline-block;
-    padding: 4px 10px;
-    background: #8051B0;
+    padding: 6px 12px;
+    background: #6c757d;
     color: #fff;
     font-size: 0.8em;
-    border-radius: 4px;
+    border-radius: 6px;
+    font-weight: 500;
 }
 
 .oso-job-meta {

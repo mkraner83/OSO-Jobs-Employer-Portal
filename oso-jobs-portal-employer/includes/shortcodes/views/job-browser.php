@@ -346,18 +346,20 @@ if ( $jobseeker_id ) {
                         </a>
                     </h3>
                     
-                    <?php if ( $camp_name ) : ?>
-                        <p class="oso-job-employer">
-                            <span class="dashicons dashicons-building"></span>
-                            <?php echo esc_html( $camp_name ); ?>
-                            <?php if ( $employer_state ) : ?>
-                                <span class="oso-job-location">
-                                    <span class="dashicons dashicons-location"></span>
-                                    <?php echo esc_html( $employer_state ); ?>
-                                </span>
-                            <?php endif; ?>
-                        </p>
-                    <?php endif; ?>
+                    <div class="oso-job-employer">
+                        <?php if ( $camp_name ) : ?>
+                            <span style="display: flex; align-items: center; gap: 6px;">
+                                <span class="dashicons dashicons-building"></span>
+                                <?php echo esc_html( $camp_name ); ?>
+                            </span>
+                        <?php endif; ?>
+                        <?php if ( $employer_state ) : ?>
+                            <span class="oso-job-location">
+                                <span class="dashicons dashicons-location"></span>
+                                <?php echo esc_html( $employer_state ); ?>
+                            </span>
+                        <?php endif; ?>
+                    </div>
                     
                     <?php if ( ! empty( $job_types_list ) ) : ?>
                         <div class="oso-job-types">
@@ -548,9 +550,10 @@ if ( $jobseeker_id ) {
 }
 
 .oso-job-title {
-    margin: 0 0 10px 0;
-    font-size: 1.2em;
+    margin: 0 0 12px 0;
+    font-size: 1.3em;
     line-height: 1.4;
+    font-weight: 600;
 }
 
 .oso-job-title a {
@@ -564,25 +567,25 @@ if ( $jobseeker_id ) {
 
 .oso-job-employer {
     display: flex;
-    align-items: center;
-    gap: 6px;
-    margin: 0 0 10px 0;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0 0 4px 0;
     font-size: 0.95em;
     color: #666;
 }
 
 .oso-job-location {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 4px;
-    margin-left: 8px;
+    margin-left: 0;
 }
 
 .oso-job-excerpt {
-    margin: 10px 0 15px 0;
-    color: #666;
-    font-size: 0.9em;
-    line-height: 1.6;
+    margin: 15px 0 18px 0;
+    color: #555;
+    font-size: 0.95em;
+    line-height: 1.7;
     flex-grow: 1;
 }
 
