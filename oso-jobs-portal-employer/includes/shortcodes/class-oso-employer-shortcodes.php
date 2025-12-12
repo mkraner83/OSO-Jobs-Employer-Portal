@@ -1716,12 +1716,24 @@ class OSO_Employer_Shortcodes {
         $employer_name = ! empty( $employer_meta['_oso_employer_company'] ) ? $employer_meta['_oso_employer_company'] : $employer->post_title;
         $jobseeker_name = ! empty( $jobseeker_meta['_oso_jobseeker_full_name'] ) ? $jobseeker_meta['_oso_jobseeker_full_name'] : $jobseeker->post_title;
 
-        // Create interest post
+        // Create interest post with sanitized title
+        $post_title = sprintf(
+            'Interest from %s for %s',
+            sanitize_text_field( $employer_name ),
+            sanitize_text_field( $jobseeker_name )
+        );
+        
+        // Limit title length to 200 chars to avoid database issues
+        if ( strlen( $post_title ) > 200 ) {
+            $post_title = substr( $post_title, 0, 197 ) . '...';
+        }
+        
         $interest_id = wp_insert_post( array(
-            'post_type' => 'oso_employer_interest',
-            'post_title' => sprintf( '%s → %s', $employer_name, $jobseeker_name ),
-            'post_status' => 'publish',
-            'post_content' => $message,
+            'post_type'    => 'oso_employer_interest',
+            'post_title'   => $post_title,
+            'post_status'  => 'publish',
+            'post_content' => sanitize_textarea_field( $message ),
+            'post_author'  => get_current_user_id(),
         ), true ); // true = return WP_Error on failure
 
         if ( is_wp_error( $interest_id ) ) {
