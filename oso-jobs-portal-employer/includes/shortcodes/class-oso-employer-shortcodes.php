@@ -1691,7 +1691,7 @@ class OSO_Employer_Shortcodes {
 
         // Check for duplicate interest
         $existing = get_posts( array(
-            'post_type' => 'oso_employer_interest',
+            'post_type' => 'oso_emp_interest',
             'posts_per_page' => 1,
             'meta_query' => array(
                 array(
@@ -1729,7 +1729,7 @@ class OSO_Employer_Shortcodes {
         }
         
         $interest_id = wp_insert_post( array(
-            'post_type'    => 'oso_employer_interest',
+            'post_type'    => 'oso_emp_interest',
             'post_title'   => $post_title,
             'post_status'  => 'publish',
             'post_content' => sanitize_textarea_field( $message ),

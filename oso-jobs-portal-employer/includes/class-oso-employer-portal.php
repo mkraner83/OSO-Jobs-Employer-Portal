@@ -163,7 +163,7 @@ class OSO_Employer_Portal {
             'show_in_rest'       => false,
         );
 
-        register_post_type( 'oso_employer_interest', $args );
+        register_post_type( 'oso_emp_interest', $args );
     }
     
     /**

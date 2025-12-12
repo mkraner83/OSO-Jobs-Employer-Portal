@@ -127,7 +127,7 @@ if ( $is_employer ) {
             <?php if ( $is_employer && $employer_post ) : 
                 // Check if interest already expressed
                 $existing_interest = get_posts( array(
-                    'post_type' => 'oso_employer_interest',
+                    'post_type' => 'oso_emp_interest',
                     'posts_per_page' => 1,
                     'meta_query' => array(
                         array(

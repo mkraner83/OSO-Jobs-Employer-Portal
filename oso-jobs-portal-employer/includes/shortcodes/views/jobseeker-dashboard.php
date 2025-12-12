@@ -186,7 +186,7 @@ $is_approved = get_post_meta( $jobseeker_post->ID, '_oso_jobseeker_approved', tr
         <?php
         // Get interests received for this jobseeker - using WP_Query for better debugging
         $interest_query = new WP_Query( array(
-            'post_type'      => 'oso_employer_interest',
+            'post_type'      => 'oso_emp_interest',
             'posts_per_page' => -1,
             'post_status'    => array( 'publish', 'draft', 'pending', 'private' ),
             'meta_query'     => array(
@@ -205,7 +205,7 @@ $is_approved = get_post_meta( $jobseeker_post->ID, '_oso_jobseeker_approved', tr
         
         // Debug output - check all interests in database
         $all_interests = get_posts( array(
-            'post_type' => 'oso_employer_interest',
+            'post_type' => 'oso_emp_interest',
             'posts_per_page' => -1,
             'post_status' => 'any'
         ) );
