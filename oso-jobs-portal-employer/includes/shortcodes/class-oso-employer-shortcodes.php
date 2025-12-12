@@ -1716,16 +1716,25 @@ class OSO_Employer_Shortcodes {
         $employer_name = ! empty( $employer_meta['_oso_employer_company'] ) ? $employer_meta['_oso_employer_company'] : $employer->post_title;
         $jobseeker_name = ! empty( $jobseeker_meta['_oso_jobseeker_full_name'] ) ? $jobseeker_meta['_oso_jobseeker_full_name'] : $jobseeker->post_title;
 
+        // Check if post type exists
+        if ( ! post_type_exists( 'oso_employer_interest' ) ) {
+            wp_send_json_error( array( 'message' => __( 'Interest post type not registered. Please contact administrator.', 'oso-employer-portal' ) ) );
+        }
+
         // Create interest post
         $interest_id = wp_insert_post( array(
             'post_type' => 'oso_employer_interest',
             'post_title' => sprintf( '%s → %s', $employer_name, $jobseeker_name ),
             'post_status' => 'publish',
             'post_content' => $message,
-        ) );
+        ), true ); // true = return WP_Error on failure
 
         if ( is_wp_error( $interest_id ) ) {
-            wp_send_json_error( array( 'message' => __( 'Failed to save interest. Please try again.', 'oso-employer-portal' ) ) );
+            wp_send_json_error( array( 'message' => __( 'Failed to save interest: ', 'oso-employer-portal' ) . $interest_id->get_error_message() ) );
+        }
+
+        if ( ! $interest_id || $interest_id === 0 ) {
+            wp_send_json_error( array( 'message' => __( 'Failed to create interest post. Post ID is 0.', 'oso-employer-portal' ) ) );
         }
 
         // Save metadata

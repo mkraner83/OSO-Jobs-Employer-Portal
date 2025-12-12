@@ -764,17 +764,22 @@
         // Disable submit button
         $submitBtn.prop('disabled', true).html('<span class="dashicons dashicons-update dashicons-spin"></span> Sending...');
         
+        var formData = {
+            action: 'oso_express_interest',
+            nonce: osoEmployerPortal.nonce,
+            jobseeker_id: $form.find('input[name="jobseeker_id"]').val(),
+            employer_id: $form.find('input[name="employer_id"]').val(),
+            message: $form.find('#oso-interest-message').val()
+        };
+        
+        console.log('Submitting interest with data:', formData);
+        
         $.ajax({
             url: osoEmployerPortal.ajaxUrl,
             type: 'POST',
-            data: {
-                action: 'oso_express_interest',
-                nonce: osoEmployerPortal.nonce,
-                jobseeker_id: $form.find('input[name="jobseeker_id"]').val(),
-                employer_id: $form.find('input[name="employer_id"]').val(),
-                message: $form.find('#oso-interest-message').val()
-            },
+            data: formData,
             success: function(response) {
+                console.log('Interest response:', response);
                 if (response.success) {
                     // Hide form, show success message
                     $form.fadeOut(300, function() {
@@ -789,11 +794,14 @@
                         '</div>'
                     );
                 } else {
-                    alert(response.data.message || 'Failed to send interest. Please try again.');
+                    var errorMsg = response.data.message || 'Failed to send interest. Please try again.';
+                    console.error('Interest error:', errorMsg);
+                    alert(errorMsg);
                     $submitBtn.prop('disabled', false).html(originalText);
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error, xhr.responseText);
                 alert('Network error. Please try again.');
                 $submitBtn.prop('disabled', false).html(originalText);
             }
