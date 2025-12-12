@@ -2111,24 +2111,25 @@
 }
 
 .oso-status-badge {
-    display: block;
-    padding: 8px 12px;
-    border-radius: 4px;
+    display: inline-block;
+    padding: 8px 14px;
+    border-radius: 8px;
     font-size: 0.85em;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .oso-status-badge.status-pending {
-    background: #fff3cd;
+    background: #ffc107;
     color: #856404;
 }
 
 .oso-status-badge.status-approved {
-    background: #d4edda;
-    color: #155724;
+    background: #28a745;
+    color: #ffffff;
 }
 
 .oso-status-badge.status-rejected {
