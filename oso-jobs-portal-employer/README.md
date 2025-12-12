@@ -1,10 +1,28 @@
 # OSO Jobs Portal - Employer Extension
 
-**Version:** 1.3.0  
-**Requires:** OSO Jobs Portal (Core Plugin)  
+**Version:** 1.3.1  
+**Requires:** OSO Jobs Portal (Core Plugin) v1.0.14+  
 **WordPress Version:** 5.0 or higher
 
-## 🔖 Restore Point - December 6, 2025 (v1.3.0)
+## 🔖 Latest Restore Point - December 12, 2025 (v1.3.1)
+
+**Stable Release:** Complete Approval System with Inline Toggle + Color-Coded Badges  
+**Core Plugin:** v1.0.14  
+**Employer Extension:** v1.0.10  
+**Git Tag:** restore-point-approval-system-complete
+
+### December 12, 2025 Updates
+✅ **Jobseeker Approval System**: Complete admin-controlled approval workflow  
+✅ **Inline Approval Toggle**: Click to approve/unapprove directly from list page  
+✅ **Color-Coded Badges**: Green for approved, red for pending with hover effects  
+✅ **Email Notifications**: Automatic emails on approval + admin alerts on registration  
+✅ **Access Control**: Unapproved jobseekers cannot apply for jobs  
+✅ **Filtered Browsing**: Employers only see approved jobseekers  
+✅ **Logo Upload Fix**: Single URL storage, no WebP conversion or thumbnails  
+✅ **Button Hover Fix**: Purple gradient buttons maintain white text on hover  
+✅ **Infinite Loop Fix**: Resolved memory exhaustion error in approval save handler  
+
+## 🔖 Previous Restore Point - December 6, 2025 (v1.3.0)
 
 **Stable Release:** Complete Jobseeker Dashboard + Job Application System - All features working  
 **Git Commit:** [23835b9](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/commit/23835b9)  
@@ -13,6 +31,28 @@
 - [oso-jobs-portal-employer.zip](https://github.com/mkraner83/OSO-Jobs-Employer-Portal/raw/main/oso-jobs-portal-employer.zip) (Employer Extension v1.0.9)
 
 ### Major Features Implemented
+
+#### Jobseeker Management (Dec 12, 2025)
+✅ **Complete Approval System**: Admin-controlled approval workflow with default pending status  
+✅ **Inline Toggle**: One-click approve/unapprove from jobseeker list page  
+✅ **Color-Coded Badges**: Visual status indicators (green approved, red pending)  
+✅ **Access Restrictions**: Unapproved users blocked from job applications  
+✅ **Email Notifications**: Approval emails + admin alerts on new registrations  
+✅ **Dashboard Warnings**: Yellow banner for pending approval status  
+✅ **Filtered Browsing**: Employers see only approved jobseekers  
+
+#### File Management (Dec 12, 2025)
+✅ **Logo Upload Fix**: Single URL storage without WebP conversion  
+✅ **No Thumbnails**: Logos skip WordPress image size generation  
+✅ **Media Library Integration**: All uploads tracked with uploader metadata  
+✅ **Custom Upload Folder**: Organized "Camp-Uploads" directory  
+
+#### UI/UX Improvements (Dec 12, 2025)
+✅ **Button Hover Fix**: Purple gradient buttons keep white text on hover  
+✅ **Badge Styling**: Clickable approval badges with hover effects  
+✅ **Status Cards**: Gray badges on job cards with better spacing  
+
+#### Employer Features
 ✅ Complete employer registration and profile management  
 ✅ Jobseeker browser with advanced filtering (location, skills, certifications)  
 ✅ Full profile editing with image uploads (logo + 6 photos)  
@@ -21,8 +61,8 @@
 ✅ Dashboard with card-based profile display and hover effects  
 ✅ Access control: Unapproved employers see pending approval message  
 ✅ Expired subscriptions block jobseeker browsing with clear warnings  
-✅ "Back to Search" links only visible to employers (hidden for jobseekers)  
-✅ OSO Jobs admin menu: Always expanded, purple title, positioned after Dashboard  
+
+#### Job Posting System
 ✅ Complete Job Posting System with Add/Edit/Delete functionality  
 ✅ Public job browser with filters, search, and pagination  
 ✅ Job details page with application submission  
@@ -31,13 +71,15 @@
 ✅ Per-employer job posting limits (1-20 or unlimited)  
 ✅ Automatic job expiration based on end date  
 ✅ Email notifications for job applications  
-✅ **NEW: Complete Jobseeker Dashboard with profile, applications, and camps**  
-✅ **NEW: Job browser requires login - shows login form if not authenticated**  
-✅ **NEW: Job application system with cover letter and consent**  
-✅ **NEW: Application status tracking (pending/approved/rejected)**  
-✅ **NEW: My Applications section showing all submitted applications**  
-✅ **NEW: All Camps section showing approved employers**  
-✅ **NEW: Fixed job application nonce verification issue**
+
+#### Jobseeker Features
+✅ Complete Jobseeker Dashboard with profile, applications, and camps  
+✅ Job browser requires login - shows login form if not authenticated  
+✅ Job application system with cover letter and consent  
+✅ Application status tracking (pending/approved/rejected)  
+✅ My Applications section showing all submitted applications  
+✅ All Camps section showing approved employers  
+✅ Fixed job application nonce verification issue
 
 ## 🔖 Previous Restore Point - December 6, 2025 (v1.2.0)
 
