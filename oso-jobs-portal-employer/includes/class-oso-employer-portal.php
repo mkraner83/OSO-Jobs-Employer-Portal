@@ -22,10 +22,10 @@ class OSO_Employer_Portal {
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/admin/class-oso-job-admin.php';
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/class-oso-job-manager.php';
 
-        // Register custom post types
-        add_action( 'init', [ $this, 'register_job_post_type' ] );
-        add_action( 'init', [ $this, 'register_job_application_post_type' ] );
-        add_action( 'init', [ $this, 'register_employer_interest_post_type' ] );
+        // Register custom post types - priority 5 to ensure they're available for AJAX
+        add_action( 'init', [ $this, 'register_job_post_type' ], 5 );
+        add_action( 'init', [ $this, 'register_job_application_post_type' ], 5 );
+        add_action( 'init', [ $this, 'register_employer_interest_post_type' ], 5 );
 
         // Initialize employer registration handler
         OSO_Employer_Registration::init();
