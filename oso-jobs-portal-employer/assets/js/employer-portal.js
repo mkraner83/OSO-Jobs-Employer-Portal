@@ -1,6 +1,6 @@
 /**
  * OSO Employer Portal JavaScript
- * Version: 1.0.25
+ * Version: 1.0.26
  */
 
 (function($) {
@@ -789,8 +789,9 @@
             success: function(response) {
                 console.log('Interest response:', response);
                 if (response.success) {
-                    // Hide form, show success message
+                    // Hide form and header close button, show success message
                     $form.fadeOut(300, function() {
+                        $('.oso-modal-header .oso-modal-close').fadeOut(200);
                         $('.oso-interest-success').fadeIn(300);
                     });
                     
@@ -827,6 +828,7 @@
             $('.oso-char-current').text('0');
             $('.oso-interest-success').hide();
             $('#oso-express-interest-form').show();
+            $('.oso-modal-header .oso-modal-close').show();
         }, 500);
     });
 
