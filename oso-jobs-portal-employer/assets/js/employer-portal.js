@@ -714,4 +714,104 @@
         });
     });
 
+    // ========================================
+    // Express Interest System
+    // ========================================
+    
+    // Open Express Interest Modal
+    $(document).on('click', '.oso-express-interest-btn', function(e) {
+        e.preventDefault();
+        var $btn = $(this);
+        var jobseekerId = $btn.data('jobseeker-id');
+        var employerId = $btn.data('employer-id');
+        
+        $('#oso-express-interest-modal').fadeIn(300);
+        $('body').css('overflow', 'hidden');
+    });
+    
+    // Close Modal
+    $(document).on('click', '.oso-modal-close, .oso-modal-overlay, .oso-modal-cancel', function(e) {
+        e.preventDefault();
+        $('#oso-express-interest-modal').fadeOut(300);
+        $('body').css('overflow', 'auto');
+        
+        // Reset form if closed without success
+        if (!$('.oso-interest-success').is(':visible')) {
+            $('#oso-express-interest-form')[0].reset();
+            $('.oso-char-current').text('0');
+        }
+    });
+    
+    // Character Counter
+    $(document).on('input', '#oso-interest-message', function() {
+        var length = $(this).val().length;
+        $('.oso-char-current').text(length);
+        
+        if (length > 1000) {
+            $(this).val($(this).val().substring(0, 1000));
+            $('.oso-char-current').text('1000');
+        }
+    });
+    
+    // Submit Express Interest Form
+    $(document).on('submit', '#oso-express-interest-form', function(e) {
+        e.preventDefault();
+        
+        var $form = $(this);
+        var $submitBtn = $form.find('button[type="submit"]');
+        var originalText = $submitBtn.html();
+        
+        // Disable submit button
+        $submitBtn.prop('disabled', true).html('<span class="dashicons dashicons-update dashicons-spin"></span> Sending...');
+        
+        $.ajax({
+            url: osoEmployerPortal.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'oso_express_interest',
+                nonce: osoEmployerPortal.nonce,
+                jobseeker_id: $form.find('input[name="jobseeker_id"]').val(),
+                employer_id: $form.find('input[name="employer_id"]').val(),
+                message: $form.find('#oso-interest-message').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Hide form, show success message
+                    $form.fadeOut(300, function() {
+                        $('.oso-interest-success').fadeIn(300);
+                    });
+                    
+                    // Update button on page
+                    $('.oso-express-interest-btn').replaceWith(
+                        '<div class="oso-interest-sent">' +
+                        '<span class="dashicons dashicons-yes-alt"></span>' +
+                        'Interest Sent' +
+                        '</div>'
+                    );
+                } else {
+                    alert(response.data.message || 'Failed to send interest. Please try again.');
+                    $submitBtn.prop('disabled', false).html(originalText);
+                }
+            },
+            error: function() {
+                alert('Network error. Please try again.');
+                $submitBtn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+    
+    // Close modal after success
+    $(document).on('click', '.oso-interest-success .oso-modal-close', function() {
+        $('#oso-express-interest-modal').fadeOut(300);
+        $('body').css('overflow', 'auto');
+        
+        // Reset form for next time
+        setTimeout(function() {
+            $('#oso-express-interest-form')[0].reset();
+            $('.oso-char-current').text('0');
+            $('.oso-interest-success').hide();
+            $('#oso-express-interest-form').show();
+        }, 500);
+    });
+
 })(jQuery);

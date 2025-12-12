@@ -56,6 +56,7 @@ class OSO_Employer_Shortcodes {
         add_action( 'wp_ajax_oso_delete_employer_profile', array( $this, 'ajax_delete_employer_profile' ) );
         add_action( 'wp_ajax_oso_delete_application', array( $this, 'ajax_delete_application' ) );
         add_action( 'wp_ajax_oso_cancel_application', array( $this, 'ajax_cancel_application' ) );
+        add_action( 'wp_ajax_oso_express_interest', array( $this, 'ajax_express_interest' ) );
         
         // Media Library customization
         add_filter( 'manage_media_columns', array( $this, 'add_media_uploader_column' ) );
@@ -1651,5 +1652,195 @@ class OSO_Employer_Shortcodes {
                 }
             }
         }
+    }
+
+    /**
+     * AJAX handler for expressing interest in a jobseeker.
+     */
+    public function ajax_express_interest() {
+        // Verify nonce
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'oso_upload_profile_file' ) ) {
+            wp_send_json_error( array( 'message' => __( 'Security check failed.', 'oso-employer-portal' ) ) );
+        }
+
+        // Check user permissions
+        if ( ! current_user_can( 'oso_employer' ) && ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to perform this action.', 'oso-employer-portal' ) ) );
+        }
+
+        // Get and validate inputs
+        $jobseeker_id = isset( $_POST['jobseeker_id'] ) ? absint( $_POST['jobseeker_id'] ) : 0;
+        $employer_id = isset( $_POST['employer_id'] ) ? absint( $_POST['employer_id'] ) : 0;
+        $message = isset( $_POST['message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['message'] ) ) : '';
+
+        if ( ! $jobseeker_id || ! $employer_id || empty( $message ) ) {
+            wp_send_json_error( array( 'message' => __( 'Please provide all required information.', 'oso-employer-portal' ) ) );
+        }
+
+        // Verify jobseeker exists
+        $jobseeker = get_post( $jobseeker_id );
+        if ( ! $jobseeker || 'oso_jobseeker' !== $jobseeker->post_type ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid jobseeker.', 'oso-employer-portal' ) ) );
+        }
+
+        // Verify employer exists
+        $employer = get_post( $employer_id );
+        if ( ! $employer || 'oso_employer' !== $employer->post_type ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid employer.', 'oso-employer-portal' ) ) );
+        }
+
+        // Check for duplicate interest
+        $existing = get_posts( array(
+            'post_type' => 'oso_employer_interest',
+            'posts_per_page' => 1,
+            'meta_query' => array(
+                array(
+                    'key' => '_oso_employer_id',
+                    'value' => $employer_id,
+                ),
+                array(
+                    'key' => '_oso_jobseeker_id',
+                    'value' => $jobseeker_id,
+                ),
+            ),
+        ) );
+
+        if ( ! empty( $existing ) ) {
+            wp_send_json_error( array( 'message' => __( 'You have already expressed interest in this candidate.', 'oso-employer-portal' ) ) );
+        }
+
+        // Get employer and jobseeker details
+        $employer_meta = $this->get_employer_meta( $employer_id );
+        $jobseeker_meta = OSO_Jobs_Utilities::get_jobseeker_meta( $jobseeker_id );
+        
+        $employer_name = ! empty( $employer_meta['_oso_employer_company'] ) ? $employer_meta['_oso_employer_company'] : $employer->post_title;
+        $jobseeker_name = ! empty( $jobseeker_meta['_oso_jobseeker_full_name'] ) ? $jobseeker_meta['_oso_jobseeker_full_name'] : $jobseeker->post_title;
+
+        // Create interest post
+        $interest_id = wp_insert_post( array(
+            'post_type' => 'oso_employer_interest',
+            'post_title' => sprintf( '%s → %s', $employer_name, $jobseeker_name ),
+            'post_status' => 'publish',
+            'post_content' => $message,
+        ) );
+
+        if ( is_wp_error( $interest_id ) ) {
+            wp_send_json_error( array( 'message' => __( 'Failed to save interest. Please try again.', 'oso-employer-portal' ) ) );
+        }
+
+        // Save metadata
+        update_post_meta( $interest_id, '_oso_employer_id', $employer_id );
+        update_post_meta( $interest_id, '_oso_jobseeker_id', $jobseeker_id );
+        update_post_meta( $interest_id, '_oso_interest_date', current_time( 'mysql' ) );
+        update_post_meta( $interest_id, '_oso_interest_status', 'sent' );
+
+        // Send email notification
+        $this->send_interest_notification_email( $interest_id, $jobseeker_meta, $employer_meta, $message );
+
+        wp_send_json_success( array(
+            'message' => __( 'Your interest has been sent successfully!', 'oso-employer-portal' ),
+            'interest_id' => $interest_id,
+        ) );
+    }
+
+    /**
+     * Send email notification to jobseeker when employer expresses interest.
+     */
+    private function send_interest_notification_email( $interest_id, $jobseeker_meta, $employer_meta, $message ) {
+        $jobseeker_email = ! empty( $jobseeker_meta['_oso_jobseeker_email'] ) ? $jobseeker_meta['_oso_jobseeker_email'] : '';
+        $jobseeker_name = ! empty( $jobseeker_meta['_oso_jobseeker_full_name'] ) ? $jobseeker_meta['_oso_jobseeker_full_name'] : '';
+        $employer_name = ! empty( $employer_meta['_oso_employer_company'] ) ? $employer_meta['_oso_employer_company'] : '';
+        $employer_logo = ! empty( $employer_meta['_oso_employer_logo'] ) ? $employer_meta['_oso_employer_logo'] : '';
+        $employer_website = ! empty( $employer_meta['_oso_employer_website'] ) ? $employer_meta['_oso_employer_website'] : '';
+        $employer_description = ! empty( $employer_meta['_oso_employer_description'] ) ? $employer_meta['_oso_employer_description'] : '';
+
+        if ( empty( $jobseeker_email ) ) {
+            return;
+        }
+
+        $subject = sprintf( '%s is interested in you!', $employer_name );
+        
+        $dashboard_url = home_url( '/job-portal/jobseeker-dashboard/' );
+        
+        $email_body = '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+            <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td style="padding: 40px 20px;">
+                        <table role="presentation" style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                            <!-- Header with Purple Gradient -->
+                            <tr>
+                                <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+                                    <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">
+                                        🌟 Exciting News!
+                                    </h1>
+                                    <p style="margin: 10px 0 0 0; color: #ffffff; font-size: 16px; opacity: 0.95;">
+                                        An employer is interested in you
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                            <!-- Content -->
+                            <tr>
+                                <td style="padding: 40px 30px;">
+                                    <p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.6;">
+                                        Hi ' . esc_html( $jobseeker_name ) . ',
+                                    </p>
+                                    
+                                    <p style="margin: 0 0 25px 0; color: #333333; font-size: 16px; line-height: 1.6;">
+                                        Great news! <strong>' . esc_html( $employer_name ) . '</strong> has expressed interest in your profile and would like to connect with you about potential opportunities.
+                                    </p>
+                                    
+                                    <!-- Employer Info Card -->
+                                    <div style="background: #f8f9fa; border-left: 4px solid #667eea; padding: 20px; margin: 0 0 25px 0; border-radius: 4px;">
+                                        ' . ( $employer_logo ? '<div style="margin-bottom: 15px;"><img src="' . esc_url( $employer_logo ) . '" alt="' . esc_attr( $employer_name ) . '" style="max-width: 120px; height: auto; border-radius: 8px;" /></div>' : '' ) . '
+                                        <h3 style="margin: 0 0 10px 0; color: #667eea; font-size: 20px;">' . esc_html( $employer_name ) . '</h3>
+                                        ' . ( $employer_description ? '<p style="margin: 0 0 10px 0; color: #666666; font-size: 14px; line-height: 1.5;">' . esc_html( wp_trim_words( $employer_description, 30 ) ) . '</p>' : '' ) . '
+                                        ' . ( $employer_website ? '<p style="margin: 0; font-size: 14px;"><a href="' . esc_url( $employer_website ) . '" style="color: #667eea; text-decoration: none;">Visit Website →</a></p>' : '' ) . '
+                                    </div>
+                                    
+                                    <!-- Their Message -->
+                                    <div style="background: #ffffff; border: 2px solid #e0e0e0; padding: 20px; margin: 0 0 30px 0; border-radius: 8px;">
+                                        <h4 style="margin: 0 0 12px 0; color: #333333; font-size: 16px; font-weight: 600;">Their Message:</h4>
+                                        <p style="margin: 0; color: #666666; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">' . esc_html( $message ) . '</p>
+                                    </div>
+                                    
+                                    <!-- CTA Button -->
+                                    <div style="text-align: center; margin: 0 0 25px 0;">
+                                        <a href="' . esc_url( $dashboard_url ) . '" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-size: 16px; font-weight: 600;">
+                                            View in Dashboard
+                                        </a>
+                                    </div>
+                                    
+                                    <p style="margin: 0; color: #999999; font-size: 14px; line-height: 1.6; text-align: center;">
+                                        Log in to your dashboard to view all employer interests and manage your profile.
+                                    </p>
+                                </td>
+                            </tr>
+                            
+                            <!-- Footer -->
+                            <tr>
+                                <td style="background-color: #f8f9fa; padding: 25px 30px; text-align: center; border-top: 1px solid #e0e0e0;">
+                                    <p style="margin: 0; color: #999999; font-size: 13px;">
+                                        This is an automated message from OSO Jobs
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>';
+
+        $headers = array( 'Content-Type: text/html; charset=UTF-8' );
+        
+        wp_mail( $jobseeker_email, $subject, $email_body, $headers );
     }
 }

@@ -2335,3 +2335,262 @@
         justify-content: center;
     }
 }
+
+/* ========================================
+   Express Interest System
+   ======================================== */
+
+/* Express Interest Button & Status */
+.oso-profile-express-interest {
+    margin-top: 20px;
+}
+
+.oso-express-interest-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 1em;
+    padding: 12px 20px;
+}
+
+.oso-interest-sent {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.oso-interest-sent .dashicons {
+    font-size: 20px;
+}
+
+/* Modal Styles */
+.oso-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.oso-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(3px);
+}
+
+.oso-modal-content {
+    position: relative;
+    background: #fff;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+
+.oso-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 30px;
+    border-bottom: 2px solid #f0f0f0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px 12px 0 0;
+}
+
+.oso-modal-header h3 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+.oso-modal-close {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 32px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.oso-modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.oso-modal-body {
+    padding: 30px;
+}
+
+.oso-candidate-preview {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+.oso-candidate-preview img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #667eea;
+}
+
+.oso-candidate-info h4 {
+    margin: 0 0 5px 0;
+    color: #2c3e50;
+    font-size: 1.2em;
+}
+
+.oso-candidate-info p {
+    margin: 0;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.oso-form-group {
+    margin-bottom: 20px;
+}
+
+.oso-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.oso-form-group .required {
+    color: #dc3545;
+}
+
+.oso-form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95em;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+}
+
+.oso-form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.oso-char-count {
+    text-align: right;
+    color: #666;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.oso-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.oso-modal-cancel {
+    background: #6c757d !important;
+}
+
+.oso-modal-cancel:hover {
+    background: #5a6268 !important;
+}
+
+/* Success Message */
+.oso-interest-success {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.oso-success-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px;
+}
+
+.oso-success-icon .dashicons {
+    color: #fff;
+    font-size: 48px;
+}
+
+.oso-interest-success h4 {
+    color: #2c3e50;
+    font-size: 1.5em;
+    margin: 0 0 15px 0;
+}
+
+.oso-interest-success p {
+    color: #666;
+    font-size: 1.05em;
+    margin: 0 0 25px 0;
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .oso-modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .oso-modal-header,
+    .oso-modal-body {
+        padding: 20px;
+    }
+    
+    .oso-candidate-preview {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .oso-modal-footer {
+        flex-direction: column;
+    }
+    
+    .oso-modal-footer .oso-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

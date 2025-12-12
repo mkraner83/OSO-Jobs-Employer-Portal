@@ -123,6 +123,38 @@ if ( $is_employer ) {
                     </a>
                 </div>
             <?php endif; ?>
+            
+            <?php if ( $is_employer && $employer_post ) : 
+                // Check if interest already expressed
+                $existing_interest = get_posts( array(
+                    'post_type' => 'oso_employer_interest',
+                    'posts_per_page' => 1,
+                    'meta_query' => array(
+                        array(
+                            'key' => '_oso_employer_id',
+                            'value' => $employer_post->ID,
+                        ),
+                        array(
+                            'key' => '_oso_jobseeker_id',
+                            'value' => $jobseeker->ID,
+                        ),
+                    ),
+                ) );
+                ?>
+                <div class="oso-profile-express-interest">
+                    <?php if ( empty( $existing_interest ) ) : ?>
+                        <button class="oso-btn oso-btn-purple-gradient oso-express-interest-btn" data-jobseeker-id="<?php echo esc_attr( $jobseeker->ID ); ?>" data-employer-id="<?php echo esc_attr( $employer_post->ID ); ?>">
+                            <span class="dashicons dashicons-heart"></span>
+                            <?php esc_html_e( 'Express Interest', 'oso-employer-portal' ); ?>
+                        </button>
+                    <?php else : ?>
+                        <div class="oso-interest-sent">
+                            <span class="dashicons dashicons-yes-alt"></span>
+                            <?php esc_html_e( 'Interest Sent', 'oso-employer-portal' ); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
         </div>
 
         <div class="oso-profile-content">
@@ -221,3 +253,59 @@ if ( $is_employer ) {
         </div>
     </div>
 </div>
+
+<!-- Express Interest Modal -->
+<?php if ( $is_employer && $employer_post ) : ?>
+<div id="oso-express-interest-modal" class="oso-modal" style="display: none;">
+    <div class="oso-modal-overlay"></div>
+    <div class="oso-modal-content">
+        <div class="oso-modal-header">
+            <h3><?php esc_html_e( 'Express Interest in Candidate', 'oso-employer-portal' ); ?></h3>
+            <button class="oso-modal-close">&times;</button>
+        </div>
+        <div class="oso-modal-body">
+            <div class="oso-candidate-preview">
+                <?php if ( $photo ) : ?>
+                    <img src="<?php echo esc_url( $photo ); ?>" alt="<?php echo esc_attr( $name ); ?>" />
+                <?php endif; ?>
+                <div class="oso-candidate-info">
+                    <h4><?php echo esc_html( $name ); ?></h4>
+                    <?php if ( ! empty( $meta['_oso_jobseeker_location'] ) ) : ?>
+                        <p><span class="dashicons dashicons-location"></span> <?php echo esc_html( $meta['_oso_jobseeker_location'] ); ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+            
+            <form id="oso-express-interest-form">
+                <input type="hidden" name="jobseeker_id" value="<?php echo esc_attr( $jobseeker->ID ); ?>" />
+                <input type="hidden" name="employer_id" value="<?php echo esc_attr( $employer_post->ID ); ?>" />
+                
+                <div class="oso-form-group">
+                    <label for="oso-interest-message"><?php esc_html_e( 'Your Message', 'oso-employer-portal' ); ?> <span class="required">*</span></label>
+                    <textarea id="oso-interest-message" name="message" rows="8" maxlength="1000" required placeholder="<?php esc_attr_e( 'Tell this candidate why you\'re interested and what opportunity you have...', 'oso-employer-portal' ); ?>"></textarea>
+                    <div class="oso-char-count">
+                        <span class="oso-char-current">0</span> / <span class="oso-char-max">1000</span>
+                    </div>
+                </div>
+                
+                <div class="oso-modal-footer">
+                    <button type="button" class="oso-btn oso-btn-secondary oso-modal-cancel"><?php esc_html_e( 'Cancel', 'oso-employer-portal' ); ?></button>
+                    <button type="submit" class="oso-btn oso-btn-purple-gradient">
+                        <span class="dashicons dashicons-heart"></span>
+                        <?php esc_html_e( 'Send Interest', 'oso-employer-portal' ); ?>
+                    </button>
+                </div>
+            </form>
+            
+            <div class="oso-interest-success" style="display: none;">
+                <div class="oso-success-icon">
+                    <span class="dashicons dashicons-yes-alt"></span>
+                </div>
+                <h4><?php esc_html_e( 'Interest Sent Successfully!', 'oso-employer-portal' ); ?></h4>
+                <p><?php esc_html_e( 'The candidate has been notified via email and will receive your message.', 'oso-employer-portal' ); ?></p>
+                <button class="oso-btn oso-btn-purple-gradient oso-modal-close"><?php esc_html_e( 'Close', 'oso-employer-portal' ); ?></button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>

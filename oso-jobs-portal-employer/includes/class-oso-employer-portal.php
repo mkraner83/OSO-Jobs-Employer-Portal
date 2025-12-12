@@ -25,6 +25,7 @@ class OSO_Employer_Portal {
         // Register custom post types
         add_action( 'init', [ $this, 'register_job_post_type' ] );
         add_action( 'init', [ $this, 'register_job_application_post_type' ] );
+        add_action( 'init', [ $this, 'register_employer_interest_post_type' ] );
 
         // Initialize employer registration handler
         OSO_Employer_Registration::init();
@@ -124,6 +125,46 @@ class OSO_Employer_Portal {
 
         register_post_type( 'oso_job_application', $args );
     }
+
+    /**
+     * Register employer interest custom post type.
+     */
+    public function register_employer_interest_post_type() {
+        $labels = array(
+            'name'                  => _x( 'Employer Interests', 'Post type general name', 'oso-employer-portal' ),
+            'singular_name'         => _x( 'Employer Interest', 'Post type singular name', 'oso-employer-portal' ),
+            'menu_name'             => _x( 'Interests', 'Admin Menu text', 'oso-employer-portal' ),
+            'name_admin_bar'        => _x( 'Employer Interest', 'Add New on Toolbar', 'oso-employer-portal' ),
+            'add_new'               => __( 'Add New', 'oso-employer-portal' ),
+            'add_new_item'          => __( 'Add New Interest', 'oso-employer-portal' ),
+            'new_item'              => __( 'New Interest', 'oso-employer-portal' ),
+            'edit_item'             => __( 'View Interest', 'oso-employer-portal' ),
+            'view_item'             => __( 'View Interest', 'oso-employer-portal' ),
+            'all_items'             => __( 'All Interests', 'oso-employer-portal' ),
+            'search_items'          => __( 'Search Interests', 'oso-employer-portal' ),
+            'not_found'             => __( 'No interests found.', 'oso-employer-portal' ),
+            'not_found_in_trash'    => __( 'No interests found in Trash.', 'oso-employer-portal' ),
+        );
+
+        $args = array(
+            'labels'             => $labels,
+            'public'             => false,
+            'publicly_queryable' => false,
+            'show_ui'            => true,
+            'show_in_menu'       => 'oso-jobs-dashboard',
+            'query_var'          => true,
+            'rewrite'            => false,
+            'capability_type'    => 'post',
+            'has_archive'        => false,
+            'hierarchical'       => false,
+            'menu_position'      => null,
+            'menu_icon'          => 'dashicons-heart',
+            'supports'           => array( 'title' ),
+            'show_in_rest'       => false,
+        );
+
+        register_post_type( 'oso_employer_interest', $args );
+    }
     
     /**
      * Enqueue frontend assets.
@@ -136,7 +177,7 @@ class OSO_Employer_Portal {
             'oso-employer-portal',
             OSO_EMPLOYER_PORTAL_URL . 'assets/css/employer-portal.css',
             array( 'dashicons' ),
-            '1.0.22'
+            '1.0.23'
         );
         
         // Deregister conflicting lightbox scripts that might cause duplicates
@@ -147,7 +188,7 @@ class OSO_Employer_Portal {
             'oso-employer-portal',
             OSO_EMPLOYER_PORTAL_URL . 'assets/js/employer-portal.js',
             array( 'jquery' ),
-            '1.0.18',
+            '1.0.19',
             true
         );
         
