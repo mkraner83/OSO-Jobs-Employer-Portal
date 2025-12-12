@@ -1015,6 +1015,7 @@
 
 .oso-quick-link-banner .oso-quick-link:hover {
     background: #6d3f96;
+    color: #fff;
     transform: none;
     box-shadow: 0 2px 8px rgba(128, 81, 176, 0.3);
 }
