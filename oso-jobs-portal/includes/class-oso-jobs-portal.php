@@ -614,6 +614,9 @@ class OSO_Jobs_Portal {
             update_post_meta( $post_id, $config['meta'], $value );
         }
 
+        // Unhook to prevent infinite loop when updating post
+        remove_action( 'save_post_' . self::POST_TYPE_JOBSEEKER, array( $this, 'save_jobseeker_meta' ), 10 );
+
         if ( isset( $_POST['why'] ) ) {
             $content = sanitize_textarea_field( wp_unslash( $_POST['why'] ) );
             wp_update_post(
@@ -645,6 +648,9 @@ class OSO_Jobs_Portal {
                 'post_title' => $title,
             )
         );
+
+        // Re-hook after updates complete
+        add_action( 'save_post_' . self::POST_TYPE_JOBSEEKER, array( $this, 'save_jobseeker_meta' ), 10, 2 );
 
         $user_id = (int) get_post_meta( $post_id, '_oso_jobseeker_user_id', true );
         $email   = isset( $_POST['email'] ) ? sanitize_email( wp_unslash( $_POST['email'] ) ) : '';
