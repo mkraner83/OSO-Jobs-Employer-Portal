@@ -21,12 +21,22 @@ class OSO_Interest_Admin {
         add_action( 'admin_menu', [ __CLASS__, 'add_admin_menu' ], 20 );
         
         // Add custom columns to the interests list
-        add_filter( 'manage_oso_emp_interest_posts_columns', [ __CLASS__, 'add_custom_columns' ] );
+        add_filter( 'manage_oso_emp_interest_posts_columns', [ __CLASS__, 'add_custom_columns' ], 10 );
         add_action( 'manage_oso_emp_interest_posts_custom_column', [ __CLASS__, 'render_custom_columns' ], 10, 2 );
         add_filter( 'manage_edit-oso_emp_interest_sortable_columns', [ __CLASS__, 'make_columns_sortable' ] );
         
         // Add meta box to edit page
         add_action( 'add_meta_boxes', [ __CLASS__, 'add_meta_boxes' ] );
+        
+        // Remove default editor for this post type
+        add_action( 'init', [ __CLASS__, 'remove_post_type_support' ] );
+    }
+    
+    /**
+     * Remove post type support for editor and title.
+     */
+    public static function remove_post_type_support() {
+        remove_post_type_support( 'oso_emp_interest', 'editor' );
     }
     
     /**
@@ -127,6 +137,32 @@ class OSO_Interest_Admin {
             'normal',
             'high'
         );
+        
+        // Add CSS to hide title field
+        add_action( 'admin_head', [ __CLASS__, 'add_admin_css' ] );
+    }
+    
+    /**
+     * Add admin CSS to hide title field for interests.
+     */
+    public static function add_admin_css() {
+        global $post_type;
+        if ( 'oso_emp_interest' === $post_type ) {
+            ?>
+            <style>
+                #titlediv {
+                    display: none;
+                }
+                #oso_interest_details {
+                    margin-top: 20px;
+                }
+                #oso_interest_details .inside {
+                    margin: 0;
+                    padding: 0;
+                }
+            </style>
+            <?php
+        }
     }
     
     /**
