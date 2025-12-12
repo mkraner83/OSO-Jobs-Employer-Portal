@@ -1,6 +1,6 @@
 /**
  * OSO Employer Portal JavaScript
- * Version: 1.0.22
+ * Version: 1.0.23
  */
 
 (function($) {

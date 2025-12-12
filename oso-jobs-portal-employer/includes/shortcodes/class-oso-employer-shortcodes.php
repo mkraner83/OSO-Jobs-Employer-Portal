@@ -1863,7 +1863,7 @@ class OSO_Employer_Shortcodes {
 
     /**
      * Delete an express interest post.
-     * AJAX handler for jobseekers to remove interests from their dashboard.
+     * AJAX handler for employers to remove interests they sent.
      */
     public function ajax_delete_interest() {
         // Verify nonce
@@ -1871,8 +1871,8 @@ class OSO_Employer_Shortcodes {
             wp_send_json_error( array( 'message' => __( 'Security check failed.', 'oso-employer-portal' ) ) );
         }
 
-        // Check user permissions - jobseekers can delete interests sent to them
-        if ( ! current_user_can( 'oso_jobseeker' ) && ! current_user_can( 'manage_options' ) ) {
+        // Check user permissions - employers can delete interests they sent
+        if ( ! current_user_can( 'oso_employer' ) && ! current_user_can( 'manage_options' ) ) {
             wp_send_json_error( array( 'message' => __( 'You do not have permission to perform this action.', 'oso-employer-portal' ) ) );
         }
 
@@ -1889,24 +1889,24 @@ class OSO_Employer_Shortcodes {
             wp_send_json_error( array( 'message' => __( 'Interest not found.', 'oso-employer-portal' ) ) );
         }
 
-        // Get current user's jobseeker ID
+        // Get current user's employer ID
         $user_id = get_current_user_id();
-        $user_jobseeker_posts = get_posts( array(
-            'post_type' => 'oso_jobseeker',
+        $user_employer_posts = get_posts( array(
+            'post_type' => 'oso_employer',
             'author' => $user_id,
             'posts_per_page' => 1,
         ) );
 
-        if ( empty( $user_jobseeker_posts ) ) {
-            wp_send_json_error( array( 'message' => __( 'No jobseeker profile found.', 'oso-employer-portal' ) ) );
+        if ( empty( $user_employer_posts ) ) {
+            wp_send_json_error( array( 'message' => __( 'No employer profile found.', 'oso-employer-portal' ) ) );
         }
 
-        $jobseeker_id = $user_jobseeker_posts[0]->ID;
+        $employer_id = $user_employer_posts[0]->ID;
 
-        // Verify this interest was sent to the current jobseeker
-        $interest_jobseeker_id = get_post_meta( $interest_id, '_oso_jobseeker_id', true );
-        if ( absint( $interest_jobseeker_id ) !== $jobseeker_id ) {
-            wp_send_json_error( array( 'message' => __( 'You can only delete interests sent to you.', 'oso-employer-portal' ) ) );
+        // Verify this interest was sent by the current employer
+        $interest_employer_id = get_post_meta( $interest_id, '_oso_employer_id', true );
+        if ( absint( $interest_employer_id ) !== $employer_id ) {
+            wp_send_json_error( array( 'message' => __( 'You can only delete interests you sent.', 'oso-employer-portal' ) ) );
         }
 
         // Delete the interest post

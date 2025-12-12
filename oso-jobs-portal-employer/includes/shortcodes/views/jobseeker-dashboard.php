@@ -313,10 +313,6 @@ $is_approved = get_post_meta( $jobseeker_post->ID, '_oso_jobseeker_approved', tr
                                     <?php esc_html_e( 'Reply', 'oso-employer-portal' ); ?>
                                 </a>
                             <?php endif; ?>
-                            <button type="button" class="oso-btn oso-btn-danger oso-btn-small oso-delete-interest" data-interest-id="<?php echo esc_attr( $interest->ID ); ?>">
-                                <span class="dashicons dashicons-trash"></span>
-                                <?php esc_html_e( 'Remove', 'oso-employer-portal' ); ?>
-                            </button>
                         </div>
                     </div>
                 <?php endforeach; ?>
