@@ -303,7 +303,7 @@ if ( $is_employer ) {
                 </div>
                 <h4><?php esc_html_e( 'Interest Sent Successfully!', 'oso-employer-portal' ); ?></h4>
                 <p><?php esc_html_e( 'The candidate has been notified via email and will receive your message.', 'oso-employer-portal' ); ?></p>
-                <button class="oso-btn oso-btn-purple-gradient oso-modal-close"><?php esc_html_e( 'Close', 'oso-employer-portal' ); ?></button>
+                <button class="oso-btn oso-btn-purple-gradient oso-modal-close">&times;</button>
             </div>
         </div>
     </div>

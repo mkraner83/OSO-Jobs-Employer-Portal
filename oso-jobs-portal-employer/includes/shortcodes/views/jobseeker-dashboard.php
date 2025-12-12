@@ -188,11 +188,12 @@ $is_approved = get_post_meta( $jobseeker_post->ID, '_oso_jobseeker_approved', tr
         $interests = get_posts( array(
             'post_type'      => 'oso_employer_interest',
             'posts_per_page' => -1,
-            'post_status'    => 'publish',
+            'post_status'    => 'any',
             'meta_query'     => array(
                 array(
-                    'key'   => '_oso_jobseeker_id',
-                    'value' => $jobseeker_post->ID,
+                    'key'     => '_oso_jobseeker_id',
+                    'value'   => $jobseeker_post->ID,
+                    'compare' => '='
                 ),
             ),
             'orderby'        => 'date',
