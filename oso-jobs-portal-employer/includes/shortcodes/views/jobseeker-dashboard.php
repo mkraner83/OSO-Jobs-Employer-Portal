@@ -184,21 +184,29 @@ $is_approved = get_post_meta( $jobseeker_post->ID, '_oso_jobseeker_approved', tr
         <h3><?php esc_html_e( 'Employer Interest', 'oso-employer-portal' ); ?></h3>
         
         <?php
-        // Get interests received for this jobseeker
-        $interests = get_posts( array(
+        // Get interests received for this jobseeker - using WP_Query for better debugging
+        $interest_query = new WP_Query( array(
             'post_type'      => 'oso_employer_interest',
             'posts_per_page' => -1,
-            'post_status'    => 'any',
+            'post_status'    => array( 'publish', 'draft', 'pending', 'private' ),
             'meta_query'     => array(
                 array(
                     'key'     => '_oso_jobseeker_id',
                     'value'   => $jobseeker_post->ID,
-                    'compare' => '='
+                    'compare' => '=',
+                    'type'    => 'NUMERIC'
                 ),
             ),
             'orderby'        => 'date',
             'order'          => 'DESC',
         ) );
+        
+        $interests = $interest_query->posts;
+        
+        // Debug output (comment out after testing)
+        // echo '<!-- Jobseeker ID: ' . $jobseeker_post->ID . ' -->';
+        // echo '<!-- Found ' . count($interests) . ' interests -->';
+        // echo '<!-- Query: ' . $interest_query->request . ' -->';
 
         if ( ! empty( $interests ) ) :
             ?>
