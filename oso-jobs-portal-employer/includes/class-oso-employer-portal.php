@@ -20,6 +20,7 @@ class OSO_Employer_Portal {
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/shortcodes/class-oso-employer-shortcodes.php';
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/admin/class-oso-employer-admin.php';
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/admin/class-oso-job-admin.php';
+        require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/admin/class-oso-interest-admin.php';
         require_once OSO_EMPLOYER_PORTAL_DIR . 'includes/class-oso-job-manager.php';
 
         // Register custom post types - priority 5 to ensure they're available for AJAX
@@ -40,6 +41,7 @@ class OSO_Employer_Portal {
         if ( is_admin() ) {
             OSO_Employer_Admin::instance();
             OSO_Job_Admin::instance();
+            OSO_Interest_Admin::init();
         }
         
         // Enqueue frontend assets
@@ -177,7 +179,7 @@ class OSO_Employer_Portal {
             'oso-employer-portal',
             OSO_EMPLOYER_PORTAL_URL . 'assets/css/employer-portal.css',
             array( 'dashicons' ),
-            '1.0.26'
+            '1.0.27'
         );
         
         // Deregister conflicting lightbox scripts that might cause duplicates

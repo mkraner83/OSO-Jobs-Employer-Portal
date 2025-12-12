@@ -225,6 +225,106 @@ endif;
         <?php endif; ?>
     </div>
 
+    <!-- Express Interest Sent Section -->
+    <div class="oso-employer-interests-section">
+        <h3><?php esc_html_e( 'Candidates I\'ve Expressed Interest In', 'oso-employer-portal' ); ?></h3>
+        
+        <?php
+        // Get all interests sent by this employer
+        $sent_interests = get_posts( array(
+            'post_type'      => 'oso_emp_interest',
+            'post_status'    => 'publish',
+            'posts_per_page' => -1,
+            'meta_key'       => '_oso_employer_id',
+            'meta_value'     => $employer_post->ID,
+            'orderby'        => 'date',
+            'order'          => 'DESC',
+        ) );
+
+        if ( ! empty( $sent_interests ) ) :
+            ?>
+            <div class="oso-interests-sent-grid">
+                <?php foreach ( $sent_interests as $interest ) :
+                    $jobseeker_id = get_post_meta( $interest->ID, '_oso_jobseeker_id', true );
+                    $message = $interest->post_content;
+                    $interest_date = get_post_meta( $interest->ID, '_oso_interest_date', true );
+                    
+                    $jobseeker = get_post( $jobseeker_id );
+                    
+                    if ( ! $jobseeker ) {
+                        continue;
+                    }
+                    
+                    $jobseeker_meta = OSO_Jobs_Utilities::get_jobseeker_meta( $jobseeker_id );
+                    $jobseeker_photo = ! empty( $jobseeker_meta['_oso_jobseeker_photo'] ) ? $jobseeker_meta['_oso_jobseeker_photo'] : '';
+                    $jobseeker_name = ! empty( $jobseeker_meta['_oso_jobseeker_full_name'] ) ? $jobseeker_meta['_oso_jobseeker_full_name'] : $jobseeker->post_title;
+                    $jobseeker_email = ! empty( $jobseeker_meta['_oso_jobseeker_email'] ) ? $jobseeker_meta['_oso_jobseeker_email'] : '';
+                    $jobseeker_location = ! empty( $jobseeker_meta['_oso_jobseeker_location'] ) ? $jobseeker_meta['_oso_jobseeker_location'] : '';
+                    ?>
+                    <div class="oso-interest-sent-card">
+                        <div class="oso-interest-sent-header">
+                            <?php if ( $jobseeker_photo ) : ?>
+                                <img src="<?php echo esc_url( $jobseeker_photo ); ?>" alt="<?php echo esc_attr( $jobseeker_name ); ?>" class="oso-jobseeker-photo-small">
+                            <?php else : ?>
+                                <div class="oso-jobseeker-photo-placeholder-small">
+                                    <span class="dashicons dashicons-admin-users"></span>
+                                </div>
+                            <?php endif; ?>
+                            <div class="oso-interest-sent-title">
+                                <h4><?php echo esc_html( $jobseeker_name ); ?></h4>
+                                <?php if ( $jobseeker_location ) : ?>
+                                    <p class="oso-interest-sent-location">
+                                        <span class="dashicons dashicons-location"></span>
+                                        <?php echo esc_html( $jobseeker_location ); ?>
+                                    </p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        
+                        <div class="oso-interest-sent-date">
+                            <span class="dashicons dashicons-calendar"></span>
+                            <?php
+                            if ( $interest_date ) {
+                                echo esc_html( date_i18n( get_option( 'date_format' ), strtotime( $interest_date ) ) );
+                            } else {
+                                echo esc_html( get_the_date( '', $interest->ID ) );
+                            }
+                            ?>
+                        </div>
+                        
+                        <?php if ( $message ) : ?>
+                            <div class="oso-interest-sent-message">
+                                <strong><?php esc_html_e( 'Your Message:', 'oso-employer-portal' ); ?></strong>
+                                <p><?php echo esc_html( wp_trim_words( $message, 30, '...' ) ); ?></p>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <div class="oso-interest-sent-actions">
+                            <a href="<?php echo esc_url( add_query_arg( 'jobseeker_id', $jobseeker_id, home_url( '/job-portal/jobseeker-profile/' ) ) ); ?>" class="oso-btn oso-btn-secondary oso-btn-small">
+                                <span class="dashicons dashicons-visibility"></span>
+                                <?php esc_html_e( 'View Profile', 'oso-employer-portal' ); ?>
+                            </a>
+                            <?php if ( $jobseeker_email ) : ?>
+                                <a href="mailto:<?php echo esc_attr( $jobseeker_email ); ?>" class="oso-btn oso-btn-purple-gradient oso-btn-small">
+                                    <span class="dashicons dashicons-email-alt"></span>
+                                    <?php esc_html_e( 'Contact', 'oso-employer-portal' ); ?>
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else : ?>
+            <div class="oso-no-interests-sent">
+                <span class="dashicons dashicons-heart"></span>
+                <p><?php esc_html_e( 'You haven\'t expressed interest in any candidates yet.', 'oso-employer-portal' ); ?></p>
+                <a href="<?php echo esc_url( home_url( '/job-portal/jobseeker-browser/' ) ); ?>" class="oso-btn oso-btn-primary">
+                    <?php esc_html_e( 'Browse Candidates', 'oso-employer-portal' ); ?>
+                </a>
+            </div>
+        <?php endif; ?>
+    </div>
+
     <!-- Job Applications Section -->
     <div class="oso-job-applications-section">
         <h3><?php esc_html_e( 'Job Applications', 'oso-employer-portal' ); ?></h3>

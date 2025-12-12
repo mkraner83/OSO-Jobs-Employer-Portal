@@ -2306,6 +2306,161 @@
     font-size: 1.1em;
 }
 
+/* Employer Sent Interests Section on Employer Dashboard */
+.oso-employer-interests-section {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.oso-employer-interests-section h3 {
+    margin: 0 0 25px 0;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.oso-interests-sent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
+.oso-interest-sent-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0;
+}
+
+.oso-interest-sent-card:hover {
+    box-shadow: 0 4px 12px rgba(74, 116, 119, 0.15);
+    transform: translateY(-2px);
+}
+
+.oso-interest-sent-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.oso-jobseeker-photo-small {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #4A7477;
+}
+
+.oso-jobseeker-photo-placeholder-small {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #4A7477;
+}
+
+.oso-jobseeker-photo-placeholder-small .dashicons {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #4A7477;
+}
+
+.oso-interest-sent-title h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.oso-interest-sent-location {
+    margin: 0;
+    font-size: 0.9em;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.oso-interest-sent-location .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.oso-interest-sent-date {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.oso-interest-sent-date .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.oso-interest-sent-message {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    border-left: 3px solid #4A7477;
+}
+
+.oso-interest-sent-message strong {
+    display: block;
+    color: #4A7477;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
+.oso-interest-sent-message p {
+    margin: 0;
+    color: #555;
+    line-height: 1.6;
+    font-size: 0.95em;
+}
+
+.oso-interest-sent-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.oso-no-interests-sent {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.oso-no-interests-sent .dashicons {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #4A7477;
+    margin-bottom: 20px;
+}
+
+.oso-no-interests-sent p {
+    margin: 0 0 20px 0;
+    color: #666;
+    font-size: 1.05em;
+}
+
 /* Employer Interests Section on Jobseeker Dashboard */
 .oso-jobseeker-interests {
     margin-bottom: 40px;
