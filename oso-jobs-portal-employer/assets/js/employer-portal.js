@@ -718,12 +718,19 @@
     // Express Interest System
     // ========================================
     
+    console.log('Express Interest handlers initialized');
+    console.log('Found express interest buttons:', $('.oso-express-interest-btn').length);
+    console.log('Found express interest form:', $('#oso-express-interest-form').length);
+    
     // Open Express Interest Modal
     $(document).on('click', '.oso-express-interest-btn', function(e) {
         e.preventDefault();
+        console.log('Express Interest button clicked');
         var $btn = $(this);
         var jobseekerId = $btn.data('jobseeker-id');
         var employerId = $btn.data('employer-id');
+        
+        console.log('Opening modal for jobseeker:', jobseekerId, 'employer:', employerId);
         
         $('#oso-express-interest-modal').fadeIn(300);
         $('body').css('overflow', 'hidden');
@@ -756,6 +763,7 @@
     // Submit Express Interest Form
     $(document).on('submit', '#oso-express-interest-form', function(e) {
         e.preventDefault();
+        console.log('Express Interest form submitted');
         
         var $form = $(this);
         var $submitBtn = $form.find('button[type="submit"]');
