@@ -1,6 +1,6 @@
 /**
  * OSO Employer Portal JavaScript
- * Version: 1.0.18
+ * Version: 1.0.22
  */
 
 (function($) {
@@ -828,6 +828,59 @@
             $('.oso-interest-success').hide();
             $('#oso-express-interest-form').show();
         }, 500);
+    });
+
+    // ========================================
+    // Delete Interest
+    // ========================================
+    
+    // Delete/Remove Interest (for jobseekers)
+    $(document).on('click', '.oso-delete-interest', function(e) {
+        e.preventDefault();
+        
+        var $btn = $(this);
+        var interestId = $btn.data('interest-id');
+        
+        // Confirm deletion
+        if (!confirm('Are you sure you want to remove this interest? This action cannot be undone.')) {
+            return;
+        }
+        
+        // Disable button
+        var originalText = $btn.html();
+        $btn.prop('disabled', true).html('<span class="dashicons dashicons-update dashicons-spin"></span> Removing...');
+        
+        $.ajax({
+            url: osoEmployerPortal.ajaxUrl,
+            type: 'POST',
+            data: {
+                action: 'oso_delete_interest',
+                nonce: osoEmployerPortal.nonce,
+                interest_id: interestId
+            },
+            success: function(response) {
+                if (response.success) {
+                    // Fade out and remove the interest card
+                    $btn.closest('.oso-interest-card').fadeOut(300, function() {
+                        $(this).remove();
+                        
+                        // Check if there are any interests left
+                        if ($('.oso-interest-card').length === 0) {
+                            location.reload(); // Reload to show "no interests" message
+                        }
+                    });
+                } else {
+                    var errorMsg = response.data.message || 'Failed to remove interest. Please try again.';
+                    alert(errorMsg);
+                    $btn.prop('disabled', false).html(originalText);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error, xhr.responseText);
+                alert('Network error. Please try again.');
+                $btn.prop('disabled', false).html(originalText);
+            }
+        });
     });
 
 })(jQuery);

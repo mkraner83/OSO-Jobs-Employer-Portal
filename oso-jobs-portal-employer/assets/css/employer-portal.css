@@ -1,7 +1,7 @@
 /**
  * OSO Employer Portal Styles
  * Jobseeker Browser & Profile Views
- * Version: 1.0.11
+ * Version: 1.0.28
  */
 
 /* ========================================
@@ -963,6 +963,19 @@
     background: linear-gradient(135deg, #7a8ff0 0%, #8a5cb2 100%);
     color: #ffffff;
     box-shadow: 0 6px 10px rgba(102, 126, 234, 0.35);
+}
+
+.oso-btn-danger {
+    background: #dc3545;
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.25);
+}
+
+.oso-btn-danger:hover {
+    background: #c82333;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.35);
 }
 
 .oso-btn .dashicons {

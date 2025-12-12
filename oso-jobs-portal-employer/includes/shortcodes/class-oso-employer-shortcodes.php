@@ -57,6 +57,7 @@ class OSO_Employer_Shortcodes {
         add_action( 'wp_ajax_oso_delete_application', array( $this, 'ajax_delete_application' ) );
         add_action( 'wp_ajax_oso_cancel_application', array( $this, 'ajax_cancel_application' ) );
         add_action( 'wp_ajax_oso_express_interest', array( $this, 'ajax_express_interest' ) );
+        add_action( 'wp_ajax_oso_delete_interest', array( $this, 'ajax_delete_interest' ) );
         
         // Media Library customization
         add_filter( 'manage_media_columns', array( $this, 'add_media_uploader_column' ) );
@@ -1858,5 +1859,65 @@ class OSO_Employer_Shortcodes {
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );
         
         wp_mail( $jobseeker_email, $subject, $email_body, $headers );
+    }
+
+    /**
+     * Delete an express interest post.
+     * AJAX handler for jobseekers to remove interests from their dashboard.
+     */
+    public function ajax_delete_interest() {
+        // Verify nonce
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'oso_upload_profile_file' ) ) {
+            wp_send_json_error( array( 'message' => __( 'Security check failed.', 'oso-employer-portal' ) ) );
+        }
+
+        // Check user permissions - jobseekers can delete interests sent to them
+        if ( ! current_user_can( 'oso_jobseeker' ) && ! current_user_can( 'manage_options' ) ) {
+            wp_send_json_error( array( 'message' => __( 'You do not have permission to perform this action.', 'oso-employer-portal' ) ) );
+        }
+
+        // Get and validate interest ID
+        $interest_id = isset( $_POST['interest_id'] ) ? absint( $_POST['interest_id'] ) : 0;
+
+        if ( ! $interest_id ) {
+            wp_send_json_error( array( 'message' => __( 'Invalid interest ID.', 'oso-employer-portal' ) ) );
+        }
+
+        // Verify interest post exists
+        $interest = get_post( $interest_id );
+        if ( ! $interest || 'oso_emp_interest' !== $interest->post_type ) {
+            wp_send_json_error( array( 'message' => __( 'Interest not found.', 'oso-employer-portal' ) ) );
+        }
+
+        // Get current user's jobseeker ID
+        $user_id = get_current_user_id();
+        $user_jobseeker_posts = get_posts( array(
+            'post_type' => 'oso_jobseeker',
+            'author' => $user_id,
+            'posts_per_page' => 1,
+        ) );
+
+        if ( empty( $user_jobseeker_posts ) ) {
+            wp_send_json_error( array( 'message' => __( 'No jobseeker profile found.', 'oso-employer-portal' ) ) );
+        }
+
+        $jobseeker_id = $user_jobseeker_posts[0]->ID;
+
+        // Verify this interest was sent to the current jobseeker
+        $interest_jobseeker_id = get_post_meta( $interest_id, '_oso_jobseeker_id', true );
+        if ( absint( $interest_jobseeker_id ) !== $jobseeker_id ) {
+            wp_send_json_error( array( 'message' => __( 'You can only delete interests sent to you.', 'oso-employer-portal' ) ) );
+        }
+
+        // Delete the interest post
+        $deleted = wp_delete_post( $interest_id, true ); // true = force delete (bypass trash)
+
+        if ( ! $deleted ) {
+            wp_send_json_error( array( 'message' => __( 'Failed to delete interest.', 'oso-employer-portal' ) ) );
+        }
+
+        wp_send_json_success( array(
+            'message' => __( 'Interest removed successfully.', 'oso-employer-portal' ),
+        ) );
     }
 }
