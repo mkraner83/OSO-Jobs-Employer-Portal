@@ -1,17 +1,26 @@
 # OSO Jobs Portal - Employer Extension
 
-**Version:** 1.3.1  
+**Version:** 1.3.2  
 **Requires:** OSO Jobs Portal (Core Plugin) v1.0.14+  
 **WordPress Version:** 5.0 or higher
 
-## 🔖 Latest Restore Point - December 12, 2025 (v1.3.1)
+## 🔖 Latest Restore Point - December 12, 2025 (v1.3.2)
 
-**Stable Release:** Complete Approval System with Inline Toggle + Color-Coded Badges  
-**Core Plugin:** v1.0.14  
-**Employer Extension:** v1.0.10  
-**Git Tag:** restore-point-approval-system-complete
+**Stable Release:** Express Interest System + List View Improvements  
+**CSS Version:** v1.0.37  
+**JS Version:** v1.0.27  
+**Git Tag:** v1.0.37-session-end
 
-### December 12, 2025 Updates
+### December 12, 2025 Evening Session Updates
+✅ **Express Interest System**: Employers can contact jobseekers via modal with email notifications  
+✅ **Delete Interest**: Employers can remove their sent interests from dashboard  
+✅ **Grid/List View Toggle**: Switch between 3-column grid and full-width list views  
+✅ **List View Design**: Larger photos (104px), tighter spacing, circular icon button  
+✅ **Skill Badges**: Dark grey badges (rgb(108, 117, 125)) matching job-type-badge style  
+✅ **Admin Interface**: Custom post type tracking with columns and meta boxes  
+⚠️ **In Progress**: Badge styling refinement (user requested further adjustments)
+
+### Previous Session - December 12, 2025 Morning (v1.3.1)
 ✅ **Jobseeker Approval System**: Complete admin-controlled approval workflow  
 ✅ **Inline Approval Toggle**: Click to approve/unapprove directly from list page  
 ✅ **Color-Coded Badges**: Green for approved, red for pending with hover effects  
@@ -51,6 +60,18 @@
 ✅ **Button Hover Fix**: Purple gradient buttons keep white text on hover  
 ✅ **Badge Styling**: Clickable approval badges with hover effects  
 ✅ **Status Cards**: Gray badges on job cards with better spacing  
+✅ **Grid/List View Toggle**: Jobseeker browser with localStorage preference  
+✅ **List View Photos**: Enlarged to 104px × 104px with border  
+✅ **Circular Icon Button**: View profile button with dashicons-visibility icon  
+✅ **Skill Badges**: Compact grey badges matching job-type-badge style  
+
+#### Express Interest System (Dec 12, 2025)
+✅ **Interest Modal**: Popup form for employers to contact jobseekers  
+✅ **Email Notifications**: Automated emails to jobseekers with employer contact info  
+✅ **Custom Post Type**: `oso_emp_interest` tracking all interests  
+✅ **Admin Interface**: View and manage all employer interests  
+✅ **Delete Interests**: Employers can remove sent interests from dashboard  
+✅ **AJAX Handlers**: Smooth modal interactions without page reload  
 
 #### Employer Features
 ✅ Complete employer registration and profile management  
