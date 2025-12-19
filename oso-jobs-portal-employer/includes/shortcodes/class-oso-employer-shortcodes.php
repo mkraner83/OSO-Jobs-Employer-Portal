@@ -722,7 +722,8 @@ class OSO_Employer_Shortcodes {
         
         foreach ( $checkbox_groups as $key => $config ) {
             $posted_values = isset( $_POST[ $key ] ) && is_array( $_POST[ $key ] ) ? array_map( 'sanitize_text_field', $_POST[ $key ] ) : array();
-            $value_string = ! empty( $posted_values ) ? implode( ', ', $posted_values ) : '';
+            // Use newlines to match WPForms format
+            $value_string = ! empty( $posted_values ) ? implode( "\n", $posted_values ) : '';
             update_post_meta( $jobseeker_id, $config['meta'], $value_string );
         }
         
