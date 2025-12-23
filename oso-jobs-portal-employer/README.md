@@ -4,6 +4,14 @@
 **Requires:** OSO Jobs Portal (Core Plugin) v1.0.14+  
 **WordPress Version:** 5.0 or higher
 
+## 🚀 Latest Changes (December 22-23, 2025)
+
+- Project restored to December 12, 2025 session (v1.0.37-session-end)
+- Fixed: Long URLs in "Application Instructions" field now break lines and no longer overflow job details view
+- Rebuilt and pushed updated employer plugin zip with this fix
+
+---
+
 ## 🔖 Latest Restore Point - December 12, 2025 (v1.3.1)
 
 **Stable Release:** Complete Approval System with Inline Toggle + Color-Coded Badges  
