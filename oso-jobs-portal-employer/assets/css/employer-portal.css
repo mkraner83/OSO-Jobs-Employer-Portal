@@ -19,6 +19,11 @@
     box-shadow: 0 4px 15px rgba(74, 116, 119, 0.3);
 }
 
+/* Break long URLs/words in Application Instructions */
+.oso-application-instructions {
+     word-break: break-all;
+     overflow-wrap: anywhere;
+}
 .oso-employer-header-left {
     display: flex;
     align-items: center;
