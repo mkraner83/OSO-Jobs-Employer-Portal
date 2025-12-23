@@ -4,6 +4,14 @@ WordPress plugin for managing job postings, employer profiles, and jobseeker pro
 
 ## Current Version: 1.0.14
 
+## 🚀 Latest Changes (December 22-23, 2025)
+
+- Project restored to December 12, 2025 session (v1.0.37-session-end)
+- Employer plugin: Fixed long URLs in "Application Instructions" field to break lines and not overflow job details view
+- Rebuilt and pushed updated employer plugin zip with this fix
+
+---
+
 ## Version History
 
 ### December 12, 2025 - Jobseeker Approval System
