@@ -73,7 +73,23 @@ class OSO_Jobs_Email_Templates {
         $saved = get_option( self::OPTION_NAME, array() );
         $defaults = self::get_default_templates();
         
-        return wp_parse_args( $saved, $defaults );
+        // Merge saved templates with defaults to preserve variables and description
+        $templates = array();
+        foreach ( $defaults as $key => $default ) {
+            $templates[ $key ] = $default;
+            
+            // Override subject and body if saved
+            if ( isset( $saved[ $key ] ) ) {
+                if ( isset( $saved[ $key ]['subject'] ) ) {
+                    $templates[ $key ]['subject'] = $saved[ $key ]['subject'];
+                }
+                if ( isset( $saved[ $key ]['body'] ) ) {
+                    $templates[ $key ]['body'] = $saved[ $key ]['body'];
+                }
+            }
+        }
+        
+        return $templates;
     }
 
     /**
