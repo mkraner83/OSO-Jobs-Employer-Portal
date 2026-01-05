@@ -106,6 +106,8 @@
     font-weight: 600;
     transition: all 0.3s ease;
     border: 2px solid rgba(255, 255, 255, 0.3);
+    min-width: 120px;
+    text-align: center;
 }
 
 .oso-btn-secondary:hover {
@@ -3237,7 +3239,7 @@
 }
 
 .oso-filter-actions .oso-btn {
-    min-width: 140px;
+    min-width: 120px;
     text-align: center;
 }
 
