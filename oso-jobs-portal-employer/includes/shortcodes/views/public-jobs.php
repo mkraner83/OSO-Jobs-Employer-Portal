@@ -200,7 +200,7 @@ $jobs_query = new WP_Query( $args );
                     <div class="oso-job-card-header">
                         <?php if ( $employer_logo ) : ?>
                             <div class="oso-job-camp-logo">
-                                <img src="<?php echo esc_url( wp_get_attachment_url( $employer_logo ) ); ?>" alt="<?php echo esc_attr( $camp_name ); ?>" />
+                                <img src="<?php echo esc_url( $employer_logo ); ?>" alt="<?php echo esc_attr( $camp_name ); ?>" />
                             </div>
                         <?php endif; ?>
                         <div class="oso-job-header-text">
