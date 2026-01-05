@@ -3784,3 +3784,214 @@
         width: 100%;
     }
 }
+
+/* ========================================
+   Public Jobseekers Listing (Unregistered Users)
+   ======================================== */
+
+.oso-public-jobseekers {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.oso-public-jobseekers .oso-public-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: #fff;
+}
+
+.oso-public-jobseekers .oso-public-header h1 {
+    font-size: 2.5em;
+    margin: 0 0 10px 0;
+    font-weight: 700;
+}
+
+.oso-public-jobseekers .oso-public-subtitle {
+    font-size: 1.2em;
+    margin: 0;
+    opacity: 0.95;
+}
+
+.oso-public-jobseekers .oso-jobseeker-count {
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.oso-public-jobseekers .oso-jobseeker-count p {
+    margin: 0;
+    font-size: 1em;
+}
+
+.oso-public-jobseekers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.oso-public-jobseekers .oso-jobseeker-card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.oso-public-jobseekers .oso-jobseeker-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.oso-public-jobseekers .oso-card-photo {
+    width: 100%;
+    height: 200px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.oso-public-jobseekers .oso-photo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.oso-public-jobseekers .oso-photo-placeholder .dashicons {
+    font-size: 80px;
+    width: 80px;
+    height: 80px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.oso-public-jobseekers .oso-card-content {
+    padding: 20px;
+}
+
+.oso-public-jobseekers .oso-card-name {
+    margin: 0 0 10px 0;
+    font-size: 1.4em;
+    color: #333;
+}
+
+.oso-public-jobseekers .oso-card-location {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0 0 10px 0;
+    color: #666;
+    font-size: 0.95em;
+}
+
+.oso-public-jobseekers .oso-card-location .dashicons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.oso-public-jobseekers .oso-card-availability {
+    margin: 0 0 12px 0;
+    font-size: 0.9em;
+    color: #555;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.oso-public-jobseekers .oso-card-availability strong {
+    color: #333;
+}
+
+.oso-public-jobseekers .oso-card-why {
+    margin: 0 0 15px 0;
+    color: #666;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.oso-public-jobseekers .oso-card-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.oso-public-jobseekers .oso-skill-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    background: #f0f0f0;
+    color: #555;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+.oso-public-jobseekers .oso-skill-more {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+}
+
+.oso-public-jobseekers .oso-card-login-prompt {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.oso-public-jobseekers .oso-card-login-prompt p {
+    margin: 0 0 15px 0;
+    color: #666;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+.oso-public-jobseekers .oso-login-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.oso-public-jobseekers .oso-login-buttons .oso-btn {
+    flex: 1;
+    text-align: center;
+}
+
+/* No Results Message */
+.oso-public-jobseekers .oso-no-results {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.oso-public-jobseekers .oso-no-results p {
+    font-size: 1.2em;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .oso-public-jobseekers .oso-public-header h1 {
+        font-size: 2em;
+    }
+    
+    .oso-public-jobseekers-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .oso-public-jobseekers .oso-login-buttons {
+        flex-direction: column;
+    }
+    
+    .oso-public-jobseekers .oso-login-buttons .oso-btn {
+        width: 100%;
+    }
+}
