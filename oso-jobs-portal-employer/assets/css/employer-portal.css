@@ -996,6 +996,29 @@
     border-radius: 8px;
 }
 
+/* WhatsApp Contact Banner */
+.oso-whatsapp-banner {
+    background: linear-gradient(135deg, #f0f4f8 0%, #e9eff5 100%);
+    border: 1px solid #d1dce6;
+    border-radius: 8px;
+    padding: 16px 24px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    color: #4a5568;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.oso-whatsapp-banner a {
+    transition: opacity 0.2s ease;
+}
+
+.oso-whatsapp-banner a:hover {
+    opacity: 0.8;
+    text-decoration: underline !important;
+}
+
 .oso-profile-section {
     margin-bottom: 30px;
     padding-bottom: 30px;
