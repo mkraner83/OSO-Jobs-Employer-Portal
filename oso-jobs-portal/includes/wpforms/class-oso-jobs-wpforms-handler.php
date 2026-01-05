@@ -616,6 +616,41 @@ class OSO_Jobs_WPForms_Handler {
         add_filter( 'wp_mail_content_type', function() { return 'text/html'; } );
         wp_mail( $user->user_email, $subject, $message );
         remove_filter( 'wp_mail_content_type', function() { return 'text/html'; } );
+        
+        // Send admin notification
+        $this->send_admin_registration_notification( $user, $is_employer );
+    }
+
+    /**
+     * Send admin notification about new registration.
+     *
+     * @param WP_User $user User object.
+     * @param bool    $is_employer Whether user is employer or jobseeker.
+     */
+    protected function send_admin_registration_notification( $user, $is_employer ) {
+        $admin_email = get_option( 'admin_email' );
+        
+        if ( ! $admin_email ) {
+            return;
+        }
+        
+        $user_type = $is_employer ? 'Employer' : 'Jobseeker';
+        $subject = sprintf( '[%s] New %s Registration', get_bloginfo( 'name' ), $user_type );
+        
+        $message = sprintf(
+            "A new %s has registered on your site.\n\n" .
+            "Username: %s\n" .
+            "Email: %s\n" .
+            "Name: %s\n\n" .
+            "You can view and manage this user in the WordPress admin:\n%s",
+            strtolower( $user_type ),
+            $user->user_login,
+            $user->user_email,
+            $user->display_name,
+            admin_url( 'user-edit.php?user_id=' . $user->ID )
+        );
+        
+        wp_mail( $admin_email, $subject, $message );
     }
 
     /**
