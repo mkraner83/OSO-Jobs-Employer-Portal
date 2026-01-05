@@ -769,9 +769,25 @@ class OSO_Jobs_Portal {
             return;
         }
         
-        $subject = 'Your OSO Jobs Profile Has Been Approved!';
+        // Load email template settings
+        require_once OSO_JOBS_PORTAL_DIR . 'includes/settings/class-oso-jobs-email-templates.php';
+        $template = OSO_Jobs_Email_Templates::get_template( 'jobseeker_profile_approved' );
         
-        $message = '
+        if ( ! $template ) {
+            return;
+        }
+        
+        // Prepare variables
+        $variables = array(
+            '{jobseeker_name}' => $name,
+            '{dashboard_url}'  => home_url( '/job-portal/jobseeker-dashboard/' ),
+        );
+        
+        // Replace variables in subject and body
+        $subject = str_replace( array_keys( $variables ), array_values( $variables ), $template['subject'] );
+        $message = str_replace( array_keys( $variables ), array_values( $variables ), $template['body'] );
+        
+        $old_message = '
         <!DOCTYPE html>
         <html>
         <head>

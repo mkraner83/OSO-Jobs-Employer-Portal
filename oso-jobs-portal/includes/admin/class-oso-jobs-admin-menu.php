@@ -103,6 +103,15 @@ class OSO_Jobs_Admin_Menu {
             'oso-jobs-tools',
             array( $this, 'render_tools' )
         );
+        
+        add_submenu_page(
+            'oso-jobs-dashboard',
+            __( 'Email Templates', 'oso-jobs-portal' ),
+            __( 'Email Templates', 'oso-jobs-portal' ),
+            'manage_options',
+            'oso-jobs-email-templates',
+            array( $this, 'render_email_templates' )
+        );
     }
 
     /**
@@ -223,6 +232,18 @@ class OSO_Jobs_Admin_Menu {
         echo '<div class="notice notice-success"><p>';
         printf( esc_html__( 'Fixed %d jobseeker records.', 'oso-jobs-portal' ), $fixed );
         echo '</p></div>';
+    }
+    
+    /**
+     * Render email templates page.
+     */
+    public function render_email_templates() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            return;
+        }
+        
+        require_once OSO_JOBS_PORTAL_DIR . 'includes/settings/class-oso-jobs-email-templates.php';
+        OSO_Jobs_Email_Templates::render_page();
     }
 
     /**

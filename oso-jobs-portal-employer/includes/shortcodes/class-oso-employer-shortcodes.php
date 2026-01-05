@@ -1195,20 +1195,42 @@ class OSO_Employer_Shortcodes {
         $application_post = get_post( $application_id );
         $message_content = $application_post ? $application_post->post_content : '';
 
-        $subject = sprintf( __( '🎉 New Application for %s - %s', 'oso-employer-portal' ), $job_title, $jobseeker_name );
+        // Load email template settings
+        require_once OSO_JOBS_PORTAL_DIR . 'includes/settings/class-oso-jobs-email-templates.php';
+        $template = OSO_Jobs_Email_Templates::get_template( 'new_application_employer' );
         
-        $message = sprintf(
-            __( "Hello %s,\n\nGreat news! You have received a new job application.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAPPLICATION DETAILS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nPosition: %s\nApplicant: %s\nEmail: %s\nPhone: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nMESSAGE FROM APPLICANT\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n%s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nYou can view the full applicant profile and manage this application in your employer dashboard:\n%s\n\nBest regards,\nOSO Jobs Team", 'oso-employer-portal' ),
-            $camp_name,
-            $job_title,
-            $jobseeker_name,
-            $jobseeker_email ?: 'Not provided',
-            $jobseeker_phone ?: 'Not provided',
-            $message_content,
-            home_url( '/job-portal/employer-profile/' )
-        );
+        if ( $template ) {
+            // Prepare variables
+            $variables = array(
+                '{camp_name}'        => $camp_name,
+                '{job_title}'        => $job_title,
+                '{jobseeker_name}'   => $jobseeker_name,
+                '{jobseeker_email}'  => $jobseeker_email ?: 'Not provided',
+                '{jobseeker_phone}'  => $jobseeker_phone ?: 'Not provided',
+                '{message_content}'  => $message_content,
+                '{dashboard_url}'    => home_url( '/job-portal/employer-profile/' ),
+            );
+            
+            // Replace variables in subject and body
+            $subject = str_replace( array_keys( $variables ), array_values( $variables ), $template['subject'] );
+            $message = str_replace( array_keys( $variables ), array_values( $variables ), $template['body'] );
+        } else {
+            // Fallback to default
+            $subject = sprintf( __( '🎉 New Application for %s - %s', 'oso-employer-portal' ), $job_title, $jobseeker_name );
+            $message = sprintf(
+                __( "Hello %s,\n\nGreat news! You have received a new job application.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAPPLICATION DETAILS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nPosition: %s\nApplicant: %s\nEmail: %s\nPhone: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nMESSAGE FROM APPLICANT\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n%s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nYou can view the full applicant profile and manage this application in your employer dashboard:\n%s\n\nBest regards,\nOSO Jobs Team", 'oso-employer-portal' ),
+                $camp_name,
+                $job_title,
+                $jobseeker_name,
+                $jobseeker_email ?: 'Not provided',
+                $jobseeker_phone ?: 'Not provided',
+                $message_content,
+                home_url( '/job-portal/employer-profile/' )
+            );
+        }
 
-        wp_mail( $employer_user->user_email, $subject, $message );
+        $headers = array( 'Content-Type: text/html; charset=UTF-8' );
+        wp_mail( $employer_user->user_email, $subject, $message, $headers );
     }
 
     /**
@@ -1328,17 +1350,40 @@ class OSO_Employer_Shortcodes {
             $contact_info .= sprintf( "\nWebsite: %s", $employer_website );
         }
         
-        $message = sprintf(
-            __( "Hello %s,\n\nExciting news! Your application has been approved!\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nJOB DETAILS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nPosition: %s\nEmployer: %s%s%s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nNEXT STEPS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nThe employer will contact you directly to discuss the next steps. Please make sure to respond promptly to their communication.\n\nYou can view this application and all your other applications in your dashboard:\n%s\n\nGood luck with your new position!\n\nBest regards,\nOSO Jobs Team", 'oso-employer-portal' ),
-            $jobseeker_name,
-            $job_title,
-            $camp_name,
-            $contact_info,
-            $job_start_date ? sprintf( "\nStart Date: %s", date_i18n( 'F j, Y', strtotime( $job_start_date ) ) ) : '',
-            home_url( '/job-portal/jobseeker-dashboard/' )
-        );
+        // Load email template settings
+        require_once OSO_JOBS_PORTAL_DIR . 'includes/settings/class-oso-jobs-email-templates.php';
+        $template = OSO_Jobs_Email_Templates::get_template( 'application_approved_jobseeker' );
+        
+        if ( $template ) {
+            // Prepare variables
+            $variables = array(
+                '{jobseeker_name}'  => $jobseeker_name,
+                '{job_title}'       => $job_title,
+                '{camp_name}'       => $camp_name,
+                '{contact_info}'    => $contact_info,
+                '{job_start_date}'  => $job_start_date ? sprintf( "\nStart Date: %s", date_i18n( 'F j, Y', strtotime( $job_start_date ) ) ) : '',
+                '{dashboard_url}'   => home_url( '/job-portal/jobseeker-dashboard/' ),
+            );
+            
+            // Replace variables in subject and body
+            $subject = str_replace( array_keys( $variables ), array_values( $variables ), $template['subject'] );
+            $message = str_replace( array_keys( $variables ), array_values( $variables ), $template['body'] );
+        } else {
+            // Fallback to default
+            $subject = sprintf( __( '🎉 Congratulations! Your Application Has Been Approved - %s', 'oso-employer-portal' ), $camp_name );
+            $message = sprintf(
+                __( "Hello %s,\n\nExciting news! Your application has been approved!\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nJOB DETAILS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nPosition: %s\nEmployer: %s%s%s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nNEXT STEPS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nThe employer will contact you directly to discuss the next steps. Please make sure to respond promptly to their communication.\n\nYou can view this application and all your other applications in your dashboard:\n%s\n\nGood luck with your new position!\n\nBest regards,\nOSO Jobs Team", 'oso-employer-portal' ),
+                $jobseeker_name,
+                $job_title,
+                $camp_name,
+                $contact_info,
+                $job_start_date ? sprintf( "\nStart Date: %s", date_i18n( 'F j, Y', strtotime( $job_start_date ) ) ) : '',
+                home_url( '/job-portal/jobseeker-dashboard/' )
+            );
+        }
 
-        wp_mail( $jobseeker_user->user_email, $subject, $message );
+        $headers = array( 'Content-Type: text/html; charset=UTF-8' );
+        wp_mail( $jobseeker_user->user_email, $subject, $message, $headers );
     }
 
     /**
@@ -1384,22 +1429,60 @@ class OSO_Employer_Shortcodes {
         $application_post = get_post( $application_id );
         $message_content = $application_post ? wp_trim_words( $application_post->post_content, 50, '...' ) : 'No message';
 
-        $subject = sprintf( __( '✅ Application Approved: %s hired by %s', 'oso-employer-portal' ), $jobseeker_name, $camp_name );
+        // Load email template settings
+        require_once OSO_JOBS_PORTAL_DIR . 'includes/settings/class-oso-jobs-email-templates.php';
+        $template = OSO_Jobs_Email_Templates::get_template( 'application_approved_admin' );
         
-        $message = sprintf(
-            __( "Hello Admin,\n\nAn employer has approved a job application on OSO Jobs Portal.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAPPROVAL DETAILS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nJob Position: %s\nStart Date: %s\nCompensation: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEMPLOYER INFORMATION\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nCamp/Company: %s\nContact Name: %s\nEmail: %s\nPhone: %s\nUser Account: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCANDIDATE INFORMATION\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nName: %s\nEmail: %s\nPhone: %s\nUser Account: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAPPLICATION INFO\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nApplied On: %s\nApproved On: %s\nCandidate's Message: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nBoth parties have been notified via email.\n\nView full details in WordPress Admin:\n%s\n\nBest regards,\nOSO Jobs System", 'oso-employer-portal' ),
-            $job_title,
-            $job_start_date ? date_i18n( 'F j, Y', strtotime( $job_start_date ) ) : 'Not specified',
-            $job_compensation ?: 'Not specified',
-            $camp_name,
-            $employer_user ? $employer_user->display_name : 'Unknown',
-            $employer_email ?: 'Not provided',
-            $employer_phone ?: 'Not provided',
-            $employer_user ? $employer_user->user_email : 'N/A',
-            $jobseeker_name,
-            $jobseeker_email ?: 'Not provided',
-            $jobseeker_phone ?: 'Not provided',
-            $jobseeker_user ? $jobseeker_user->user_email : 'N/A',
+        if ( $template ) {
+            // Prepare variables
+            $variables = array(
+                '{jobseeker_name}'         => $jobseeker_name,
+                '{camp_name}'              => $camp_name,
+                '{job_title}'              => $job_title,
+                '{job_start_date}'         => $job_start_date ? date_i18n( 'F j, Y', strtotime( $job_start_date ) ) : 'Not specified',
+                '{job_compensation}'       => $job_compensation ?: 'Not specified',
+                '{employer_contact_name}'  => $employer_user ? $employer_user->display_name : 'Unknown',
+                '{employer_email}'         => $employer_email ?: 'Not provided',
+                '{employer_phone}'         => $employer_phone ?: 'Not provided',
+                '{employer_user_email}'    => $employer_user ? $employer_user->user_email : 'N/A',
+                '{jobseeker_email}'        => $jobseeker_email ?: 'Not provided',
+                '{jobseeker_phone}'        => $jobseeker_phone ?: 'Not provided',
+                '{jobseeker_user_email}'   => $jobseeker_user ? $jobseeker_user->user_email : 'N/A',
+                '{application_date}'       => $application_date ? date_i18n( 'F j, Y', strtotime( $application_date ) ) : 'Unknown',
+                '{approval_date}'          => current_time( 'F j, Y' ),
+                '{message_content}'        => $message_content,
+                '{admin_url}'              => admin_url( 'edit.php?post_type=oso_job_application' ),
+            );
+            
+            // Replace variables in subject and body
+            $subject = str_replace( array_keys( $variables ), array_values( $variables ), $template['subject'] );
+            $message = str_replace( array_keys( $variables ), array_values( $variables ), $template['body'] );
+        } else {
+            // Fallback to default
+            $subject = sprintf( __( '✅ Application Approved: %s hired by %s', 'oso-employer-portal' ), $jobseeker_name, $camp_name );
+            $message = sprintf(
+                __( "Hello Admin,\n\nAn employer has approved a job application on OSO Jobs Portal.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAPPROVAL DETAILS\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nJob Position: %s\nStart Date: %s\nCompensation: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEMPLOYER INFORMATION\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nCamp/Company: %s\nContact Name: %s\nEmail: %s\nPhone: %s\nUser Account: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nCANDIDATE INFORMATION\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nName: %s\nEmail: %s\nPhone: %s\nUser Account: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAPPLICATION INFO\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nApplied On: %s\nApproved On: %s\nCandidate's Message: %s\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nBoth parties have been notified via email.\n\nView full details in WordPress Admin:\n%s\n\nBest regards,\nOSO Jobs System", 'oso-employer-portal' ),
+                $job_title,
+                $job_start_date ? date_i18n( 'F j, Y', strtotime( $job_start_date ) ) : 'Not specified',
+                $job_compensation ?: 'Not specified',
+                $camp_name,
+                $employer_user ? $employer_user->display_name : 'Unknown',
+                $employer_email ?: 'Not provided',
+                $employer_phone ?: 'Not provided',
+                $employer_user ? $employer_user->user_email : 'N/A',
+                $jobseeker_name,
+                $jobseeker_email ?: 'Not provided',
+                $jobseeker_phone ?: 'Not provided',
+                $jobseeker_user ? $jobseeker_user->user_email : 'N/A',
+                $application_date ? date_i18n( 'F j, Y', strtotime( $application_date ) ) : 'Unknown',
+                current_time( 'F j, Y' ),
+                $message_content,
+                admin_url( 'edit.php?post_type=oso_job_application' )
+            );
+        }
+
+        $headers = array( 'Content-Type: text/html; charset=UTF-8' );
+        wp_mail( $admin_email, $subject, $message, $headers );
             $application_date ? date_i18n( 'F j, Y', strtotime( $application_date ) ) : 'Unknown',
             current_time( 'F j, Y' ),
             $message_content,
@@ -1596,25 +1679,54 @@ class OSO_Employer_Shortcodes {
         
         // Send email notification to jobseeker
         if ( $jobseeker_email && $job ) {
-            $subject = sprintf( __( 'Application Cancelled - %s', 'oso-employer-portal' ), $job->post_title );
-            $message = sprintf(
-                __( "Hi %s,\n\nYour application for the position '%s' at %s has been successfully cancelled.\n\nIf you change your mind, you can apply again by visiting the job listing.\n\nBest regards,\nOSO Jobs Team", 'oso-employer-portal' ),
-                $jobseeker_name,
-                $job->post_title,
-                $employer_company
-            );
-            wp_mail( $jobseeker_email, $subject, $message );
+            // Load email template settings
+            require_once OSO_JOBS_PORTAL_DIR . 'includes/settings/class-oso-jobs-email-templates.php';
+            $template = OSO_Jobs_Email_Templates::get_template( 'application_cancelled_jobseeker' );
+            
+            if ( $template ) {
+                $variables = array(
+                    '{jobseeker_name}' => $jobseeker_name,
+                    '{job_title}'      => $job->post_title,
+                    '{camp_name}'      => $employer_company,
+                );
+                $subject = str_replace( array_keys( $variables ), array_values( $variables ), $template['subject'] );
+                $message = str_replace( array_keys( $variables ), array_values( $variables ), $template['body'] );
+            } else {
+                $subject = sprintf( __( 'Application Cancelled - %s', 'oso-employer-portal' ), $job->post_title );
+                $message = sprintf(
+                    __( "Hi %s,\n\nYour application for the position '%s' at %s has been successfully cancelled.\n\nIf you change your mind, you can apply again by visiting the job listing.\n\nBest regards,\nOSO Jobs Team", 'oso-employer-portal' ),
+                    $jobseeker_name,
+                    $job->post_title,
+                    $employer_company
+                );
+            }
+            $headers = array( 'Content-Type: text/html; charset=UTF-8' );
+            wp_mail( $jobseeker_email, $subject, $message, $headers );
         }
         
         // Send email notification to employer
         if ( $employer_email && $job ) {
-            $subject = sprintf( __( 'Application Cancelled - %s', 'oso-employer-portal' ), $job->post_title );
-            $message = sprintf(
-                __( "Hello,\n\n%s has cancelled their application for the position '%s'.\n\nYou can view other applicants for this position in your employer dashboard.\n\nBest regards,\nOSO Jobs Team", 'oso-employer-portal' ),
-                $jobseeker_name,
-                $job->post_title
-            );
-            wp_mail( $employer_email, $subject, $message );
+            // Load email template settings
+            require_once OSO_JOBS_PORTAL_DIR . 'includes/settings/class-oso-jobs-email-templates.php';
+            $template = OSO_Jobs_Email_Templates::get_template( 'application_cancelled_employer' );
+            
+            if ( $template ) {
+                $variables = array(
+                    '{jobseeker_name}' => $jobseeker_name,
+                    '{job_title}'      => $job->post_title,
+                );
+                $subject = str_replace( array_keys( $variables ), array_values( $variables ), $template['subject'] );
+                $message = str_replace( array_keys( $variables ), array_values( $variables ), $template['body'] );
+            } else {
+                $subject = sprintf( __( 'Application Cancelled - %s', 'oso-employer-portal' ), $job->post_title );
+                $message = sprintf(
+                    __( "Hello,\n\n%s has cancelled their application for the position '%s'.\n\nYou can view other applicants for this position in your employer dashboard.\n\nBest regards,\nOSO Jobs Team", 'oso-employer-portal' ),
+                    $jobseeker_name,
+                    $job->post_title
+                );
+            }
+            $headers = array( 'Content-Type: text/html; charset=UTF-8' );
+            wp_mail( $employer_email, $subject, $message, $headers );
         }
 
         wp_send_json_success( array( 'message' => __( 'Application cancelled successfully.', 'oso-employer-portal' ) ) );
@@ -1775,9 +1887,38 @@ class OSO_Employer_Shortcodes {
             return;
         }
 
-        $subject = sprintf( '%s is interested in you!', $employer_name );
+        // Load email template settings
+        require_once OSO_JOBS_PORTAL_DIR . 'includes/settings/class-oso-jobs-email-templates.php';
+        $template = OSO_Jobs_Email_Templates::get_template( 'employer_interest_jobseeker' );
         
         $dashboard_url = home_url( '/job-portal/jobseeker-dashboard/' );
+        
+        if ( $template ) {
+            // Prepare HTML snippets for conditional content
+            $employer_logo_html = $employer_logo ? '<div style="margin-bottom: 15px;"><img src="' . esc_url( $employer_logo ) . '" alt="' . esc_attr( $employer_name ) . '" style="max-width: 120px; height: auto; border-radius: 8px;" /></div>' : '';
+            $employer_description_html = $employer_description ? '<p style="margin: 0 0 10px 0; color: #666666; font-size: 14px; line-height: 1.5;">' . esc_html( wp_trim_words( $employer_description, 30 ) ) . '</p>' : '';
+            $employer_website_html = $employer_website ? '<p style="margin: 0; font-size: 14px;"><a href="' . esc_url( $employer_website ) . '" style="color: #667eea; text-decoration: none;">Visit Website →</a></p>' : '';
+            
+            // Prepare variables
+            $variables = array(
+                '{jobseeker_name}'          => esc_html( $jobseeker_name ),
+                '{camp_name}'               => esc_html( $employer_name ),
+                '{employer_logo}'           => esc_url( $employer_logo ),
+                '{employer_website}'        => esc_url( $employer_website ),
+                '{employer_description}'    => esc_html( wp_trim_words( $employer_description, 30 ) ),
+                '{message}'                 => esc_html( $message ),
+                '{dashboard_url}'           => esc_url( $dashboard_url ),
+                '{employer_logo_html}'      => $employer_logo_html,
+                '{employer_description_html}' => $employer_description_html,
+                '{employer_website_html}'   => $employer_website_html,
+            );
+            
+            // Replace variables in subject and body
+            $subject = str_replace( array_keys( $variables ), array_values( $variables ), $template['subject'] );
+            $email_body = str_replace( array_keys( $variables ), array_values( $variables ), $template['body'] );
+        } else {
+            // Fallback to default
+            $subject = sprintf( '%s is interested in you!', $employer_name );
         
         $email_body = '
         <!DOCTYPE html>
@@ -1855,6 +1996,7 @@ class OSO_Employer_Shortcodes {
             </table>
         </body>
         </html>';
+        }
 
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );
         
