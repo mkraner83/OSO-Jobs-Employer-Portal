@@ -561,51 +561,121 @@ class OSO_Jobs_WPForms_Handler {
         $is_employer = in_array( OSO_Jobs_Portal::ROLE_EMPLOYER, (array) $user->roles, true );
         $first_name = ! empty( $user->first_name ) ? $user->first_name : $user->display_name;
         
+        // Generate password reset key
+        $reset_key = get_password_reset_key( $user );
+        if ( ! is_wp_error( $reset_key ) ) {
+            $password_reset_link = network_site_url( "wp-login.php?action=rp&key=$reset_key&login=" . rawurlencode( $user->user_login ), 'login' );
+        } else {
+            $password_reset_link = wp_lostpassword_url();
+        }
+        
         if ( $is_employer ) {
-            $subject = __( 'Welcome to OSO Jobs – Your Employer Account is Ready!', 'oso-jobs-portal' );
+            // Employer welcome email
             $profile_link = wp_login_url( home_url( '/job-portal/employer-profile/' ) );
             
-            // Generate password reset key
-            $reset_key = get_password_reset_key( $user );
-            if ( ! is_wp_error( $reset_key ) ) {
-                $password_reset_link = network_site_url( "wp-login.php?action=rp&key=$reset_key&login=" . rawurlencode( $user->user_login ), 'login' );
-            } else {
-                $password_reset_link = wp_lostpassword_url();
-            }
+            // Get template from settings
+            $template = OSO_Jobs_Email_Templates::get_template( 'employer_welcome' );
             
-            // Create styled HTML email
-            $message = $this->get_employer_welcome_email_html( $first_name, $user->user_login, $profile_link, $password_reset_link );
+            // Replace variables
+            $variables = array(
+                '{first_name}'          => $first_name,
+                '{username}'            => $user->user_login,
+                '{password_reset_link}' => $password_reset_link,
+                '{profile_link}'        => $profile_link,
+            );
             
-            // Set content type to HTML
-            add_filter( 'wp_mail_content_type', function() { return 'text/html'; } );
-            wp_mail( $user->user_email, $subject, $message );
-            remove_filter( 'wp_mail_content_type', function() { return 'text/html'; } );
+            $subject = str_replace( array_keys( $variables ), array_values( $variables ), $template['subject'] );
+            $body    = str_replace( array_keys( $variables ), array_values( $variables ), $template['body'] );
+            
+            // Wrap in HTML email template
+            $message = $this->get_email_html_wrapper( $subject, $body );
+            
         } else {
-            // Jobseeker - styled HTML email
-            $subject = __( 'Welcome to OSO Jobs – Your Summer Starts Here!', 'oso-jobs-portal' );
+            // Jobseeker welcome email
             $profile_link = wp_login_url( home_url( '/job-portal/jobseeker-profile/' ) );
             
-            // Generate password reset key for jobseeker too
-            $reset_key = get_password_reset_key( $user );
-            if ( ! is_wp_error( $reset_key ) ) {
-                $password_reset_link = network_site_url( "wp-login.php?action=rp&key=$reset_key&login=" . rawurlencode( $user->user_login ), 'login' );
-            } else {
-                $password_reset_link = wp_lostpassword_url();
-            }
+            // Get template from settings
+            $template = OSO_Jobs_Email_Templates::get_template( 'jobseeker_welcome' );
             
-            // Create styled HTML email
-            $message = $this->get_jobseeker_welcome_email_html( $first_name, $user->user_login, $profile_link, $password_reset_link );
+            // Replace variables
+            $variables = array(
+                '{first_name}'          => $first_name,
+                '{username}'            => $user->user_login,
+                '{password_reset_link}' => $password_reset_link,
+                '{profile_link}'        => $profile_link,
+            );
             
-            // Set content type to HTML
-            add_filter( 'wp_mail_content_type', function() { return 'text/html'; } );
-            wp_mail( $user->user_email, $subject, $message );
-            remove_filter( 'wp_mail_content_type', function() { return 'text/html'; } );
+            $subject = str_replace( array_keys( $variables ), array_values( $variables ), $template['subject'] );
+            $body    = str_replace( array_keys( $variables ), array_values( $variables ), $template['body'] );
+            
+            // Wrap in HTML email template
+            $message = $this->get_email_html_wrapper( $subject, $body );
         }
+        
+        // Send HTML email
+        add_filter( 'wp_mail_content_type', function() { return 'text/html'; } );
+        wp_mail( $user->user_email, $subject, $message );
+        remove_filter( 'wp_mail_content_type', function() { return 'text/html'; } );
+    }
+
+    /**
+     * Wrap email content in HTML structure with purple gradient header.
+     *
+     * @param string $subject Email subject.
+     * @param string $body    Email body HTML.
+     * @return string Complete HTML email.
+     */
+    protected function get_email_html_wrapper( $subject, $body ) {
+        ob_start();
+        ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f7fa;">
+    <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f5f7fa;">
+        <tr>
+            <td style="padding: 40px 20px;">
+                <table role="presentation" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-collapse: collapse; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="padding: 50px 40px 40px; text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px 12px 0 0;">
+                            <h1 style="margin: 0 0 10px 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;"><?php echo esc_html( $subject ); ?></h1>
+                        </td>
+                    </tr>
+                    
+                    <!-- Main Content -->
+                    <tr>
+                        <td style="padding: 40px 40px 20px;">
+                            <?php echo $body; // Already escaped in template ?>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 30px 40px; background-color: #f8f9fa; border-radius: 0 0 12px 12px;">
+                            <p style="margin: 0; color: #6c757d; font-size: 13px; line-height: 1.6; text-align: center;">
+                                © <?php echo esc_html( date( 'Y' ) ); ?> OSO Jobs. All rights reserved.<br>
+                                This is an automated message, please do not reply to this email.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+        <?php
+        return ob_get_clean();
     }
     
     /**
-     * Get styled HTML email for employer welcome.
+     * Get styled HTML email for employer welcome (DEPRECATED - use template system).
      *
+     * @deprecated Use template system via OSO_Jobs_Email_Templates.
      * @param string $first_name User's first name.
      * @param string $username Username.
      * @param string $profile_link Profile URL.
@@ -752,8 +822,9 @@ class OSO_Jobs_WPForms_Handler {
     }
     
     /**
-     * Get styled HTML email for jobseeker welcome.
+     * Get styled HTML email for jobseeker welcome (DEPRECATED - use template system).
      *
+     * @deprecated Use template system via OSO_Jobs_Email_Templates.
      * @param string $first_name User's first name.
      * @param string $username Username.
      * @param string $profile_link Profile URL.
