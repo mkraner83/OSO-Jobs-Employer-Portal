@@ -1,18 +1,48 @@
 # OSO Jobs Portal - Employer Extension
 
-**Version:** 1.3.1  
-**Requires:** OSO Jobs Portal (Core Plugin) v1.0.14+  
+**Version:** 1.4.0  
+**Requires:** OSO Jobs Portal (Core Plugin) v1.1.0+  
 **WordPress Version:** 5.0 or higher
 
-## 🚀 Latest Changes (December 22-23, 2025)
+## 🚀 Latest Changes (January 5, 2026)
 
-- Project restored to December 12, 2025 session (v1.0.37-session-end)
-- Fixed: Long URLs in "Application Instructions" field now break lines and no longer overflow job details view
-- Rebuilt and pushed updated employer plugin zip with this fix
+### Email & Communication Enhancements
+- **Application Rejection Emails**: Jobseekers now receive professional email when employers click "No Thanks!"
+- **Email Template System**: Rejection emails pull from customizable admin templates
+- **Individual Template Reset**: Each email template now has its own "Reset Template" button
+- **Email Design Overhaul**: All emails now use consistent purple gradient design with proper table-based HTML
+- **WhatsApp Integration**: Added contact banner on jobseeker dashboard with OSO green (#527D80)
+
+### Application System Improvements  
+- **Unlimited Applications**: Jobseekers can now apply to unlimited jobs from different employers
+- **Duplicate Prevention**: Smart check prevents applying to the same job twice with same employer
+- **Button Label Updates**: "Approve" → "Let's Chat!", "Reject" → "No Thanks!" for friendlier UX
+
+### Template Management
+- **10 Customizable Email Templates**: All automated emails editable from admin dashboard
+- **Individual Reset Buttons**: Reset single templates without affecting others
+- **Available Variables**: Each template shows available merge tags for personalization
+- **Visual & HTML Editors**: Easy editing with WordPress rich text or raw HTML
 
 ---
 
-## 🔖 Latest Restore Point - December 12, 2025 (v1.3.1)
+## 🔖 Latest Restore Point - January 5, 2026 (v1.4.0)
+
+**Stable Release:** Email System Overhaul + Application Flow Improvements  
+**Core Plugin:** v1.1.0  
+**Employer Extension:** v1.4.0  
+**Session:** January 5, 2026
+
+### January 5, 2026 Updates
+✅ **Application Rejected Email**: New customizable template for rejection notifications  
+✅ **Unlimited Applications**: Jobseekers can apply to multiple jobs (but not duplicates)  
+✅ **Button Labels**: Friendlier "Let's Chat!" and "No Thanks!" buttons  
+✅ **WhatsApp Banner**: Integrated on jobseeker dashboard post-approval  
+✅ **Email Design**: All 10 templates now use consistent purple gradient format  
+✅ **Individual Reset**: Reset single email templates without losing other customizations  
+✅ **Template Variables**: Clear display of available merge tags for each email  
+
+## 🔖 Previous Restore Point - December 12, 2025 (v1.3.1)
 
 **Stable Release:** Complete Approval System with Inline Toggle + Color-Coded Badges  
 **Core Plugin:** v1.0.14  

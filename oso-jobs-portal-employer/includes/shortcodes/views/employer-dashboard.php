@@ -444,14 +444,14 @@ endif;
                                     data-application-id="<?php echo esc_attr( $app_id ); ?>"
                                 >
                                     <span class="dashicons dashicons-yes"></span>
-                                    <?php esc_html_e( 'Approve', 'oso-employer-portal' ); ?>
+                                    <?php esc_html_e( 'Let\'s Chat!', 'oso-employer-portal' ); ?>
                                 </button>
                                 <button 
                                     class="oso-btn oso-btn-small oso-btn-danger oso-reject-application" 
                                     data-application-id="<?php echo esc_attr( $app_id ); ?>"
                                 >
                                     <span class="dashicons dashicons-no"></span>
-                                    <?php esc_html_e( 'Reject', 'oso-employer-portal' ); ?>
+                                    <?php esc_html_e( 'No Thanks!', 'oso-employer-portal' ); ?>
                                 </button>
                             <?php elseif ( $status === 'approved' ) : ?>
                                 <button 

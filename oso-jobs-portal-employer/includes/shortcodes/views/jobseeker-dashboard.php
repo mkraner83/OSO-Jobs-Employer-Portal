@@ -68,6 +68,19 @@ $is_approved = get_post_meta( $jobseeker_post->ID, '_oso_jobseeker_approved', tr
         </a>
     </div>
 
+    <!-- WhatsApp Contact Banner -->
+    <?php if ( $is_approved ) : ?>
+        <div class="oso-whatsapp-banner">
+            <span class="dashicons dashicons-whatsapp" style="color: #527D80; font-size: 20px;"></span>
+            <span style="margin-left: 8px;">
+                <?php esc_html_e( 'Got a question about summer jobs? Contact Josh & Caleb directly on', 'oso-employer-portal' ); ?>
+                <a href="https://chat.whatsapp.com/Hnhr2AQDp3yJ106F53ilct" target="_blank" rel="noopener noreferrer" style="color: #527D80; font-weight: 600; text-decoration: underline;">
+                    <?php esc_html_e( 'WhatsApp!', 'oso-employer-portal' ); ?>
+                </a>
+            </span>
+        </div>
+    <?php endif; ?>
+
     <!-- My Applications Section -->
     <div class="oso-jobseeker-applications">
         <h3><?php esc_html_e( 'My Applications', 'oso-employer-portal' ); ?></h3>
@@ -445,18 +458,6 @@ $is_approved = get_post_meta( $jobseeker_post->ID, '_oso_jobseeker_approved', tr
         <?php endif; ?>
     </div>
 
-    <!-- WhatsApp Contact Banner -->
-    <?php if ( $is_approved ) : ?>
-        <div class="oso-whatsapp-banner">
-            <span class="dashicons dashicons-whatsapp" style="color: #25D366; font-size: 20px;"></span>
-            <span style="margin-left: 8px;">
-                <?php esc_html_e( 'Got a question about summer jobs? Contact Josh & Caleb directly on', 'oso-employer-portal' ); ?>
-                <a href="https://chat.whatsapp.com/Hnhr2AQDp3yJ106F53ilct" target="_blank" rel="noopener noreferrer" style="color: #25D366; font-weight: 600; text-decoration: underline;">
-                    <?php esc_html_e( 'WhatsApp!', 'oso-employer-portal' ); ?>
-                </a>
-            </span>
-        </div>
-    <?php endif; ?>
 
     <!-- Jobseeker Profile Section -->
     <div class="oso-profile-section">

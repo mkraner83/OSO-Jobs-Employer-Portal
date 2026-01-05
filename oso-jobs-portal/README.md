@@ -2,19 +2,44 @@
 
 WordPress plugin for managing job postings, employer profiles, and jobseeker profiles for OSO Jobs.
 
-## Current Version: 1.0.14
+## Current Version: 1.1.0
 
-## 🚀 Latest Changes (December 22-23, 2025)
+## 🚀 Latest Changes (January 5, 2026)
 
-- Project restored to December 12, 2025 session (v1.0.37-session-end)
-- Employer plugin: Fixed long URLs in "Application Instructions" field to break lines and not overflow job details view
-- Rebuilt and pushed updated employer plugin zip with this fix
+### Email Template System Enhancements
+- **10 Customizable Templates**: All automated emails now editable from OSO Tools → Email Templates
+- **Individual Reset Buttons**: Reset single templates to default without affecting others  
+- **Application Rejected Template**: New professional email template for rejection notifications
+- **Consistent Design**: All emails now use purple gradient header with table-based HTML structure
+- **Available Variables**: Each template displays merge tags for easy personalization
+- **Visual & HTML Editors**: Edit with WordPress rich text editor or raw HTML
+- **WhatsApp Integration**: Jobseeker welcome email includes WhatsApp group link (#527D80 green)
+
+### Email Templates Available
+1. Employer Welcome Email
+2. Jobseeker Welcome Email
+3. Jobseeker Profile Approved
+4. New Application (Employer)
+5. Application Approved (Jobseeker)
+6. Application Approved (Admin)
+7. **Application Rejected (Jobseeker)** - NEW
+8. Application Cancelled (Jobseeker)
+9. Application Cancelled (Employer)
+10. Employer Interest Notification
 
 ---
 
 ## Version History
 
-### December 12, 2025 - Jobseeker Approval System
+### January 5, 2026 - Email System Overhaul (v1.1.0)
+- Added "Application Rejected (Jobseeker)" email template
+- Individual "Reset Template" button for each email (no longer resets all)
+- Updated Employer and Jobseeker welcome emails to proper table-based format
+- All templates now use consistent purple gradient design
+- Email variables displayed above each template editor
+- WhatsApp integration in jobseeker welcome with OSO green color
+
+### December 12, 2025 - Jobseeker Approval System (v1.0.14)
 
 #### Complete Approval Workflow
 - **Admin Approval Controls**: Checkbox on jobseeker edit screen to approve/unapprove users

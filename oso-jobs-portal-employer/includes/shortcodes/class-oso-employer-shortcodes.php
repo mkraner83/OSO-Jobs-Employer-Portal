@@ -1109,7 +1109,7 @@ class OSO_Employer_Shortcodes {
             wp_send_json_error( array( 'message' => __( 'Your account is pending approval. You will be able to apply for jobs once approved.', 'oso-employer-portal' ) ) );
         }
 
-        // Check for duplicate application
+        // Check for duplicate application to the same job
         $existing = get_posts( array(
             'post_type'      => 'oso_job_application',
             'post_status'    => 'any',
@@ -1302,6 +1302,11 @@ class OSO_Employer_Shortcodes {
                 $available = (int) get_post_meta( $job_id, '_oso_job_positions_available', true );
                 update_post_meta( $job_id, '_oso_job_positions_available', $available + 1 );
             }
+            
+            // Send rejection notification
+            if ( $status === 'rejected' && $old_status !== 'rejected' ) {
+                $this->send_rejection_notification( $application_id );
+            }
         }
 
         wp_send_json_success( array( 'message' => __( 'Application status updated.', 'oso-employer-portal' ) ) );
@@ -1379,6 +1384,61 @@ class OSO_Employer_Shortcodes {
                 $contact_info,
                 $job_start_date ? sprintf( "\nStart Date: %s", date_i18n( 'F j, Y', strtotime( $job_start_date ) ) ) : '',
                 home_url( '/job-portal/jobseeker-dashboard/' )
+            );
+        }
+
+        $headers = array( 'Content-Type: text/html; charset=UTF-8' );
+        wp_mail( $jobseeker_user->user_email, $subject, $message, $headers );
+    }
+
+    /**
+     * Send email notification to jobseeker when application is rejected.
+     *
+     * @param int $application_id Application post ID.
+     */
+    private function send_rejection_notification( $application_id ) {
+        $job_id = get_post_meta( $application_id, '_oso_application_job_id', true );
+        $jobseeker_id = get_post_meta( $application_id, '_oso_application_jobseeker_id', true );
+        $employer_id = get_post_meta( $application_id, '_oso_application_employer_id', true );
+
+        // Get jobseeker email
+        $jobseeker_user_id = get_post_meta( $jobseeker_id, '_oso_jobseeker_user_id', true );
+        $jobseeker_user = get_userdata( $jobseeker_user_id );
+        
+        if ( ! $jobseeker_user ) {
+            return;
+        }
+
+        // Get data for email
+        $job_title = get_the_title( $job_id );
+        $jobseeker_name = get_the_title( $jobseeker_id );
+        $camp_name = get_post_meta( $employer_id, '_oso_employer_company', true );
+        $dashboard_url = home_url( '/job-portal/jobseeker-dashboard/' );
+
+        // Load email template settings
+        require_once OSO_JOBS_PORTAL_DIR . 'includes/settings/class-oso-jobs-email-templates.php';
+        $template = OSO_Jobs_Email_Templates::get_template( 'application_rejected_jobseeker' );
+        
+        if ( $template ) {
+            // Prepare variables
+            $variables = array(
+                '{jobseeker_name}' => $jobseeker_name,
+                '{job_title}'      => $job_title,
+                '{camp_name}'      => $camp_name,
+                '{dashboard_url}'  => $dashboard_url,
+            );
+            
+            // Replace variables in subject and body
+            $subject = str_replace( array_keys( $variables ), array_values( $variables ), $template['subject'] );
+            $message = str_replace( array_keys( $variables ), array_values( $variables ), $template['body'] );
+        } else {
+            // Fallback if template not found
+            $subject = sprintf( __( 'Update from %s', 'oso-employer-portal' ), $camp_name );
+            $message = sprintf(
+                __( "Hi %s,\n\nThanks so much for expressing interest in the %s role at %s.\n\nUnfortunately, they don't have a position available for you at this time. That said, this is just one opportunity — and there are plenty more waiting for you on OSO.\n\nWe encourage you to keep exploring jobs, updating your profile, and connecting with other camps that might be the perfect fit.\n\nYou've got this 💛\n\nThe OSO Team", 'oso-employer-portal' ),
+                $jobseeker_name,
+                $job_title,
+                $camp_name
             );
         }
 

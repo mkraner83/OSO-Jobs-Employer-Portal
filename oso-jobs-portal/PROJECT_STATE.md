@@ -1,14 +1,15 @@
 # Project State - OSO Jobs Portal Core Plugin
 
-**Date:** December 23, 2025
+**Date:** January 5, 2026
 
 ## Current Version
-- Core Plugin: v1.0.14
+- Core Plugin: v1.1.0
 
 ## Latest State
-- Restored to December 12, 2025 session (v1.0.37-session-end)
-- All features from last stable session are present and working
-- Employer plugin updated and compatible
+- Email template system completely overhauled with table-based HTML
+- Individual template reset functionality implemented
+- All 10 email templates now use consistent purple gradient design
+- Session: session-2026-01-05-email-system-overhaul
 
 ## Key Features
 - Job Posting Management
@@ -19,8 +20,10 @@
 - Color-Coded Status Badges
 - Access Restrictions
 - File Uploads & Media Library Integration
-- Styled HTML Emails
+- Styled HTML Emails with Table-Based Design
 - Duplicate Email Prevention
+- Individual Email Template Reset Functionality
+- 10 Customizable Email Templates with Purple Gradient Design
 
 ## Known Issues
-- None currently reported after restore
+- None currently reported

@@ -175,6 +175,17 @@ class OSO_Jobs_Email_Templates {
                 ),
                 'description' => 'Sent to site admin when an employer approves an application',
             ),
+            'application_rejected_jobseeker' => array(
+                'subject' => 'Update from {camp_name}',
+                'body'    => self::get_application_rejected_jobseeker_default_body(),
+                'variables' => array(
+                    '{jobseeker_name}' => 'Job seeker\'s full name',
+                    '{job_title}' => 'Job position title',
+                    '{camp_name}' => 'Employer/Camp name',
+                    '{dashboard_url}' => 'Link to jobseeker dashboard',
+                ),
+                'description' => 'Sent to jobseeker when their application is rejected by employer',
+            ),
             'application_cancelled_jobseeker' => array(
                 'subject' => 'Application Cancelled - {job_title}',
                 'body'    => self::get_application_cancelled_jobseeker_default_body(),
@@ -374,6 +385,20 @@ class OSO_Jobs_Email_Templates {
      * Render the email templates settings page.
      */
     public static function render_page() {
+        // Handle individual template reset
+        if ( isset( $_POST['oso_reset_single_template'] ) && isset( $_POST['template_key'] ) && check_admin_referer( 'oso_email_template_reset_single' ) ) {
+            $template_key = sanitize_text_field( wp_unslash( $_POST['template_key'] ) );
+            $saved_templates = get_option( self::OPTION_NAME, array() );
+            $defaults = self::get_default_templates();
+            
+            if ( isset( $defaults[ $template_key ] ) ) {
+                // Remove this specific template from saved options (it will use default)
+                unset( $saved_templates[ $template_key ] );
+                update_option( self::OPTION_NAME, $saved_templates );
+                echo '<div class="notice notice-success is-dismissible"><p>' . sprintf( esc_html__( '%s reset to default successfully!', 'oso-jobs-portal' ), esc_html( self::get_template_title( $template_key ) ) ) . '</p></div>';
+            }
+        }
+        
         // Handle reset to defaults
         if ( isset( $_POST['oso_reset_email_templates'] ) && check_admin_referer( 'oso_email_templates_reset' ) ) {
             delete_option( self::OPTION_NAME );
@@ -399,10 +424,17 @@ class OSO_Jobs_Email_Templates {
                 <div class="oso-email-templates">
                     <?php foreach ( $templates as $key => $template ) : ?>
                         <div class="oso-email-template postbox" style="margin-top: 20px;">
-                            <div class="postbox-header">
-                                <h2 class="hndle">
+                            <div class="postbox-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <h2 class="hndle" style="margin: 0;">
                                     <?php echo esc_html( self::get_template_title( $key ) ); ?>
                                 </h2>
+                                <form method="post" action="" style="margin: 0; padding: 0 12px;" onsubmit="return confirm('Are you sure you want to reset this template to its default? This will overwrite any customizations you have made to this template.');">
+                                    <?php wp_nonce_field( 'oso_email_template_reset_single' ); ?>
+                                    <input type="hidden" name="template_key" value="<?php echo esc_attr( $key ); ?>" />
+                                    <button type="submit" name="oso_reset_single_template" class="button button-small" style="margin: 0;">
+                                        <?php esc_html_e( 'Reset Template', 'oso-jobs-portal' ); ?>
+                                    </button>
+                                </form>
                             </div>
                             <div class="inside">
                                 <?php if ( ! empty( $template['description'] ) ) : ?>
@@ -1014,61 +1046,69 @@ class OSO_Jobs_Email_Templates {
      */
     private static function get_employer_welcome_default_body() {
         return <<<'HTML'
-            <p style="margin: 0 0 25px 0; color: #2d3748; font-size: 18px; line-height: 1.7; font-weight: 500;">Hi {first_name}, we are so excited you're here!</p>
-            
-            <p style="margin: 0 0 20px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                We're Josh and Caleb, the co-founders of OSO. We both started working at summer camps back in 2012 when we were 19, and it pretty much changed the whole trajectory of our lives. We found confidence, community, mentors, best friends, and career paths we didn't even know existed.
-            </p>
-            
-            <p style="margin: 0 0 35px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                We built OSO so camps like yours can connect with thousands of motivated, talented job seekers who are ready to make this summer count. Our platform makes it easier than ever to post jobs, review applicants, and find the right people to join your team this summer.
-            </p>
-            
-            <h2 style="margin: 0 0 25px 0; color: #2d3748; font-size: 26px; font-weight: 700; text-align: center;">What's Next?</h2>
-            
-            <p style="margin: 0 0 10px 0; color: #2d3748; font-size: 18px; line-height: 1.7; text-align: center; font-weight: 600;">
-                Complete Your Profile. Post Jobs. Find Great Staff!
-            </p>
-            
-            <p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7; text-align: center; font-style: italic;">
-                It's really that simple.
-            </p>
-            
-            <p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                If you ever have questions about posting jobs, reviewing applicants, or just want advice on hiring, you can reach out to us directly. We're here to help you build the best team possible.
-            </p>
-            
-            <table role="presentation" style="width: 100%; border-collapse: collapse; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 35px;">
-                <tr>
-                    <td style="padding: 30px;">
-                        <h3 style="margin: 0 0 20px 0; color: #667eea; font-size: 18px; font-weight: 700;">Your Account Details</h3>
-                        <p style="margin: 0 0 15px 0; color: #2d3748; font-size: 15px; line-height: 1.6;">
-                            <strong style="color: #4a5568;">Username:</strong> {username}
-                        </p>
-                        <p style="margin: 0; color: #2d3748; font-size: 15px; line-height: 1.6;">
-                            <strong style="color: #4a5568;">To set your password, visit the following address:</strong><br>
-                            <a href="{password_reset_link}" style="color: #667eea; text-decoration: none; word-break: break-all; font-weight: 500;">{password_reset_link}</a>
-                        </p>
-                    </td>
-                </tr>
-            </table>
-            
-            <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 35px;">
-                <tr>
-                    <td style="text-align: center;">
-                        <a href="{profile_link}" style="display: inline-block; padding: 16px 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);">Get Started</a>
-                    </td>
-                </tr>
-            </table>
-            
-            <p style="margin: 0 0 25px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                Thank You! We can't wait to help you find amazing staff this summer.
-            </p>
-            
-            <p style="margin: 0 0 5px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                <strong>Josh & Caleb</strong><br>
-                Co-Founders, OSO
-            </p>
+&nbsp;
+<table style="width: 100%; border-collapse: collapse;" role="presentation">
+<tbody>
+<tr>
+<td style="padding: 40px 20px;">
+<table style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden;" role="presentation">
+<tbody>
+<!-- Header -->
+<tr>
+<td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+<h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">Welcome to OSO!</h1>
+<p style="margin: 10px 0 0 0; color: #ffffff; font-size: 16px; opacity: 0.95;">Your Employer Account is Ready</p>
+</td>
+</tr>
+<!-- Content -->
+<tr>
+<td style="padding: 40px 30px;">
+<p style="margin: 0 0 25px 0; color: #2d3748; font-size: 18px; line-height: 1.7; font-weight: 500;">Hi {first_name}, we are so excited you're here!</p>
+<p style="margin: 0 0 20px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">We're Josh and Caleb, the co-founders of OSO. We both started working at summer camps back in 2012 when we were 19, and it pretty much changed the whole trajectory of our lives. We found confidence, community, mentors, best friends, and career paths we didn't even know existed.</p>
+<p style="margin: 0 0 35px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">We built OSO so camps like yours can connect with thousands of motivated, talented job seekers who are ready to make this summer count. Our platform makes it easier than ever to post jobs, review applicants, and find the right people to join your team this summer.</p>
+
+<h2 style="margin: 0 0 25px 0; color: #2d3748; font-size: 26px; font-weight: bold; text-align: center;">What's Next?</h2>
+<p style="margin: 0 0 10px 0; color: #2d3748; font-size: 18px; line-height: 1.7; text-align: center; font-weight: 600;">Complete Your Profile. Post Jobs. Find Great Staff!</p>
+<p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7; text-align: center; font-style: italic;">It's really that simple.</p>
+<p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">If you ever have questions about posting jobs, reviewing applicants, or just want advice on hiring, you can reach out to us directly. We're here to help you build the best team possible.</p>
+
+<table style="width: 100%; border-collapse: collapse; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 35px;" role="presentation">
+<tbody>
+<tr>
+<td style="padding: 30px;">
+<h3 style="margin: 0 0 20px 0; color: #667eea; font-size: 18px; font-weight: bold;">Your Account Details</h3>
+<p style="margin: 0 0 15px 0; color: #2d3748; font-size: 15px; line-height: 1.6;"><strong style="color: #4a5568;">Username:</strong> {username}</p>
+<p style="margin: 0; color: #2d3748; font-size: 15px; line-height: 1.6;"><strong style="color: #4a5568;">To set your password, visit the following address:</strong>
+<a style="color: #667eea; text-decoration: none; font-weight: 500;" href="{password_reset_link}">{password_reset_link}</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 35px;" role="presentation">
+<tbody>
+<tr>
+<td style="text-align: center;"><a style="padding: 16px 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block;" href="{profile_link}">Get Started</a></td>
+</tr>
+</tbody>
+</table>
+<p style="margin: 0 0 25px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">Thank You! We can't wait to help you find amazing staff this summer.</p>
+<p style="margin: 0 0 5px 0; color: #4a5568; font-size: 16px; line-height: 1.7;"><strong>Josh &amp; Caleb</strong>
+Co-Founders, OSO</p>
+</td>
+</tr>
+<!-- Footer -->
+<tr>
+<td style="background-color: #f8f9fa; padding: 25px 30px; text-align: center; border-top: 1px solid #e0e0e0;">
+<p style="margin: 0; color: #999999; font-size: 13px;">This is an automated message from OSO Jobs</p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+&nbsp;
 HTML;
     }
 
@@ -1079,69 +1119,133 @@ HTML;
      */
     private static function get_jobseeker_welcome_default_body() {
         return <<<'HTML'
-            <p style="margin: 0 0 25px 0; color: #2d3748; font-size: 18px; line-height: 1.7; font-weight: 500;">Hi {first_name} we are so excited you're here!</p>
-            
-            <p style="margin: 0 0 20px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                We're Josh and Caleb, the co-founders of OSO. We both started working at summer camps back in 2012 when we were 19, and it pretty much changed the whole trajectory of our lives. We found confidence, community, mentors, best friends, and career paths we didn't even know existed.
-            </p>
-            
-            <p style="margin: 0 0 35px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                We built OSO so you can have that same shot at a summer that actually means something. Now that you've joined, you can instantly connect with camps across the country who are hiring for roles in sports, arts, waterfront, adventure, media, counseling, and more. Our hope is that OSO helps you find a job that feels exciting, supportive, and full of growth, not just another thing to fill your summer.
-            </p>
-            
-            <h2 style="margin: 0 0 25px 0; color: #2d3748; font-size: 26px; font-weight: 700; text-align: center;">What's Next?</h2>
-            
-            <p style="margin: 0 0 10px 0; color: #2d3748; font-size: 18px; line-height: 1.7; text-align: center; font-weight: 600;">
-                Create A Profile. Search Jobs. Get Hired!
-            </p>
-            
-            <p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7; text-align: center; font-style: italic;">
-                It's really that simple.
-            </p>
-            
-            <p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                And you're not doing this alone. If you ever have questions about getting hired, choosing a camp, interviews, or just want honest advice, you can talk to us directly. Join our WhatsApp group here:
-            </p>
-            
-            <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 35px;">
-                <tr>
-                    <td style="text-align: center;">
-                        <a href="https://chat.whatsapp.com/EQasmhOEsE92AvWyJDbWZX" style="display: inline-block; padding: 16px 48px; background: #25D366; color: #ffffff; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(37, 211, 102, 0.25);">📱 WhatsApp</a>
-                    </td>
-                </tr>
-            </table>
-            
-            <table role="presentation" style="width: 100%; border-collapse: collapse; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 35px;">
-                <tr>
-                    <td style="padding: 30px;">
-                        <h3 style="margin: 0 0 20px 0; color: #667eea; font-size: 18px; font-weight: 700;">Your Account Details</h3>
-                        <p style="margin: 0 0 15px 0; color: #2d3748; font-size: 15px; line-height: 1.6;">
-                            <strong style="color: #4a5568;">Username:</strong> {username}
-                        </p>
-                        <p style="margin: 0; color: #2d3748; font-size: 15px; line-height: 1.6;">
-                            <strong style="color: #4a5568;">To set your password, visit the following address:</strong><br>
-                            <a href="{password_reset_link}" style="color: #667eea; text-decoration: none; word-break: break-all; font-weight: 500;">{password_reset_link}</a>
-                        </p>
-                    </td>
-                </tr>
-            </table>
-            
-            <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 35px;">
-                <tr>
-                    <td style="text-align: center;">
-                        <a href="{profile_link}" style="display: inline-block; padding: 16px 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);">Get Started</a>
-                    </td>
-                </tr>
-            </table>
-            
-            <p style="margin: 0 0 25px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                Thank You! We can't wait to see where your summer takes you.
-            </p>
-            
-            <p style="margin: 0 0 5px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                <strong>Josh & Caleb</strong><br>
-                Co-Founders, OSO
-            </p>
+&nbsp;
+<table style="width: 100%; border-collapse: collapse;" role="presentation">
+<tbody>
+<tr>
+<td style="padding: 40px 20px;">
+<table style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden;" role="presentation">
+<tbody>
+<!-- Header -->
+<tr>
+<td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+<h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">Welcome to OSO!</h1>
+<p style="margin: 10px 0 0 0; color: #ffffff; font-size: 16px; opacity: 0.95;">Your Summer Starts Here</p>
+</td>
+</tr>
+<!-- Content -->
+<tr>
+<td style="padding: 40px 30px;">
+<p style="margin: 0 0 25px 0; color: #2d3748; font-size: 18px; line-height: 1.7; font-weight: 500;">Hi {first_name} we are so excited you're here!</p>
+<p style="margin: 0 0 20px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">We're Josh and Caleb, the co-founders of OSO. We both started working at summer camps back in 2012 when we were 19, and it pretty much changed the whole trajectory of our lives. We found confidence, community, mentors, best friends, and career paths we didn't even know existed.</p>
+<p style="margin: 0 0 35px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">We built OSO so you can have that same shot at a summer that actually means something. Now that you've joined, you can instantly connect with camps across the country who are hiring for roles in sports, arts, waterfront, adventure, media, counseling, and more. Our hope is that OSO helps you find a job that feels exciting, supportive, and full of growth, not just another thing to fill your summer.</p>
+
+<h2 style="margin: 0 0 25px 0; color: #2d3748; font-size: 26px; font-weight: bold; text-align: center;">What's Next?</h2>
+<p style="margin: 0 0 10px 0; color: #2d3748; font-size: 18px; line-height: 1.7; text-align: center; font-weight: 600;">Create A Profile. Search Jobs. Get Hired!</p>
+<p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7; text-align: center; font-style: italic;">It's really that simple.</p>
+<p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">And you're not doing this alone. If you ever have questions about getting hired, choosing a camp, interviews, or just want honest advice, you can talk to us directly. Join our WhatsApp group here:</p>
+
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 35px;" role="presentation">
+<tbody>
+<tr>
+<td style="text-align: center;"><a style="padding: 16px 48px; background: #527D80; color: #ffffff; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block;" href="https://chat.whatsapp.com/EQasmhOEsE92AvWyJDbWZX">📱 WhatsApp</a></td>
+</tr>
+</tbody>
+</table>
+<table style="width: 100%; border-collapse: collapse; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 35px;" role="presentation">
+<tbody>
+<tr>
+<td style="padding: 30px;">
+<h3 style="margin: 0 0 20px 0; color: #667eea; font-size: 18px; font-weight: bold;">Your Account Details</h3>
+<p style="margin: 0 0 15px 0; color: #2d3748; font-size: 15px; line-height: 1.6;"><strong style="color: #4a5568;">Username:</strong> {username}</p>
+<p style="margin: 0; color: #2d3748; font-size: 15px; line-height: 1.6;"><strong style="color: #4a5568;">To set your password, visit the following address:</strong>
+<a style="color: #667eea; text-decoration: none; font-weight: 500;" href="{password_reset_link}">{password_reset_link}</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 35px;" role="presentation">
+<tbody>
+<tr>
+<td style="text-align: center;"><a style="padding: 16px 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block;" href="{profile_link}">Get Started</a></td>
+</tr>
+</tbody>
+</table>
+<p style="margin: 0 0 25px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">Thank You! We can't wait to see where your summer takes you.</p>
+<p style="margin: 0 0 5px 0; color: #4a5568; font-size: 16px; line-height: 1.7;"><strong>Josh &amp; Caleb</strong>
+Co-Founders, OSO</p>
+</td>
+</tr>
+<!-- Footer -->
+<tr>
+<td style="background-color: #f8f9fa; padding: 25px 30px; text-align: center; border-top: 1px solid #e0e0e0;">
+<p style="margin: 0; color: #999999; font-size: 13px;">This is an automated message from OSO Jobs</p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+&nbsp;
+HTML;
+    }
+
+    /**
+     * Get default body for application rejected jobseeker email.
+     *
+     * @return string Default email body HTML.
+     */
+    private static function get_application_rejected_jobseeker_default_body() {
+        return <<<'HTML'
+&nbsp;
+<table style="width: 100%; border-collapse: collapse;" role="presentation">
+<tbody>
+<tr>
+<td style="padding: 40px 20px;">
+<table style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden;" role="presentation">
+<tbody>
+<!-- Header -->
+<tr>
+<td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+<h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 600;">Update from {camp_name}</h1>
+<p style="margin: 10px 0 0 0; color: #ffffff; font-size: 16px; opacity: 0.95;">About the {job_title} role</p>
+</td>
+</tr>
+<!-- Content -->
+<tr>
+<td style="padding: 40px 30px;">
+<p style="margin: 0 0 20px 0; color: #333333; font-size: 16px; line-height: 1.6;">Hi {jobseeker_name},</p>
+<p style="margin: 0 0 25px 0; color: #333333; font-size: 16px; line-height: 1.6;">Thanks so much for expressing interest in the {job_title} role at {camp_name}.</p>
+<p style="margin: 0 0 25px 0; color: #333333; font-size: 16px; line-height: 1.6;">Unfortunately, they don't have a position available for you at this time. That said, this is just one opportunity — and there are plenty more waiting for you on OSO.</p>
+<!-- Encouragement Box -->
+<div style="background: #fff9e6; border: 2px solid #ffd700; padding: 20px; margin: 0 0 30px 0; border-radius: 8px;">
+<h4 style="margin: 0 0 12px 0; color: #333333; font-size: 16px; font-weight: 600;">Keep Going!</h4>
+<p style="margin: 0 0 12px 0; color: #666666; font-size: 15px; line-height: 1.6;">We encourage you to keep exploring jobs, updating your profile, and connecting with other camps that might be the perfect fit.</p>
+<p style="margin: 0; color: #666666; font-size: 15px; line-height: 1.6;">More connections = more options. Your summer job is out there!</p>
+</div>
+<!-- CTA Button -->
+<div style="text-align: center; margin: 0 0 25px 0;"><a style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 6px; font-size: 16px; font-weight: 600; display: inline-block;" href="{dashboard_url}">
+Browse More Jobs
+</a></div>
+<p style="margin: 0; color: #666666; font-size: 14px; line-height: 1.6; text-align: center;">You've got this 💛</p>
+<p style="margin: 10px 0 0 0; color: #666666; font-size: 14px; line-height: 1.6; text-align: center;"><strong>The OSO Team</strong></p>
+</td>
+</tr>
+<!-- Footer -->
+<tr>
+<td style="background-color: #f8f9fa; padding: 25px 30px; text-align: center; border-top: 1px solid #e0e0e0;">
+<p style="margin: 0; color: #999999; font-size: 13px;">This is an automated message from OSO Jobs</p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+&nbsp;
 HTML;
     }
 
@@ -1159,6 +1263,7 @@ HTML;
             'new_application_employer'        => __( 'New Application Notification (Employer)', 'oso-jobs-portal' ),
             'application_approved_jobseeker'  => __( 'Application Approved (Jobseeker)', 'oso-jobs-portal' ),
             'application_approved_admin'      => __( 'Application Approved (Admin)', 'oso-jobs-portal' ),
+            'application_rejected_jobseeker'  => __( 'Application Rejected (Jobseeker)', 'oso-jobs-portal' ),
             'application_cancelled_jobseeker' => __( 'Application Cancelled (Jobseeker)', 'oso-jobs-portal' ),
             'application_cancelled_employer'  => __( 'Application Cancelled (Employer)', 'oso-jobs-portal' ),
             'employer_interest_jobseeker'     => __( 'Employer Interest Notification (Jobseeker)', 'oso-jobs-portal' ),
