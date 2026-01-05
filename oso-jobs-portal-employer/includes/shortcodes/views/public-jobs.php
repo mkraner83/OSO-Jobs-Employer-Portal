@@ -162,15 +162,15 @@ $jobs_query = new WP_Query( $args );
                         <option value="title" <?php selected( $sort, 'title' ); ?>><?php esc_html_e( 'Title A-Z', 'oso-employer-portal' ); ?></option>
                     </select>
                 </div>
-
-                <div class="oso-filter-actions">
-                    <button type="submit" class="oso-btn oso-btn-primary">
-                        <?php esc_html_e( 'Apply Filters', 'oso-employer-portal' ); ?>
-                    </button>
-                    <a href="<?php echo esc_url( strtok( $_SERVER['REQUEST_URI'], '?' ) ); ?>" class="oso-btn oso-btn-secondary">
-                        <?php esc_html_e( 'Clear', 'oso-employer-portal' ); ?>
-                    </a>
-                </div>
+            </div>
+            
+            <div class="oso-filter-actions">
+                <button type="submit" class="oso-btn oso-btn-primary">
+                    <?php esc_html_e( 'Apply Filters', 'oso-employer-portal' ); ?>
+                </button>
+                <a href="<?php echo esc_url( strtok( $_SERVER['REQUEST_URI'], '?' ) ); ?>" class="oso-btn oso-btn-secondary">
+                    <?php esc_html_e( 'Clear', 'oso-employer-portal' ); ?>
+                </a>
             </div>
         </form>
     </div>
@@ -275,7 +275,7 @@ $jobs_query = new WP_Query( $args );
                                     <a href="<?php echo esc_url( wp_login_url( get_permalink() ) ); ?>" class="oso-btn oso-btn-primary oso-btn-small">
                                         <?php esc_html_e( 'Login', 'oso-employer-portal' ); ?>
                                     </a>
-                                    <a href="<?php echo esc_url( wp_registration_url() ); ?>" class="oso-btn oso-btn-green oso-btn-small">
+                                    <a href="https://osojobs.com/job-portal/jobseeker-registration/" class="oso-btn oso-btn-green oso-btn-small">
                                         <?php esc_html_e( 'Register', 'oso-employer-portal' ); ?>
                                     </a>
                                 </div>
