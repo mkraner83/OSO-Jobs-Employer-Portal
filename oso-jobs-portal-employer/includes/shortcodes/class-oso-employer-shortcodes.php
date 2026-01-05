@@ -1483,13 +1483,6 @@ class OSO_Employer_Shortcodes {
 
         $headers = array( 'Content-Type: text/html; charset=UTF-8' );
         wp_mail( $admin_email, $subject, $message, $headers );
-            $application_date ? date_i18n( 'F j, Y', strtotime( $application_date ) ) : 'Unknown',
-            current_time( 'F j, Y' ),
-            $message_content,
-            admin_url( 'edit.php?post_type=oso_job_application' )
-        );
-
-        wp_mail( $admin_email, $subject, $message );
     }
 
     /**
