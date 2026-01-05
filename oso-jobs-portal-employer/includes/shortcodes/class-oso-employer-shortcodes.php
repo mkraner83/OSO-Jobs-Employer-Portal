@@ -42,6 +42,7 @@ class OSO_Employer_Shortcodes {
         add_shortcode( 'oso_employer_add_job', array( $this, 'shortcode_employer_add_job' ) );
         add_shortcode( 'oso_job_browser', array( $this, 'shortcode_job_browser' ) );
         add_shortcode( 'oso_public_jobs', array( $this, 'shortcode_public_jobs' ) );
+        add_shortcode( 'oso_public_camps', array( $this, 'shortcode_public_camps' ) );
         add_shortcode( 'oso_job_details', array( $this, 'shortcode_job_details' ) );
         add_shortcode( 'oso_jobseeker_browser', array( $this, 'shortcode_jobseeker_browser' ) );
         add_shortcode( 'oso_jobseeker_profile', array( $this, 'shortcode_jobseeker_profile' ) );
@@ -1056,6 +1057,15 @@ class OSO_Employer_Shortcodes {
      */
     public function shortcode_public_jobs() {
         return $this->load_template( 'public-jobs.php' );
+    }
+
+    /**
+     * Public Camps Shortcode - Public camp/employer listings (no contact info for unregistered users).
+     *
+     * @return string
+     */
+    public function shortcode_public_camps() {
+        return $this->load_template( 'public-camps.php' );
     }
 
     /**

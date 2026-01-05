@@ -3503,3 +3503,284 @@
         width: 100%;
     }
 }
+
+/* ========================================
+   Public Camps Listing (No Login Required)
+   ======================================== */
+
+.oso-public-camps {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.oso-public-camps-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: #fff;
+}
+
+.oso-public-camps-header h2 {
+    margin: 0 0 10px 0;
+    font-size: 2.5em;
+    font-weight: 600;
+    color: #fff;
+}
+
+.oso-public-camps-subtitle {
+    margin: 0;
+    font-size: 1.2em;
+    opacity: 0.95;
+}
+
+.oso-public-camps-filters {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.oso-public-camps-count {
+    margin-bottom: 20px;
+    color: #666;
+    font-size: 1.05em;
+}
+
+.oso-public-camps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.oso-public-camp-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.oso-public-camp-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 25px rgba(102, 126, 234, 0.2);
+}
+
+.oso-camp-card-header {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.oso-camp-logo {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.oso-camp-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.oso-camp-header-text {
+    flex: 1;
+}
+
+.oso-camp-name {
+    margin: 0 0 8px 0;
+    font-size: 1.3em;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.oso-camp-location {
+    margin: 0;
+    color: #667eea;
+    font-size: 1em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.oso-camp-location .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.oso-camp-card-description {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.oso-camp-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 15px;
+}
+
+.oso-camp-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    font-size: 0.95em;
+    padding: 10px 12px;
+    background: #f8f9fa;
+}
+
+.oso-camp-meta-item .dashicons {
+    color: #667eea;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.oso-camp-contact-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.oso-camp-contact-info h4 {
+    margin: 0 0 12px 0;
+    font-size: 1em;
+    color: #2c3e50;
+}
+
+.oso-camp-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    color: #666;
+    font-size: 0.95em;
+}
+
+.oso-camp-contact-item a {
+    color: #667eea;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.oso-camp-contact-item a:hover {
+    color: #764ba2;
+}
+
+.oso-camp-contact-item .dashicons {
+    color: #667eea;
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+.oso-camp-login-prompt {
+    text-align: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.oso-camp-login-prompt p {
+    margin: 0 0 12px 0;
+    color: #666;
+    font-size: 0.95em;
+}
+
+.oso-camp-login-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.oso-camp-card-footer {
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.oso-camp-card-footer .oso-btn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+}
+
+.oso-no-camps {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.oso-no-camps-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.oso-no-camps-icon .dashicons {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: #fff;
+}
+
+.oso-no-camps h3 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+    font-size: 1.8em;
+}
+
+.oso-no-camps p {
+    margin: 0;
+    color: #666;
+    font-size: 1.1em;
+}
+
+/* Responsive - Public Camps */
+@media (max-width: 768px) {
+    .oso-public-camps-header h2 {
+        font-size: 2em;
+    }
+    
+    .oso-public-camps-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .oso-camp-login-buttons {
+        flex-direction: column;
+    }
+    
+    .oso-camp-login-buttons .oso-btn {
+        width: 100%;
+    }
+}
