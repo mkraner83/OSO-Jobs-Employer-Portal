@@ -244,7 +244,7 @@ $is_logged_in = is_user_logged_in();
                                 <a href="<?php echo esc_url( wp_login_url( get_permalink() ) ); ?>" class="oso-btn oso-btn-primary oso-btn-small">
                                     <?php esc_html_e( 'Login', 'oso-employer-portal' ); ?>
                                 </a>
-                                <a href="https://osojobs.com/job-portal/jobseeker-registration/" class="oso-btn oso-btn-green oso-btn-small">
+                                <a href="https://osojobs.com/job-portal/" class="oso-btn oso-btn-green oso-btn-small">
                                     <?php esc_html_e( 'Register', 'oso-employer-portal' ); ?>
                                 </a>
                             </div>
