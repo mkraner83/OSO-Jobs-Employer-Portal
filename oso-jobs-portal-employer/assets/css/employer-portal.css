@@ -314,7 +314,7 @@
 }
 
 .oso-filter-row-controls {
-    grid-template-columns: 220px 160px 200px 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1.3fr;
     gap: 20px;
 }
 
