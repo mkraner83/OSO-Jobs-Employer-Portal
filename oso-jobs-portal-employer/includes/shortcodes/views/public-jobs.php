@@ -193,14 +193,22 @@ $jobs_query = new WP_Query( $args );
                 $end_date = get_post_meta( $job_id, '_oso_job_end_date', true );
                 $compensation = get_post_meta( $job_id, '_oso_job_compensation', true );
                 $description = get_post_meta( $job_id, '_oso_job_description', true );
+                $employer_logo = $employer_id ? get_post_meta( $employer_id, '_oso_employer_logo', true ) : '';
                 ?>
 
                 <div class="oso-public-job-card">
                     <div class="oso-job-card-header">
-                        <h3 class="oso-job-title"><?php the_title(); ?></h3>
-                        <?php if ( $camp_name ) : ?>
-                            <p class="oso-job-camp"><?php echo esc_html( $camp_name ); ?></p>
+                        <?php if ( $employer_logo ) : ?>
+                            <div class="oso-job-camp-logo">
+                                <img src="<?php echo esc_url( wp_get_attachment_url( $employer_logo ) ); ?>" alt="<?php echo esc_attr( $camp_name ); ?>" />
+                            </div>
                         <?php endif; ?>
+                        <div class="oso-job-header-text">
+                            <h3 class="oso-job-title"><?php the_title(); ?></h3>
+                            <?php if ( $camp_name ) : ?>
+                                <p class="oso-job-camp"><?php echo esc_html( $camp_name ); ?></p>
+                            <?php endif; ?>
+                        </div>
                     </div>
 
                     <div class="oso-job-card-meta">
@@ -251,7 +259,7 @@ $jobs_query = new WP_Query( $args );
                                     <a href="<?php echo esc_url( wp_login_url( get_permalink() ) ); ?>" class="oso-btn oso-btn-primary oso-btn-small">
                                         <?php esc_html_e( 'Login', 'oso-employer-portal' ); ?>
                                     </a>
-                                    <a href="<?php echo esc_url( wp_registration_url() ); ?>" class="oso-btn oso-btn-secondary oso-btn-small">
+                                    <a href="<?php echo esc_url( wp_registration_url() ); ?>" class="oso-btn oso-btn-green oso-btn-small">
                                         <?php esc_html_e( 'Register', 'oso-employer-portal' ); ?>
                                     </a>
                                 </div>

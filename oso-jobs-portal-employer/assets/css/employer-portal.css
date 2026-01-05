@@ -3230,6 +3230,11 @@
     display: flex;
     gap: 10px;
     align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.oso-filter-actions .oso-btn {
+    min-width: 140px;
 }
 
 .oso-public-jobs-count {
@@ -3264,6 +3269,28 @@
     margin-bottom: 15px;
     padding-bottom: 15px;
     border-bottom: 2px solid #f0f0f0;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.oso-job-camp-logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #f8f9fa;
+    flex-shrink: 0;
+}
+
+.oso-job-camp-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.oso-job-header-text {
+    flex: 1;
 }
 
 .oso-job-title {
@@ -3283,7 +3310,7 @@
 .oso-job-card-meta {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0;
     margin-bottom: 15px;
 }
 
@@ -3293,6 +3320,15 @@
     gap: 8px;
     color: #666;
     font-size: 0.95em;
+    padding: 10px 12px;
+}
+
+.oso-job-meta-item:nth-child(odd) {
+    background: #f8f9fa;
+}
+
+.oso-job-meta-item:nth-child(even) {
+    background: #fff;
 }
 
 .oso-job-meta-item .dashicons {
@@ -3334,6 +3370,17 @@
 .oso-btn-small {
     padding: 8px 16px;
     font-size: 0.9em;
+}
+
+.oso-btn-green {
+    background: #527D80;
+    color: #fff;
+    border: 1px solid #527D80;
+}
+
+.oso-btn-green:hover {
+    background: #3d5f62;
+    border-color: #3d5f62;
 }
 
 .oso-no-jobs {
