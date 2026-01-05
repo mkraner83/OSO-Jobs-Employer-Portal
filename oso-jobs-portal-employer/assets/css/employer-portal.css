@@ -3275,12 +3275,16 @@
 }
 
 .oso-job-camp-logo {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
     overflow: hidden;
-    background: #f8f9fa;
+    background: #fff;
+    border: 1px solid #e0e0e0;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .oso-job-camp-logo img {
@@ -3289,13 +3293,29 @@
     object-fit: cover;
 }
 
+.oso-logo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+}
+
+.oso-logo-placeholder .dashicons {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+    color: #999;
+}
+
 .oso-job-header-text {
     flex: 1;
 }
 
 .oso-job-title {
     margin: 0 0 8px 0;
-    font-size: 1.4em;
+    font-size: 1.2em;
     color: #2c3e50;
     font-weight: 600;
 }

@@ -186,28 +186,44 @@ $jobs_query = new WP_Query( $args );
                 <?php
                 $job_id = get_the_ID();
                 $employer_id = get_post_meta( $job_id, '_oso_job_employer_id', true );
-                $camp_name = $employer_id ? get_post_meta( $employer_id, '_oso_employer_company', true ) : '';
+                
+                // Get employer details with fallbacks
+                if ( $employer_id ) {
+                    $camp_name = get_post_meta( $employer_id, '_oso_employer_company', true );
+                    $employer_logo = get_post_meta( $employer_id, '_oso_employer_logo', true );
+                } else {
+                    $camp_name = '';
+                    $employer_logo = '';
+                }
+                
+                // Fallback to job author if no employer assigned
+                if ( empty( $camp_name ) ) {
+                    $author = get_userdata( get_post_field( 'post_author', $job_id ) );
+                    $camp_name = $author ? $author->display_name : __( 'Not specified', 'oso-employer-portal' );
+                }
+                
                 $job_type = get_post_meta( $job_id, '_oso_job_type', true );
                 $job_location = get_post_meta( $job_id, '_oso_job_location', true );
                 $start_date = get_post_meta( $job_id, '_oso_job_start_date', true );
                 $end_date = get_post_meta( $job_id, '_oso_job_end_date', true );
                 $compensation = get_post_meta( $job_id, '_oso_job_compensation', true );
                 $description = get_post_meta( $job_id, '_oso_job_description', true );
-                $employer_logo = $employer_id ? get_post_meta( $employer_id, '_oso_employer_logo', true ) : '';
                 ?>
 
                 <div class="oso-public-job-card">
                     <div class="oso-job-card-header">
-                        <?php if ( $employer_logo ) : ?>
-                            <div class="oso-job-camp-logo">
+                        <div class="oso-job-camp-logo">
+                            <?php if ( $employer_logo ) : ?>
                                 <img src="<?php echo esc_url( $employer_logo ); ?>" alt="<?php echo esc_attr( $camp_name ); ?>" />
-                            </div>
-                        <?php endif; ?>
+                            <?php else : ?>
+                                <div class="oso-logo-placeholder">
+                                    <span class="dashicons dashicons-building"></span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                         <div class="oso-job-header-text">
                             <h3 class="oso-job-title"><?php the_title(); ?></h3>
-                            <?php if ( $camp_name ) : ?>
-                                <p class="oso-job-camp"><?php echo esc_html( $camp_name ); ?></p>
-                            <?php endif; ?>
+                            <p class="oso-job-camp"><?php echo esc_html( $camp_name ); ?></p>
                         </div>
                     </div>
 
