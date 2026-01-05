@@ -56,7 +56,7 @@ class OSO_Jobs_Email_Templates {
             if ( isset( $template['subject'] ) && isset( $template['body'] ) ) {
                 $sanitized[ $key ] = array(
                     'subject' => sanitize_text_field( $template['subject'] ),
-                    'body'    => wp_kses_post( $template['body'] ),
+                    'body'    => wp_unslash( $template['body'] ), // Don't escape - we're storing HTML email templates
                 );
             }
         }
