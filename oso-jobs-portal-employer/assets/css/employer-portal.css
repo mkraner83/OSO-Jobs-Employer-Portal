@@ -3151,3 +3151,285 @@
         justify-content: center;
     }
 }
+
+/* ========================================
+   Public Jobs Listing (No Login Required)
+   ======================================== */
+
+.oso-public-jobs {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.oso-public-jobs-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: #fff;
+}
+
+.oso-public-jobs-header h2 {
+    margin: 0 0 10px 0;
+    font-size: 2.5em;
+    font-weight: 600;
+    color: #fff;
+}
+
+.oso-public-jobs-subtitle {
+    margin: 0;
+    font-size: 1.2em;
+    opacity: 0.95;
+}
+
+.oso-public-jobs-filters {
+    background: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.oso-filter-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    align-items: end;
+}
+
+.oso-filter-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.oso-filter-field label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 0.9em;
+}
+
+.oso-filter-field input,
+.oso-filter-field select {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+    transition: border-color 0.2s;
+}
+
+.oso-filter-field input:focus,
+.oso-filter-field select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.oso-filter-actions {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.oso-public-jobs-count {
+    margin-bottom: 20px;
+    color: #666;
+    font-size: 1.05em;
+}
+
+.oso-public-jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.oso-public-job-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.oso-public-job-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 25px rgba(102, 126, 234, 0.2);
+}
+
+.oso-job-card-header {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.oso-job-title {
+    margin: 0 0 8px 0;
+    font-size: 1.4em;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.oso-job-camp {
+    margin: 0;
+    color: #667eea;
+    font-size: 1.05em;
+    font-weight: 500;
+}
+
+.oso-job-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.oso-job-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    font-size: 0.95em;
+}
+
+.oso-job-meta-item .dashicons {
+    color: #667eea;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.oso-job-card-description {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+.oso-job-card-footer {
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 2px solid #f0f0f0;
+}
+
+.oso-job-login-prompt {
+    text-align: center;
+}
+
+.oso-job-login-prompt p {
+    margin: 0 0 12px 0;
+    color: #666;
+    font-size: 0.95em;
+}
+
+.oso-job-login-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.oso-btn-small {
+    padding: 8px 16px;
+    font-size: 0.9em;
+}
+
+.oso-no-jobs {
+    text-align: center;
+    padding: 60px 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.oso-no-jobs-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.oso-no-jobs-icon .dashicons {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: #fff;
+}
+
+.oso-no-jobs h3 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+    font-size: 1.8em;
+}
+
+.oso-no-jobs p {
+    margin: 0;
+    color: #666;
+    font-size: 1.1em;
+}
+
+.oso-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 30px 0;
+}
+
+.oso-pagination a,
+.oso-pagination span {
+    padding: 10px 15px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.oso-pagination a:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-color: #667eea;
+}
+
+.oso-pagination .current {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-color: #667eea;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .oso-public-jobs-header h2 {
+        font-size: 2em;
+    }
+    
+    .oso-filter-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .oso-filter-actions {
+        flex-direction: column;
+    }
+    
+    .oso-filter-actions .oso-btn {
+        width: 100%;
+    }
+    
+    .oso-public-jobs-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .oso-job-login-buttons {
+        flex-direction: column;
+    }
+    
+    .oso-job-login-buttons .oso-btn {
+        width: 100%;
+    }
+}

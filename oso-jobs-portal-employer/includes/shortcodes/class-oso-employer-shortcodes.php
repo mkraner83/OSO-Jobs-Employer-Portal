@@ -41,6 +41,7 @@ class OSO_Employer_Shortcodes {
         add_shortcode( 'oso_employer_edit_profile', array( $this, 'shortcode_employer_edit_profile' ) );
         add_shortcode( 'oso_employer_add_job', array( $this, 'shortcode_employer_add_job' ) );
         add_shortcode( 'oso_job_browser', array( $this, 'shortcode_job_browser' ) );
+        add_shortcode( 'oso_public_jobs', array( $this, 'shortcode_public_jobs' ) );
         add_shortcode( 'oso_job_details', array( $this, 'shortcode_job_details' ) );
         add_shortcode( 'oso_jobseeker_browser', array( $this, 'shortcode_jobseeker_browser' ) );
         add_shortcode( 'oso_jobseeker_profile', array( $this, 'shortcode_jobseeker_profile' ) );
@@ -1046,6 +1047,15 @@ class OSO_Employer_Shortcodes {
      */
     public function shortcode_job_browser() {
         return $this->load_template( 'job-browser.php' );
+    }
+
+    /**
+     * Public Jobs Shortcode - Public job listings without contact info (no login required).
+     *
+     * @return string
+     */
+    public function shortcode_public_jobs() {
+        return $this->load_template( 'public-jobs.php' );
     }
 
     /**
