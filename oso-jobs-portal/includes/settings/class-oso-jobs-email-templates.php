@@ -374,6 +374,12 @@ class OSO_Jobs_Email_Templates {
      * Render the email templates settings page.
      */
     public static function render_page() {
+        // Handle reset to defaults
+        if ( isset( $_POST['oso_reset_email_templates'] ) && check_admin_referer( 'oso_email_templates_reset' ) ) {
+            delete_option( self::OPTION_NAME );
+            echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__( 'Email templates reset to defaults successfully!', 'oso-jobs-portal' ) . '</p></div>';
+        }
+        
         // Handle form submission
         if ( isset( $_POST['oso_save_email_templates'] ) && check_admin_referer( 'oso_email_templates_save' ) ) {
             $templates = isset( $_POST['email_templates'] ) ? $_POST['email_templates'] : array();
@@ -475,6 +481,18 @@ class OSO_Jobs_Email_Templates {
                     <button type="submit" name="oso_save_email_templates" class="button button-primary button-large">
                         <?php esc_html_e( 'Save All Email Templates', 'oso-jobs-portal' ); ?>
                     </button>
+                </p>
+            </form>
+            
+            <form method="post" action="" style="margin-top: 20px;" onsubmit="return confirm('Are you sure you want to reset all email templates to their defaults? This will overwrite any customizations you have made.');">
+                <?php wp_nonce_field( 'oso_email_templates_reset' ); ?>
+                <p class="submit">
+                    <button type="submit" name="oso_reset_email_templates" class="button button-secondary">
+                        <?php esc_html_e( 'Reset All Templates to Defaults', 'oso-jobs-portal' ); ?>
+                    </button>
+                    <span class="description" style="margin-left: 10px;">
+                        <?php esc_html_e( 'This will restore all email templates to their default content.', 'oso-jobs-portal' ); ?>
+                    </span>
                 </p>
             </form>
         </div>
