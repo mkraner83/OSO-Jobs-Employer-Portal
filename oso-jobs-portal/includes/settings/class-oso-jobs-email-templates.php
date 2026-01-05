@@ -995,29 +995,29 @@ class OSO_Jobs_Email_Templates {
      * @return string Default email body HTML.
      */
     private static function get_employer_welcome_default_body() {
-        return '
-            <p style="margin: 0 0 25px 0; color: #2d3748; font-size: 18px; line-height: 1.7; font-weight: 500;">Hi {first_name}, we are so excited you\'re here!</p>
+        return <<<'HTML'
+            <p style="margin: 0 0 25px 0; color: #2d3748; font-size: 18px; line-height: 1.7; font-weight: 500;">Hi {first_name}, we are so excited you're here!</p>
             
             <p style="margin: 0 0 20px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                We\'re Josh and Caleb, the co-founders of OSO. We both started working at summer camps back in 2012 when we were 19, and it pretty much changed the whole trajectory of our lives. We found confidence, community, mentors, best friends, and career paths we didn\'t even know existed.
+                We're Josh and Caleb, the co-founders of OSO. We both started working at summer camps back in 2012 when we were 19, and it pretty much changed the whole trajectory of our lives. We found confidence, community, mentors, best friends, and career paths we didn't even know existed.
             </p>
             
             <p style="margin: 0 0 35px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
                 We built OSO so camps like yours can connect with thousands of motivated, talented job seekers who are ready to make this summer count. Our platform makes it easier than ever to post jobs, review applicants, and find the right people to join your team this summer.
             </p>
             
-            <h2 style="margin: 0 0 25px 0; color: #2d3748; font-size: 26px; font-weight: 700; text-align: center;">What\'s Next?</h2>
+            <h2 style="margin: 0 0 25px 0; color: #2d3748; font-size: 26px; font-weight: 700; text-align: center;">What's Next?</h2>
             
             <p style="margin: 0 0 10px 0; color: #2d3748; font-size: 18px; line-height: 1.7; text-align: center; font-weight: 600;">
                 Complete Your Profile. Post Jobs. Find Great Staff!
             </p>
             
             <p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7; text-align: center; font-style: italic;">
-                It\'s really that simple.
+                It's really that simple.
             </p>
             
             <p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                If you ever have questions about posting jobs, reviewing applicants, or just want advice on hiring, you can reach out to us directly. We\'re here to help you build the best team possible.
+                If you ever have questions about posting jobs, reviewing applicants, or just want advice on hiring, you can reach out to us directly. We're here to help you build the best team possible.
             </p>
             
             <table role="presentation" style="width: 100%; border-collapse: collapse; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 35px;">
@@ -1044,13 +1044,14 @@ class OSO_Jobs_Email_Templates {
             </table>
             
             <p style="margin: 0 0 25px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                Thank You! We can\'t wait to help you find amazing staff this summer.
+                Thank You! We can't wait to help you find amazing staff this summer.
             </p>
             
             <p style="margin: 0 0 5px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
                 <strong>Josh & Caleb</strong><br>
                 Co-Founders, OSO
-            </p>';
+            </p>
+HTML;
     }
 
     /**
@@ -1059,29 +1060,29 @@ class OSO_Jobs_Email_Templates {
      * @return string Default email body HTML.
      */
     private static function get_jobseeker_welcome_default_body() {
-        return '
-            <p style="margin: 0 0 25px 0; color: #2d3748; font-size: 18px; line-height: 1.7; font-weight: 500;">Hi {first_name} we are so excited you\'re here!</p>
+        return <<<'HTML'
+            <p style="margin: 0 0 25px 0; color: #2d3748; font-size: 18px; line-height: 1.7; font-weight: 500;">Hi {first_name} we are so excited you're here!</p>
             
             <p style="margin: 0 0 20px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                We\'re Josh and Caleb, the co-founders of OSO. We both started working at summer camps back in 2012 when we were 19, and it pretty much changed the whole trajectory of our lives. We found confidence, community, mentors, best friends, and career paths we didn\'t even know existed.
+                We're Josh and Caleb, the co-founders of OSO. We both started working at summer camps back in 2012 when we were 19, and it pretty much changed the whole trajectory of our lives. We found confidence, community, mentors, best friends, and career paths we didn't even know existed.
             </p>
             
             <p style="margin: 0 0 35px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                We built OSO so you can have that same shot at a summer that actually means something. Now that you\'ve joined, you can instantly connect with camps across the country who are hiring for roles in sports, arts, waterfront, adventure, media, counseling, and more. Our hope is that OSO helps you find a job that feels exciting, supportive, and full of growth, not just another thing to fill your summer.
+                We built OSO so you can have that same shot at a summer that actually means something. Now that you've joined, you can instantly connect with camps across the country who are hiring for roles in sports, arts, waterfront, adventure, media, counseling, and more. Our hope is that OSO helps you find a job that feels exciting, supportive, and full of growth, not just another thing to fill your summer.
             </p>
             
-            <h2 style="margin: 0 0 25px 0; color: #2d3748; font-size: 26px; font-weight: 700; text-align: center;">What\'s Next?</h2>
+            <h2 style="margin: 0 0 25px 0; color: #2d3748; font-size: 26px; font-weight: 700; text-align: center;">What's Next?</h2>
             
             <p style="margin: 0 0 10px 0; color: #2d3748; font-size: 18px; line-height: 1.7; text-align: center; font-weight: 600;">
                 Create A Profile. Search Jobs. Get Hired!
             </p>
             
             <p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7; text-align: center; font-style: italic;">
-                It\'s really that simple.
+                It's really that simple.
             </p>
             
             <p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                And you\'re not doing this alone. If you ever have questions about getting hired, choosing a camp, interviews, or just want honest advice, you can talk to us directly. Join our WhatsApp group here:
+                And you're not doing this alone. If you ever have questions about getting hired, choosing a camp, interviews, or just want honest advice, you can talk to us directly. Join our WhatsApp group here:
             </p>
             
             <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 35px;">
@@ -1116,13 +1117,14 @@ class OSO_Jobs_Email_Templates {
             </table>
             
             <p style="margin: 0 0 25px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
-                Thank You! We can\'t wait to see where your summer takes you.
+                Thank You! We can't wait to see where your summer takes you.
             </p>
             
             <p style="margin: 0 0 5px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
                 <strong>Josh & Caleb</strong><br>
                 Co-Founders, OSO
-            </p>';
+            </p>
+HTML;
     }
 
     /**
