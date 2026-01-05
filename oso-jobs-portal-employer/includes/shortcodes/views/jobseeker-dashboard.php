@@ -315,7 +315,7 @@ $is_approved = get_post_meta( $jobseeker_post->ID, '_oso_jobseeker_approved', tr
                         </div>
                         
                         <div class="oso-interest-actions">
-                            <a href="<?php echo esc_url( add_query_arg( 'employer_id', $employer_id, home_url( '/job-portal/employer-profile/' ) ) ); ?>" class="oso-btn oso-btn-secondary oso-btn-small">
+                            <a href="<?php echo esc_url( home_url( '/job-portal/employer-profile/?employer_id=' . $employer_id ) ); ?>" class="oso-btn oso-btn-green oso-btn-small">
                                 <span class="dashicons dashicons-visibility"></span>
                                 <?php esc_html_e( 'View Profile', 'oso-employer-portal' ); ?>
                             </a>
