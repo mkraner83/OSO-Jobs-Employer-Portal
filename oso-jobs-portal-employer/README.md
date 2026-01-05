@@ -1,53 +1,69 @@
 # OSO Jobs Portal - Employer Extension
 
-**Version:** 1.4.0  
+**Version:** 1.5.0  
 **Requires:** OSO Jobs Portal (Core Plugin) v1.1.0+  
 **WordPress Version:** 5.0 or higher
 
-## 🚀 Latest Changes (January 5, 2026)
+## 🚀 Latest Changes (January 5, 2026 - Session 2)
 
-### Email & Communication Enhancements
-- **Application Rejection Emails**: Jobseekers now receive professional email when employers click "No Thanks!"
-- **Email Template System**: Rejection emails pull from customizable admin templates
-- **Individual Template Reset**: Each email template now has its own "Reset Template" button
-- **Email Design Overhaul**: All emails now use consistent purple gradient design with proper table-based HTML
-- **WhatsApp Integration**: Added contact banner on jobseeker dashboard with OSO green (#527D80)
+### Public-Facing Features (Unregistered Users)
+- **[oso_public_jobs]**: Browse all active jobs without login
+  - No contact information shown until registration
+  - Employer logos with professional design
+  - Filters: search, location, job type, sort
+  - Login/Register prompts with OSO branding
+  
+- **[oso_public_camps]**: Browse all employers/camps without login
+  - Contact details hidden (email, phone, website)
+  - Shows: logo, name, location, description, active job count
+  - "View Open Positions" links to filtered jobs
+  - Register button links to general registration
+  
+- **[oso_public_jobseekers]**: Browse jobseekers without login (for employers)
+  - Privacy-focused: First name only, last name as ***
+  - Placeholder photos (no real images)
+  - Limited skills preview (first 3 + count)
+  - Login/Register buttons instead of View Profile
+  - Register links to employer registration
 
-### Application System Improvements  
-- **Unlimited Applications**: Jobseekers can now apply to unlimited jobs from different employers
-- **Duplicate Prevention**: Smart check prevents applying to the same job twice with same employer
-- **Button Label Updates**: "Approve" → "Let's Chat!", "Reject" → "No Thanks!" for friendlier UX
+### Design & UX Improvements
+- **Purple Gradient Theme**: Consistent across all public pages
+- **OSO Green Buttons**: Register buttons use brand color (#527D80)
+- **Alternating Backgrounds**: Metadata rows for better readability
+- **White Headers**: Titles now white on purple gradient
+- **Filter Spacing**: Fixed overlap issues with proper min-widths
+- **Responsive Design**: Mobile-optimized grid layouts
 
-### Template Management
-- **10 Customizable Email Templates**: All automated emails editable from admin dashboard
-- **Individual Reset Buttons**: Reset single templates without affecting others
-- **Available Variables**: Each template shows available merge tags for personalization
-- **Visual & HTML Editors**: Easy editing with WordPress rich text or raw HTML
+### Technical Enhancements
+- **Email Template Persistence**: Variables/descriptions preserved after customization
+- **Selective ZIP Building**: Only rebuild modified plugins (faster workflow)
+- **Logo URL Fix**: Direct URLs instead of attachment IDs
+- **Dashboard Links**: Correct profile view links (not edit pages)
 
 ---
 
-## 🔖 Latest Restore Point - January 5, 2026 (v1.4.0)
+## 🔖 Latest Restore Point - January 5, 2026 (v1.5.0 - Session 2)
+
+**Stable Release:** Public Listings for Unregistered Users  
+**Core Plugin:** v1.1.0  
+**Employer Extension:** v1.5.0  
+**Session:** January 5, 2026 (Afternoon)
+
+### January 5, 2026 (Session 2) Updates
+✅ **Public Jobs Listing**: [oso_public_jobs] shortcode with full access control  
+✅ **Public Camps Listing**: [oso_public_camps] shortcode with contact info gating  
+✅ **Public Jobseekers Listing**: [oso_public_jobseekers] with privacy protection  
+✅ **Email Variables Fix**: Template metadata now persists properly  
+✅ **Design Consistency**: Purple gradient + OSO green across all pages  
+✅ **Filter UI Fix**: Proper spacing prevents button overlap  
+✅ **Build Optimization**: Selective plugin ZIP rebuilding  
+
+## 🔖 Previous Restore Point - January 5, 2026 (v1.4.0 - Session 1)
 
 **Stable Release:** Email System Overhaul + Application Flow Improvements  
 **Core Plugin:** v1.1.0  
 **Employer Extension:** v1.4.0  
-**Session:** January 5, 2026
-
-### January 5, 2026 Updates
-✅ **Application Rejected Email**: New customizable template for rejection notifications  
-✅ **Unlimited Applications**: Jobseekers can apply to multiple jobs (but not duplicates)  
-✅ **Button Labels**: Friendlier "Let's Chat!" and "No Thanks!" buttons  
-✅ **WhatsApp Banner**: Integrated on jobseeker dashboard post-approval  
-✅ **Email Design**: All 10 templates now use consistent purple gradient format  
-✅ **Individual Reset**: Reset single email templates without losing other customizations  
-✅ **Template Variables**: Clear display of available merge tags for each email  
-
-## 🔖 Previous Restore Point - December 12, 2025 (v1.3.1)
-
-**Stable Release:** Complete Approval System with Inline Toggle + Color-Coded Badges  
-**Core Plugin:** v1.0.14  
-**Employer Extension:** v1.0.10  
-**Git Tag:** restore-point-approval-system-complete
+**Session:** January 5, 2026 (Morning)
 
 ### December 12, 2025 Updates
 ✅ **Jobseeker Approval System**: Complete admin-controlled approval workflow  
@@ -682,6 +698,11 @@ Handled by core OSO Jobs Portal plugin. Refer to core plugin documentation.
 - `[oso_jobseeker_browser]` - Browse jobseekers (employers only)
 - `[oso_job_browser]` - Public job listings with filters (requires login as of v1.3.0)
 - `[oso_job_details]` - Individual job page with application form
+
+**Public Listings (Unregistered Users) - NEW in v1.5.0:**
+- `[oso_public_jobs]` - Browse all jobs without login (contact info hidden until registration)
+- `[oso_public_camps]` - Browse all camps/employers without login (contact info hidden until registration)
+- `[oso_public_jobseekers]` - Browse jobseekers without login (limited info: first name only, placeholder photos)
 
 ### Hooks Used
 - `wpforms_process_complete_{FORM_ID}` - Handle employer registration
