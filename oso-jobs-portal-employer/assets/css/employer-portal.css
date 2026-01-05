@@ -314,7 +314,7 @@
 }
 
 .oso-filter-row-controls {
-    grid-template-columns: 1fr 1fr 1fr auto;
+    grid-template-columns: 200px 150px 180px auto;
 }
 
 .oso-filter-field {
@@ -3808,6 +3808,7 @@
     font-size: 2.5em;
     margin: 0 0 10px 0;
     font-weight: 700;
+    color: #fff;
 }
 
 .oso-public-jobseekers .oso-public-subtitle {
