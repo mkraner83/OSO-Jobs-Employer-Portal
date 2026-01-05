@@ -421,14 +421,25 @@ class OSO_Jobs_Email_Templates {
                                             </label>
                                         </th>
                                         <td>
-                                            <textarea 
-                                                id="<?php echo esc_attr( $key ); ?>_body"
-                                                name="email_templates[<?php echo esc_attr( $key ); ?>][body]" 
-                                                rows="15" 
-                                                class="large-text code"
-                                            ><?php echo esc_textarea( $template['body'] ); ?></textarea>
+                                            <?php
+                                            $editor_id = 'email_templates_' . $key . '_body';
+                                            $editor_settings = array(
+                                                'textarea_name' => 'email_templates[' . esc_attr( $key ) . '][body]',
+                                                'textarea_rows' => 20,
+                                                'media_buttons' => false,
+                                                'teeny'         => false,
+                                                'tinymce'       => array(
+                                                    'toolbar1' => 'formatselect,bold,italic,underline,strikethrough,forecolor,|,alignleft,aligncenter,alignright,|,bullist,numlist,|,link,unlink,|,undo,redo',
+                                                    'toolbar2' => 'fontsizeselect,removeformat,charmap,|,outdent,indent,|,code,fullscreen',
+                                                ),
+                                                'quicktags'     => array(
+                                                    'buttons' => 'strong,em,link,ul,ol,li,code,close',
+                                                ),
+                                            );
+                                            wp_editor( $template['body'], $editor_id, $editor_settings );
+                                            ?>
                                             <p class="description">
-                                                <?php esc_html_e( 'HTML is allowed. Use variables from the list above to personalize the email.', 'oso-jobs-portal' ); ?>
+                                                <?php esc_html_e( 'Use the Visual tab for easy editing or the Text tab for HTML. Use variables from the list above to personalize the email.', 'oso-jobs-portal' ); ?>
                                             </p>
                                         </td>
                                     </tr>
@@ -460,6 +471,14 @@ class OSO_Jobs_Email_Templates {
             }
             .oso-email-variables code {
                 font-size: 12px;
+            }
+            .oso-email-template .form-table th {
+                width: 120px;
+                vertical-align: top;
+                padding-top: 20px;
+            }
+            .oso-email-template .wp-editor-container {
+                border: 1px solid #ddd;
             }
         </style>
         <?php
