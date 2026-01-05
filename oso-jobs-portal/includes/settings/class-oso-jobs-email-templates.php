@@ -1070,56 +1070,56 @@ class OSO_Jobs_Email_Templates {
                 We built OSO so you can have that same shot at a summer that actually means something. Now that you\'ve joined, you can instantly connect with camps across the country who are hiring for roles in sports, arts, waterfront, adventure, media, counseling, and more. Our hope is that OSO helps you find a job that feels exciting, supportive, and full of growth, not just another thing to fill your summer.
             </p>
             
-            <h2 style=\"margin: 0 0 25px 0; color: #2d3748; font-size: 26px; font-weight: 700; text-align: center;\">What\\'s Next?</h2>
+            <h2 style="margin: 0 0 25px 0; color: #2d3748; font-size: 26px; font-weight: 700; text-align: center;">What\'s Next?</h2>
             
-            <p style=\"margin: 0 0 10px 0; color: #2d3748; font-size: 18px; line-height: 1.7; text-align: center; font-weight: 600;\">
+            <p style="margin: 0 0 10px 0; color: #2d3748; font-size: 18px; line-height: 1.7; text-align: center; font-weight: 600;">
                 Create A Profile. Search Jobs. Get Hired!
             </p>
             
-            <p style=\"margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7; text-align: center; font-style: italic;\">
-                It\\'s really that simple.
+            <p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7; text-align: center; font-style: italic;">
+                It\'s really that simple.
             </p>
             
-            <p style=\"margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7;\">
-                And you\\'re not doing this alone. If you ever have questions about getting hired, choosing a camp, interviews, or just want honest advice, you can talk to us directly. Join our WhatsApp group here:
+            <p style="margin: 0 0 30px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
+                And you\'re not doing this alone. If you ever have questions about getting hired, choosing a camp, interviews, or just want honest advice, you can talk to us directly. Join our WhatsApp group here:
             </p>
             
-            <table role=\"presentation\" style=\"width: 100%; border-collapse: collapse; margin-bottom: 35px;\">
+            <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 35px;">
                 <tr>
-                    <td style=\"text-align: center;\">
-                        <a href=\"https://chat.whatsapp.com/EQasmhOEsE92AvWyJDbWZX\" style=\"display: inline-block; padding: 16px 48px; background: #25D366; color: #ffffff; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(37, 211, 102, 0.25);\">📱 WhatsApp</a>
+                    <td style="text-align: center;">
+                        <a href="https://chat.whatsapp.com/EQasmhOEsE92AvWyJDbWZX" style="display: inline-block; padding: 16px 48px; background: #25D366; color: #ffffff; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(37, 211, 102, 0.25);">📱 WhatsApp</a>
                     </td>
                 </tr>
             </table>
             
-            <table role=\"presentation\" style=\"width: 100%; border-collapse: collapse; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 35px;\">
+            <table role="presentation" style="width: 100%; border-collapse: collapse; background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border: 2px solid #e2e8f0; border-radius: 10px; margin-bottom: 35px;">
                 <tr>
-                    <td style=\"padding: 30px;\">
-                        <h3 style=\"margin: 0 0 20px 0; color: #667eea; font-size: 18px; font-weight: 700;\">Your Account Details</h3>
-                        <p style=\"margin: 0 0 15px 0; color: #2d3748; font-size: 15px; line-height: 1.6;\">
-                            <strong style=\"color: #4a5568;\">Username:</strong> {username}
+                    <td style="padding: 30px;">
+                        <h3 style="margin: 0 0 20px 0; color: #667eea; font-size: 18px; font-weight: 700;">Your Account Details</h3>
+                        <p style="margin: 0 0 15px 0; color: #2d3748; font-size: 15px; line-height: 1.6;">
+                            <strong style="color: #4a5568;">Username:</strong> {username}
                         </p>
-                        <p style=\"margin: 0; color: #2d3748; font-size: 15px; line-height: 1.6;\">
-                            <strong style=\"color: #4a5568;\">To set your password, visit the following address:</strong><br>
-                            <a href=\"{password_reset_link}\" style=\"color: #667eea; text-decoration: none; word-break: break-all; font-weight: 500;\">{password_reset_link}</a>
+                        <p style="margin: 0; color: #2d3748; font-size: 15px; line-height: 1.6;">
+                            <strong style="color: #4a5568;">To set your password, visit the following address:</strong><br>
+                            <a href="{password_reset_link}" style="color: #667eea; text-decoration: none; word-break: break-all; font-weight: 500;">{password_reset_link}</a>
                         </p>
                     </td>
                 </tr>
             </table>
             
-            <table role=\"presentation\" style=\"width: 100%; border-collapse: collapse; margin-bottom: 35px;\">
+            <table role="presentation" style="width: 100%; border-collapse: collapse; margin-bottom: 35px;">
                 <tr>
-                    <td style=\"text-align: center;\">
-                        <a href=\"{profile_link}\" style=\"display: inline-block; padding: 16px 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);\">Get Started</a>
+                    <td style="text-align: center;">
+                        <a href="{profile_link}" style="display: inline-block; padding: 16px 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(102, 126, 234, 0.25);">Get Started</a>
                     </td>
                 </tr>
             </table>
             
-            <p style=\"margin: 0 0 25px 0; color: #4a5568; font-size: 16px; line-height: 1.7;\">
-                Thank You! We can\\'t wait to see where your summer takes you.
+            <p style="margin: 0 0 25px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
+                Thank You! We can\'t wait to see where your summer takes you.
             </p>
             
-            <p style=\"margin: 0 0 5px 0; color: #4a5568; font-size: 16px; line-height: 1.7;\">
+            <p style="margin: 0 0 5px 0; color: #4a5568; font-size: 16px; line-height: 1.7;">
                 <strong>Josh & Caleb</strong><br>
                 Co-Founders, OSO
             </p>';
