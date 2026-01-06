@@ -216,6 +216,18 @@ class OSO_Jobs_WPForms_Handler {
                     // Use value_raw if it exists (even if empty array), otherwise fall back to value
                     $value = isset( $field['value_raw'] ) ? $field['value_raw'] : $field['value'];
 
+                    // Debug logging - can be disabled after testing
+                    if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                        error_log( sprintf(
+                            'OSO WPForms: Field "%s" | Match: "%s" | Type: %s | value_raw: %s | value: %s',
+                            $field['name'],
+                            $match,
+                            gettype( $value ),
+                            print_r( isset( $field['value_raw'] ) ? $field['value_raw'] : 'NOT SET', true ),
+                            print_r( isset( $field['value'] ) ? $field['value'] : 'NOT SET', true )
+                        ) );
+                    }
+
                     // Return arrays as-is (for checkboxes) - let format_list_value handle them
                     if ( is_array( $value ) ) {
                         return $value;
@@ -307,22 +319,47 @@ class OSO_Jobs_WPForms_Handler {
      * @param int   $entry_id Entry ID.
      */
     protected function create_jobseeker_post( $fields, $entry_id ) {
+        // Debug: Log all field names to help diagnose matching issues
+        if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+            error_log( 'OSO WPForms: Processing entry ' . $entry_id );
+            foreach ( $fields as $field ) {
+                error_log( 'OSO WPForms: Available field: ' . $field['name'] );
+            }
+        }
+
         $full_name  = self::find_field_value( $fields, array( 'full name', 'name' ) );
         $location   = self::find_field_value( $fields, array( 'state', 'location' ) );
-        $over_18    = self::find_field_value( $fields, array( 'over 18' ) );
+        
+        // Improved matching for "Are You Over 18?" - multiple variations
+        $over_18_raw = self::find_field_value( $fields, array( 'over 18', 'are you over 18', 'are you over' ) );
+        $over_18     = self::format_list_value( $over_18_raw ); // Handle single checkbox same as multi
+        
         $email      = self::find_field_value( $fields, array( 'email' ) );
-        $interests  = self::format_list_value( self::find_field_value( $fields, array( 'job interests', 'interest' ) ) );
-        $sports     = self::format_list_value( self::find_field_value( $fields, array( 'sports skills' ) ) );
-        $arts       = self::format_list_value( self::find_field_value( $fields, array( 'arts skills' ) ) );
-        $adventure  = self::format_list_value( self::find_field_value( $fields, array( 'adventure skills' ) ) );
-        $waterfront = self::format_list_value( self::find_field_value( $fields, array( 'waterfront skills' ) ) );
-        $support    = self::format_list_value( self::find_field_value( $fields, array( 'support services' ) ) );
-        $certs      = self::format_list_value( self::find_field_value( $fields, array( 'certifications' ) ) );
+        
+        // Improved matching for "Job Interests" - multiple variations
+        $interests  = self::format_list_value( self::find_field_value( $fields, array( 'job interests', 'job interest', 'interest' ) ) );
+        
+        $sports     = self::format_list_value( self::find_field_value( $fields, array( 'sports skills', 'sports skill' ) ) );
+        $arts       = self::format_list_value( self::find_field_value( $fields, array( 'arts skills', 'arts skill' ) ) );
+        $adventure  = self::format_list_value( self::find_field_value( $fields, array( 'adventure skills', 'adventure skill' ) ) );
+        $waterfront = self::format_list_value( self::find_field_value( $fields, array( 'waterfront skills', 'waterfront skill' ) ) );
+        $support    = self::format_list_value( self::find_field_value( $fields, array( 'support services', 'support service' ) ) );
+        $certs      = self::format_list_value( self::find_field_value( $fields, array( 'certifications', 'certification' ) ) );
         $resume     = self::find_file_url( $fields, array( 'resume' ) );
         $photo      = self::find_file_url( $fields, array( 'photo' ) );
-        $why        = self::find_field_value( $fields, array( 'why are you', 'cover letter' ) );
-        $start      = self::find_field_value( $fields, array( 'earliest start', 'availability - earliest start' ) );
-        $end        = self::find_field_value( $fields, array( 'latest end', 'availability - latest end' ) );
+        
+        // Improved matching for "Why interested" - don't use format_list_value (it's a textarea)
+        $why        = self::find_field_value( $fields, array( 'why are you interested', 'why are you', 'why interested', 'cover letter' ) );
+        
+        $start      = self::find_field_value( $fields, array( 'earliest start', 'availability - earliest start', 'availability earliest' ) );
+        $end        = self::find_field_value( $fields, array( 'latest end', 'availability - latest end', 'availability latest' ) );
+
+        // Debug: Log extracted values
+        if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+            error_log( 'OSO WPForms: over_18 = ' . var_export( $over_18, true ) );
+            error_log( 'OSO WPForms: interests = ' . var_export( $interests, true ) );
+            error_log( 'OSO WPForms: why (first 100 chars) = ' . substr( $why, 0, 100 ) );
+        }
 
         $title = $full_name ? $full_name : sprintf( __( 'Jobseeker %d', 'oso-jobs-portal' ), $entry_id );
         if ( $location ) {
