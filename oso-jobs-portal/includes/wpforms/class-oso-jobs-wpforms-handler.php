@@ -204,26 +204,25 @@ class OSO_Jobs_WPForms_Handler {
 
     /**
      * Helper to find field value by key fragments.
+     * Returns raw value (can be string or array for checkboxes).
+     * For single-value fields, returns sanitized string (preserves newlines for textarea).
+     * For multi-value fields (checkboxes), returns array - use format_list_value() to convert.
      */
     protected static function find_field_value( $fields, $possible_keys, $default = '' ) {
         foreach ( $fields as $field ) {
             $key = strtolower( $field['name'] );
             foreach ( $possible_keys as $match ) {
                 if ( false !== strpos( $key, strtolower( $match ) ) ) {
-                    $value = isset( $field['value_raw'] ) && $field['value_raw'] ? $field['value_raw'] : $field['value'];
+                    // Use value_raw if it exists (even if empty array), otherwise fall back to value
+                    $value = isset( $field['value_raw'] ) ? $field['value_raw'] : $field['value'];
 
+                    // Return arrays as-is (for checkboxes) - let format_list_value handle them
                     if ( is_array( $value ) ) {
-                        $value = array_map( 'sanitize_text_field', (array) $value );
-                        return implode( ', ', $value );
+                        return $value;
                     }
 
-                    if ( is_string( $value ) && false !== strpos( $value, "\n" ) ) {
-                        $parts = preg_split( '/[\r\n]+/', $value );
-                        $parts = array_filter( array_map( 'sanitize_text_field', $parts ) );
-                        return implode( "\n", $parts );
-                    }
-
-                    return sanitize_text_field( $value );
+                    // For strings, use sanitize_textarea_field to preserve newlines
+                    return is_string( $value ) ? sanitize_textarea_field( $value ) : '';
                 }
             }
         }
@@ -268,23 +267,37 @@ class OSO_Jobs_WPForms_Handler {
     }
 
     /**
-     * Normalize checkbox/text area multi-line values.
+     * Normalize checkbox/textarea multi-line values to newline-separated string.
      *
-     * @param string|array $value Raw value.
-     * @return string
+     * @param string|array $value Raw value (array from checkboxes or string from textarea).
+     * @return string Newline-separated string for storage.
      */
     protected static function format_list_value( $value ) {
         if ( empty( $value ) ) {
             return '';
         }
 
+        // Handle arrays (from checkboxes) - convert to newline-separated
         if ( is_array( $value ) ) {
-            return implode( "\n", array_map( 'sanitize_text_field', $value ) );
+            $value = array_map( 'sanitize_text_field', $value );
+            $value = array_filter( $value ); // Remove empty values
+            return implode( "\n", $value );
         }
 
-        $parts = preg_split( '/[\r\n]+/', $value );
-        $parts = array_filter( array_map( 'trim', $parts ) );
-        return implode( "\n", $parts );
+        // Handle strings - ensure proper formatting
+        if ( is_string( $value ) ) {
+            // Already has newlines - just clean up
+            if ( false !== strpos( $value, "\n" ) ) {
+                $parts = preg_split( '/[\r\n]+/', $value );
+                $parts = array_filter( array_map( 'trim', $parts ) );
+                return implode( "\n", $parts );
+            }
+            
+            // Single value - sanitize and return
+            return sanitize_text_field( trim( $value ) );
+        }
+
+        return '';
     }
 
     /**
